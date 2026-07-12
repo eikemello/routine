@@ -10,12 +10,9 @@
     <string name="edit_water_quantity">🔄</string>
     <string name="meal_icon">Meal icon</string>
     <string name="meal">Meal</string>
-    <string name="how_was_your_meal">How was your meal? Current meal: Lunch</string>
+    <string name="how_was_your_meal">How was your meal?\nCurrent meal by the time: Lunch</string>
     <string name="about_edit_default_water_values">You can change the default values by clicking on \'Edit\'</string>
     <string name="right_meal">Right</string>
-    <string name="right">✅</string>
-    <string name="warning">🟡</string>
-    <string name="wrong">❌</string>
     <string name="warning_meal">Meal with observation</string>
     <string name="wrong_meal">Wrong meal</string>
 </resources>

@@ -15,7 +15,6 @@
         android:padding="20dp">
 
         <!-- WATER -->
-
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -53,24 +52,24 @@
                             android:text="@string/water"
                             android:textSize="22sp"
                             android:textStyle="bold" />
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="20dp"
                             android:text="@string/about_edit_default_water_values"
-                            android:textColor="#777"/>
+                            android:textColor="#777" />
 
                     </LinearLayout>
 
                     <TextView
-                        android:id="@+id/tvWaterToday"
+                        android:id="@+id/txtDayWater"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/water_max"
                         android:textColor="#1976D2"
                         android:textSize="20sp"
                         android:textStyle="bold" />
-
                 </LinearLayout>
 
 
@@ -82,28 +81,30 @@
                     android:gravity="center">
 
                     <EditText
-                        android:id="@+id/etWater"
+                        android:id="@+id/etOtherValueWater"
                         android:layout_width="200dp"
                         android:layout_height="50dp"
                         android:autofillHints="value"
                         android:hint="@string/water_input_custom"
                         android:inputType="number" />
 
-                    <Button
-                        android:id="@+id/btnDatePicker"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                    <ImageButton
+                        android:id="@+id/btnSaveWater"
+                        android:layout_width="50dp"
+                        android:layout_height="40dp"
                         android:layout_alignParentEnd="true"
                         android:layout_marginTop="5dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:text="@string/right" />
+                        android:layout_marginEnd="20dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/about_edit_default_water_values"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/check" />
                 </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="10dp"
                     android:gravity="center"
                     android:weightSum="4">
 
@@ -111,8 +112,8 @@
                         android:id="@+id/btnAddWater1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:layout_marginEnd="5dp"
+                        android:layout_weight="1"
                         android:text="@string/water_add_300_test" />
 
                     <com.google.android.material.button.MaterialButton
@@ -132,22 +133,19 @@
                         android:text="@string/water_add_500_test" />
 
                     <ImageButton
-                        android:id="@+id/imgEditValues"
+                        android:id="@+id/btnEditWaterValues"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="42dp"
                         android:layout_weight="1"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/ic_edit"
+                        android:contentDescription="@string/about_edit_default_water_values"
                         android:scaleType="centerInside"
-                        android:contentDescription="@string/about_edit_default_water_values"/>
-
+                        android:src="@drawable/edit" />
                 </LinearLayout>
             </LinearLayout>
-
         </com.google.android.material.card.MaterialCardView>
 
         <!-- MEAL -->
-
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -157,7 +155,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="10dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -186,61 +184,57 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/txtCurrentMeal"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="20dp"
                             android:text="@string/how_was_your_meal"
                             android:textColor="#777" />
-
                     </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:weightSum="3">
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnCorrect"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
+                    <ImageButton
+                        android:id="@+id/btnCorrectMeal"
                         android:layout_width="0dp"
-                        android:layout_height="72dp"
+                        android:layout_height="40dp"
                         android:layout_weight="1"
-                        android:contentDescription="@string/right_meal"
-                        android:text="@string/right" />
+                        android:layout_marginEnd="10dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/about_edit_default_water_values"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/check" />
 
-                    <Space
-                        android:layout_width="8dp"
-                        android:layout_height="1dp" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnMedium"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
+                    <ImageButton
+                        android:id="@+id/btnWarningMeal"
                         android:layout_width="0dp"
-                        android:layout_height="72dp"
+                        android:layout_height="40dp"
                         android:layout_weight="1"
-                        android:contentDescription="@string/warning_meal"
-                        android:text="@string/warning" />
+                        android:layout_marginEnd="10dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/about_edit_default_water_values"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/error" />
 
-                    <Space
-                        android:layout_width="8dp"
-                        android:layout_height="1dp" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnWrong"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
+                    <ImageButton
+                        android:id="@+id/btnWrongMeal"
                         android:layout_width="0dp"
-                        android:layout_height="72dp"
+                        android:layout_height="40dp"
                         android:layout_weight="1"
-                        android:contentDescription="@string/wrong_meal"
-                        android:text="@string/wrong" />
-
+                        android:layout_marginEnd="10dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/about_edit_default_water_values"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/close" />
                 </LinearLayout>
-
             </LinearLayout>
-
         </com.google.android.material.card.MaterialCardView>
-
     </LinearLayout>
-
 </androidx.core.widget.NestedScrollView>
