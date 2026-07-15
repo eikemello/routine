@@ -115,7 +115,7 @@
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@string/add_water"
                         android:scaleType="centerInside"
-                        android:src="@drawable/check" />
+                        android:src="@drawable/right" />
                 </RelativeLayout>
 
                 <LinearLayout
@@ -212,7 +212,7 @@
                     android:weightSum="3">
 
                     <ImageButton
-                        android:id="@+id/btnCorrectMeal"
+                        android:id="@+id/btnRightMeal"
                         android:layout_width="0dp"
                         android:layout_height="48dp"
                         android:layout_marginEnd="10dp"
@@ -220,7 +220,7 @@
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@string/right_meal"
                         android:scaleType="centerInside"
-                        android:src="@drawable/check" />
+                        android:src="@drawable/right" />
 
 
                     <ImageButton
@@ -232,7 +232,7 @@
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@string/warning_meal"
                         android:scaleType="centerInside"
-                        android:src="@drawable/error" />
+                        android:src="@drawable/warning" />
 
 
                     <ImageButton
@@ -244,7 +244,7 @@
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@string/wrong_meal"
                         android:scaleType="centerInside"
-                        android:src="@drawable/close" />
+                        android:src="@drawable/wrong" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

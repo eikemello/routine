@@ -29,7 +29,7 @@ public class HomeActivity extends AppCompatActivity {
 
     // Meal section views
     private TextView txtCurrentMeal;//TODO: Get current meal checking hour, but turn editable too.
-    private ImageButton btnCorrectMeal;
+    private ImageButton btnRightMeal;
     private ImageButton btnWarningMeal;
     private ImageButton btnWrongMeal;
 
@@ -68,7 +68,7 @@ public class HomeActivity extends AppCompatActivity {
 
         //Meal UI
         txtCurrentMeal = findViewById(R.id.txtCurrentMeal);
-        btnCorrectMeal = findViewById(R.id.btnCorrectMeal);
+        btnRightMeal = findViewById(R.id.btnRightMeal);
         btnWarningMeal = findViewById(R.id.btnWarningMeal);
         btnWrongMeal = findViewById(R.id.btnWrongMeal);
     }
@@ -93,7 +93,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void setupMealButtonListeners() {
-        btnCorrectMeal.setOnClickListener(v -> {
+        btnRightMeal.setOnClickListener(v -> {
 
         });
 
