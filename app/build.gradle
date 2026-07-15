@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace 'com.android.nls.Routine'
+    namespace 'com.android.nls.routine'
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
