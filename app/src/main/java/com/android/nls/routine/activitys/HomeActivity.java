@@ -11,7 +11,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import com.android.nls.routine.R;
-import com.android.nls.routine.services.HomeServices;
+import com.android.nls.routine.services.HomeService;
 import com.android.nls.routine.utils.Common;
 import com.google.android.material.button.MaterialButton;
 
@@ -33,7 +33,7 @@ public class HomeActivity extends AppCompatActivity {
     private ImageButton btnWarningMeal;
     private ImageButton btnWrongMeal;
 
-    private HomeServices homeServices;
+    private HomeService homeService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +49,7 @@ public class HomeActivity extends AppCompatActivity {
             return insets;
         });
 
-        homeServices = new HomeServices(this);
+        homeService = new HomeService(this);
 
         startUIComponents();
         setupWaterButtonListeners();
@@ -76,19 +76,19 @@ public class HomeActivity extends AppCompatActivity {
     private void setupWaterButtonListeners() {
         btnAddWater1.setOnClickListener(v -> {
             Log.d(TAG, "btnWater 1 clicked");
-            homeServices.addWater(txtDayWaterDrank, Integer.parseInt(btnAddWater1.getText().toString()));
+            homeService.addWater(txtDayWaterDrank, Integer.parseInt(btnAddWater1.getText().toString()));
         });
 
         btnAddWater2.setOnClickListener(v -> {
-            homeServices.addWater(txtDayWaterDrank, Integer.parseInt(btnAddWater2.getText().toString()));
+            homeService.addWater(txtDayWaterDrank, Integer.parseInt(btnAddWater2.getText().toString()));
         });
 
         btnAddWater3.setOnClickListener(v -> {
-            homeServices.addWater(txtDayWaterDrank, Integer.parseInt(btnAddWater3.getText().toString()));
+            homeService.addWater(txtDayWaterDrank, Integer.parseInt(btnAddWater3.getText().toString()));
         });
 
         btnSaveWater.setOnClickListener(v -> {
-            homeServices.saveCustomWaterValue(txtDayWaterDrank, Integer.parseInt(etCustomValueWater.getText().toString()));
+            homeService.saveCustomWaterValue(txtDayWaterDrank, Integer.parseInt(etCustomValueWater.getText().toString()));
         });
     }
 
@@ -109,7 +109,7 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        homeServices.closeDb();
+        homeService.closeDb();
         super.onDestroy();
     }
 }

@@ -80,7 +80,7 @@
                             android:id="@+id/txtDayWaterDrank"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/water_drinked_default"
+                            android:text="@string/water_default_value_init"
                             android:textColor="#FF3B3B"
                             android:textSize="15sp"
                             android:textStyle="bold" />

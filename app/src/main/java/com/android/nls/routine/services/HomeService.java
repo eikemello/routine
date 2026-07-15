@@ -10,15 +10,15 @@ import com.android.nls.routine.services.database.DatabaseHelper;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 
-public class HomeServices {
-    private static final String TAG = Common.generateTag(HomeServices.class);
+public class HomeService {
+    private static final String TAG = Common.generateTag(HomeService.class);
 
     private final DatabaseHelper dbHelper;
     private final SQLiteDatabase db;
     private final Context mContext;
     private int currentWaterIntake = 0;
 
-    public HomeServices(Context context) {
+    public HomeService(Context context) {
         mContext = context;
         dbHelper = new DatabaseHelper(mContext);
         db = dbHelper.getWritableDatabase();
