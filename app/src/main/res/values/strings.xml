@@ -3,16 +3,18 @@
     <string name="description_water_image">Water image</string>
     <string name="water">Water</string>
     <string name="water_max">3000 ml</string>
-    <string name="water_input_custom">Other value</string>
-    <string name="water_add_300_test">+300</string>
-    <string name="water_add_400_test">+400</string>
-    <string name="water_add_500_test">+500</string>
-    <string name="edit_water_quantity">🔄</string>
+    <string name="water_input_custom">Custom value</string>
+    <string name="water_default_value_init">0ml</string>
+    <string name="water_default_value_50">+50</string>
+    <string name="water_default_value_100">+100</string>
+    <string name="water_default_value_250">+250</string>
     <string name="meal_icon">Meal icon</string>
     <string name="meal">Meal</string>
-    <string name="how_was_your_meal">How was your meal?\nCurrent meal by the time: Lunch</string>
-    <string name="about_edit_default_water_values">You can change the default values by clicking on \'Edit\'</string>
-    <string name="right_meal">Right</string>
+    <string name="how_was_your_meal">How was your meal?</string>
+    <string name="current_meal">Current meal: TBD</string>
+    <string name="about_edit_default_water_values">You can change the default values on \'Settings\'</string>
+    <string name="right_meal">Right meal</string>
     <string name="warning_meal">Meal with observation</string>
     <string name="wrong_meal">Wrong meal</string>
+    <string name="add_water">Add water</string>
 </resources>

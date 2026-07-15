@@ -1,0 +1,50 @@
+package com.android.nls.routine.services.database;
+
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.BaseColumns;
+import android.util.Log;
+import com.android.nls.routine.utils.Common;
+import com.android.nls.routine.utils.Constants;
+
+public class DatabaseHelper extends SQLiteOpenHelper {
+    private static final String TAG = Common.generateTag(DatabaseHelper.class);
+
+    private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "Routine";
+
+    public DatabaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        Log.d(TAG, "DatabaseHelper super");
+    }
+
+
+    public void onCreate(SQLiteDatabase db) {
+        Log.d(TAG, "SQLite onCreate");
+        db.execSQL(WaterFeedEntry.SQL_CREATE_ENTRIES_WATER);
+        db.execSQL(WaterFeedEntry.SQL_CREATE_ENTRIES_USER_CONFIG);
+    }
+
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL(WaterFeedEntry.SQL_DELETE_ENTRIES);
+        onCreate(db);
+    }
+
+
+    public static class WaterFeedEntry implements BaseColumns {
+        private static final String SQL_CREATE_ENTRIES_WATER =
+                "CREATE TABLE " + Constants.TABLE_NAME_WATER + " (" +
+                        _ID + " INTEGER PRIMARY KEY," +
+                        Constants.COLUMN_NAME_WATER_SUM + " TEXT," +
+                        Constants.COLUMN_NAME_WATER_TIMESTAMP + " TEXT)";
+
+        private static final String SQL_CREATE_ENTRIES_USER_CONFIG =
+                "CREATE TABLE " + Constants.TABLE_NAME_USER_CONFIG + " (" +
+                        _ID + " INTEGER PRIMARY KEY," +
+                        Constants.COLUMN_NAME_DAY_WATER + " TEXT)";
+
+        private static final String SQL_DELETE_ENTRIES =
+                "DROP TABLE IF EXISTS " + Constants.TABLE_NAME_WATER;
+    }
+}

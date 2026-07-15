@@ -1,4 +1,4 @@
-package com.android.nls.Routine;
+package com.android.nls.routine;
 
 import org.junit.Test;
 
