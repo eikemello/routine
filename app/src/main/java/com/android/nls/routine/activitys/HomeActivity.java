@@ -13,10 +13,12 @@ import androidx.core.view.WindowInsetsCompat;
 import com.android.nls.routine.R;
 import com.android.nls.routine.services.HomeService;
 import com.android.nls.routine.utils.Common;
+import com.android.nls.routine.utils.Constants;
 import com.google.android.material.button.MaterialButton;
 
 public class HomeActivity extends AppCompatActivity {
     private static final String TAG = Common.generateTag(HomeActivity.class);
+    private HomeService homeService;
 
     // Water section views
     private TextView txtDayWater;//TODO: Turn this value editable (2500ml, 3000ml....)
@@ -32,8 +34,6 @@ public class HomeActivity extends AppCompatActivity {
     private ImageButton btnRightMeal;
     private ImageButton btnWarningMeal;
     private ImageButton btnWrongMeal;
-
-    private HomeService homeService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +54,13 @@ public class HomeActivity extends AppCompatActivity {
         startUIComponents();
         setupWaterButtonListeners();
         setupMealButtonListeners();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume - refreshing water sum");
+        loadWaterSumFromDatabase();
     }
 
     private void startUIComponents() {
@@ -88,7 +95,13 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         btnSaveWater.setOnClickListener(v -> {
-            homeService.saveCustomWaterValue(txtDayWaterDrank, Integer.parseInt(etCustomValueWater.getText().toString()));
+            String water = etCustomValueWater.getText().toString();
+            if(!water.isBlank()) {
+                homeService.saveCustomWaterValue(txtDayWaterDrank, Integer.parseInt(water) );
+                etCustomValueWater.getText().clear();
+            } else {
+                Common.generateToastMessageShortInvalidNumber(this, Constants.WATER_INVALID_NUMBER);
+            }
         });
     }
 
@@ -106,6 +119,9 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    private void loadWaterSumFromDatabase() {
+        homeService.loadWaterSum(txtDayWaterDrank);
+    }
 
     @Override
     protected void onDestroy() {
