@@ -95,7 +95,7 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         btnSaveWater.setOnClickListener(v -> {
-            String water = etCustomValueWater.getText().toString();
+            String water = etCustomValueWater.getText().toString().trim();
             if(!water.isBlank()) {
                 homeService.saveCustomWaterValue(txtDayWaterDrank, Integer.parseInt(water) );
                 etCustomValueWater.getText().clear();
