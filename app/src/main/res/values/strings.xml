@@ -4,7 +4,7 @@
     <string name="water">Water</string>
     <string name="water_max">3000 ml</string>
     <string name="water_input_custom">Custom value</string>
-    <string name="water_default_value_init">0ml</string>
+    <string name="water_default_value_init">%1$s ml</string>
     <string name="water_default_value_50">+50</string>
     <string name="water_default_value_100">+100</string>
     <string name="water_default_value_250">+250</string>
@@ -13,6 +13,7 @@
     <string name="how_was_your_meal">How was your meal?</string>
     <string name="current_meal">Current meal: TBD</string>
     <string name="about_edit_default_water_values">You can change the default values on \'Settings\'</string>
+    <string name="last_water_added_time">Last added at %1$s</string>
     <string name="right_meal">Right meal</string>
     <string name="warning_meal">Meal with observation</string>
     <string name="wrong_meal">Wrong meal</string>
