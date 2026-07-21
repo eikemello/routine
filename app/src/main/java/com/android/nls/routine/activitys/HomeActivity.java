@@ -5,11 +5,13 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
 import com.android.nls.routine.R;
 import com.android.nls.routine.services.HomeService;
 import com.android.nls.routine.utils.Common;
@@ -60,7 +62,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        loadWaterSumFromDatabase();
+        loadDailyWaterSum();
         loadLastWaterAddedTime();
     }
 
@@ -99,8 +101,8 @@ public class HomeActivity extends AppCompatActivity {
 
         btnSaveWater.setOnClickListener(v -> {
             String water = etCustomValueWater.getText().toString().trim();
-            if(!water.isBlank()) {
-                homeService.saveCustomWaterValue(txtDayWaterDrank, txtLastWaterAddedTime, Integer.parseInt(water) );
+            if (!water.isBlank()) {
+                homeService.saveCustomWaterValue(txtDayWaterDrank, txtLastWaterAddedTime, Integer.parseInt(water));
                 etCustomValueWater.getText().clear();
             } else {
                 Common.generateToastMessageShortInvalidNumber(this, Constants.WATER_INVALID_NUMBER);
@@ -122,16 +124,16 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    private void loadWaterSumFromDatabase() {
-        int totalSum = homeService.getWaterSum();
+    private void loadDailyWaterSum() {
+        int totalSum = homeService.getDailyWaterSum();
         txtDayWaterDrank.setText(this.getString(R.string.water_default_value_init, String.valueOf(totalSum)));
-        Log.d(TAG, "Loaded water sum from database: " + totalSum + "ml");
+        Log.d(TAG, "Daily water sum loaded: " + totalSum + "ml");
     }
 
     private void loadLastWaterAddedTime() {
         String lastWaterAddedTime = homeService.getLastWaterAddedTime();
         txtLastWaterAddedTime.setText(this.getString(R.string.last_water_added_time, lastWaterAddedTime));
-        Log.d(TAG, "Loaded water time from last drank: " + lastWaterAddedTime + "ml");
+        Log.d(TAG, "Last water drank loaded: " + lastWaterAddedTime + "ml");
     }
 
     @Override
