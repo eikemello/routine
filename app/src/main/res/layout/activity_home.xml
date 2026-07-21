@@ -53,10 +53,11 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/txtLastWaterAddedTime"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="20dp"
-                            android:text="@string/about_edit_default_water_values"
+                            android:text="@string/last_water_added_time"
                             android:textColor="#777" />
 
                     </LinearLayout>
