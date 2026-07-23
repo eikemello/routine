@@ -36,11 +36,29 @@ public class Common {
         try {
             long timestampMillis = Long.parseLong(timestamp);
             Date date = new Date(timestampMillis);
-            SimpleDateFormat outputFormat = new SimpleDateFormat("hh:mm:ss", Locale.getDefault());
+            SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
             return outputFormat.format(date);
         } catch (NumberFormatException ignored) {
         }
         return timestamp;
+    }
+
+    public static String getWeekDay() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d", Locale.ENGLISH);
+        return dateFormat.format(new Date());
+    }
+
+    public static String getCurrentGreeting() {
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+
+        if (hour >= 5 && hour < 12) {
+            return Constants.GREETINGS.get(0);
+        } else if (hour >= 12 && hour < 18) {
+            return Constants.GREETINGS.get(1);
+        } else {
+            return Constants.GREETINGS.get(2);
+        }
     }
 
     public static void generateToastMessageShortWaterDrank(Context context, int amount, String message) {

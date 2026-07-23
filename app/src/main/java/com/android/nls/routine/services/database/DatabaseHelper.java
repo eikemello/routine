@@ -34,7 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         private static final String SQL_CREATE_ENTRIES_USER_CONFIG =
                 "CREATE TABLE " + Constants.TABLE_NAME_USER_CONFIG + " (" +
                         _ID + " INTEGER PRIMARY KEY," +
-                        Constants.COLUMN_NAME_DAY_WATER + " TEXT," +
+                        Constants.COLUMN_NAME_DAILY_WATER + " TEXT," +
                         Constants.COLUMN_NAME_BTN_1_ADD_WATER + " TEXT," +
                         Constants.COLUMN_NAME_BTN_2_ADD_WATER + " TEXT,"+
                         Constants.COLUMN_NAME_BTN_3_ADD_WATER + " TEXT)";
