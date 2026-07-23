@@ -3,7 +3,7 @@
     <string name="description_water_image">Water image</string>
     <string name="water">Water</string>
     <string name="water_max">3000 ml</string>
-    <string name="water_input_custom">Custom value</string>
+    <string name="water_input_custom">add or minus water</string>
     <string name="water_default_value_init">%1$s ml</string>
     <string name="water_default_value_50">+50</string>
     <string name="water_default_value_100">+100</string>
@@ -18,4 +18,5 @@
     <string name="warning_meal">Meal with observation</string>
     <string name="wrong_meal">Wrong meal</string>
     <string name="add_water">Add water</string>
+    <string name="menu_config_default_values">Config default values</string>
 </resources>
