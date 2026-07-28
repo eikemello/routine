@@ -4,7 +4,7 @@
     android:id="@+id/mainScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface"
+    android:background="@color/background"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
@@ -15,37 +15,36 @@
 
         <TextView
             android:id="@+id/txtCurrentGreeting"
+            style="@style/menuTitleTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="30dp"
-            android:layout_toStartOf="@+id/btnUserConfig"
-            android:text=""
-            android:textSize="30sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="10dp"
+            android:layout_toStartOf="@+id/btnUserConfig" />
 
         <TextView
             android:id="@+id/txtCurrentDate"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/txtCurrentGreeting"
+            android:layout_toStartOf="@+id/btnUserConfig"
             android:layout_marginStart="30dp"
+            android:textColor="@color/white"
             android:textSize="20sp" />
 
         <ImageButton
             android:id="@+id/btnUserConfig"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="25dp"
             android:layout_marginEnd="25dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/right_meal"
+            android:contentDescription="@string/user_config"
             android:scaleType="centerInside"
-            android:src="@drawable/profile"/>
+            android:src="@drawable/ic_user_config" />
     </RelativeLayout>
 
     <LinearLayout
@@ -54,14 +53,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="20dp"
-        android:translationY="-100dp">
+        android:translationY="-120dp">
 
         <!-- WATER -->
         <com.google.android.material.card.MaterialCardView
+            style="@style/MaterialCardView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:background="@color/design_default_color_background">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -75,10 +73,12 @@
                     android:gravity="center_vertical">
 
                     <ImageView
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
-                        android:contentDescription="@string/description_water_image"
-                        android:src="@drawable/ic_water" />
+                        android:id="@+id/imgViewWater"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="top"
+                        android:contentDescription="@string/water"
+                        android:src="@drawable/ic_water_drop_24px" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -89,19 +89,17 @@
                         android:paddingEnd="12dp">
 
                         <TextView
+                            style="@style/titleTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/water"
-                            android:textSize="22sp"
-                            android:textStyle="bold" />
+                            android:text="@string/water" />
 
                         <TextView
                             android:id="@+id/txtLastWaterAddedTime"
+                            style="@style/subTitleTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="20dp"
-                            android:text="@string/last_water_added_time"
-                            android:textColor="#777" />
+                            android:text="@string/last_water_added_time" />
 
                     </LinearLayout>
 
@@ -126,11 +124,9 @@
                             android:layout_height="wrap_content"
                             android:text="@string/water_default_value_init"
                             android:textColor="#FF3B3B"
-                            android:textSize="15sp"
+                            android:textSize="17sp"
                             android:textStyle="bold" />
-
                     </LinearLayout>
-
                 </LinearLayout>
 
 
@@ -147,31 +143,30 @@
                         android:layout_height="50dp"
                         android:autofillHints="value"
                         android:hint="@string/water_input_custom"
-                        android:inputType="number" />
+                        android:inputType="number"
+                        android:textColorHint="#807F7F" />
 
                     <ImageButton
                         android:id="@+id/btnAddWater"
-                        android:layout_width="50dp"
+                        android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:layout_marginTop="5dp"
                         android:layout_marginEnd="20dp"
                         android:layout_toStartOf="@+id/btnMinusWater"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@string/add_water"
                         android:scaleType="centerInside"
-                        android:src="@drawable/add" />
+                        android:src="@drawable/ic_plus" />
 
                     <ImageButton
                         android:id="@+id/btnMinusWater"
-                        android:layout_width="40dp"
+                        android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="20dp"
                         android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="20dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="@string/add_water"
+                        android:contentDescription="@string/minus_water"
                         android:scaleType="centerInside"
-                        android:src="@drawable/minus" />
+                        android:src="@drawable/ic_minus" />
                 </RelativeLayout>
 
                 <LinearLayout
@@ -183,25 +178,27 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnAddWater1"
+                        style="@style/buttonTextStyle"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="50dp"
                         android:layout_marginEnd="5dp"
                         android:layout_weight="1"
                         android:text="@string/water_default_value_50" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnAddWater2"
+                        style="@style/buttonTextStyle"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="50dp"
                         android:layout_marginEnd="5dp"
                         android:layout_weight="1"
                         android:text="@string/water_default_value_100" />
 
-
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnAddWater3"
+                        style="@style/buttonTextStyle"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="50dp"
                         android:layout_weight="1"
                         android:text="@string/water_default_value_250" />
                 </LinearLayout>
@@ -210,9 +207,9 @@
 
         <!-- MEAL -->
         <com.google.android.material.card.MaterialCardView
+            style="@style/MaterialCardView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/design_default_color_background">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -226,9 +223,11 @@
                     android:gravity="center_vertical">
 
                     <ImageView
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
-                        android:contentDescription="@string/meal_icon"
+                        android:id="@+id/imgViewMeal"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="top"
+                        android:contentDescription="@string/meal"
                         android:src="@drawable/ic_meal" />
 
                     <LinearLayout
@@ -240,67 +239,145 @@
                         android:paddingRight="12dp">
 
                         <TextView
+                            style="@style/titleTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/meal"
-                            android:textSize="22sp"
-                            android:textStyle="bold" />
+                            android:text="@string/meal" />
 
                         <TextView
+                            style="@style/subTitleTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/how_was_your_meal"
-                            android:textColor="#777" />
-
-                        <TextView
-                            android:id="@+id/txtCurrentMeal"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/current_meal"
-                            android:textColor="#777" />
+                            android:text="@string/how_was_your_meal" />
                     </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="15dp"
                     android:weightSum="3">
 
                     <ImageButton
                         android:id="@+id/btnRightMeal"
                         android:layout_width="0dp"
                         android:layout_height="48dp"
-                        android:layout_marginEnd="10dp"
                         android:layout_weight="1"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@string/right_meal"
                         android:scaleType="centerInside"
-                        android:src="@drawable/right" />
-
+                        android:src="@drawable/ic_right" />
 
                     <ImageButton
                         android:id="@+id/btnWarningMeal"
                         android:layout_width="0dp"
                         android:layout_height="48dp"
-                        android:layout_marginEnd="10dp"
                         android:layout_weight="1"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@string/warning_meal"
                         android:scaleType="centerInside"
-                        android:src="@drawable/warning" />
-
+                        android:src="@drawable/ic_warning" />
 
                     <ImageButton
                         android:id="@+id/btnWrongMeal"
                         android:layout_width="0dp"
                         android:layout_height="48dp"
-                        android:layout_marginEnd="10dp"
                         android:layout_weight="1"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@string/wrong_meal"
                         android:scaleType="centerInside"
-                        android:src="@drawable/wrong" />
+                        android:src="@drawable/ic_wrong" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- CREDIT CARD EXPENSES -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/MaterialCardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:id="@+id/imgCreditCard"
+                        android:layout_width="50dp"
+                        android:layout_height="45dp"
+                        android:layout_gravity="top"
+                        android:contentDescription="@string/expenses"
+                        android:src="@drawable/ic_credit_card" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp">
+
+                        <TextView
+                            style="@style/titleTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/expenses" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp">
+
+                            <TextView
+                                style="@style/expenseTextViewInfo"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:text="@string/spent_today" />
+
+                            <TextView
+                                android:id="@+id/txtSpentTodayValue"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="R$ 439,00"
+                                android:textAlignment="textEnd"
+                                android:textColor="#D5D4D4"
+                                android:textSize="20sp" />
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="5dp"
+                            android:background="#B8807F7F" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp">
+
+                            <TextView
+                                style="@style/expenseTextViewInfo"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:text="@string/remaining" />
+
+                            <TextView
+                                android:id="@+id/txtRemainingValue"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="R$ 1.561,00"
+                                android:textAlignment="textEnd"
+                                android:textColor="#E100FF09"
+                                android:textSize="20sp" />
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

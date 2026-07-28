@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import com.android.nls.routine.R;
 import com.android.nls.routine.services.HomeService;
 import com.android.nls.routine.utils.Common;
@@ -38,18 +39,20 @@ public class HomeActivity extends AppCompatActivity {
     private MaterialButton btnAddWater3;
 
     // Meal section views
-    private TextView txtCurrentMeal;//TODO: Get current meal checking hour, but turn editable too.
     private ImageButton btnRightMeal;
     private ImageButton btnWarningMeal;
     private ImageButton btnWrongMeal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "Loading home screen");
-
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
+
+        // Force status bar icons to be white (light appearance) since the header background
+        // is always dark regardless of system dark/light mode
+        WindowInsetsControllerCompat windowInsetsController = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
+        windowInsetsController.setAppearanceLightStatusBars(false);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.mainScrollView), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -90,7 +93,6 @@ public class HomeActivity extends AppCompatActivity {
         btnAddWater3 = findViewById(R.id.btnAddWater3);
 
         //Meal UI
-        txtCurrentMeal = findViewById(R.id.txtCurrentMeal);
         btnRightMeal = findViewById(R.id.btnRightMeal);
         btnWarningMeal = findViewById(R.id.btnWarningMeal);
         btnWrongMeal = findViewById(R.id.btnWrongMeal);

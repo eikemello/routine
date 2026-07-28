@@ -42,7 +42,6 @@ public class HomeService {
         int totalSum = getDailyWaterSum();
         txtDayWaterDrank.setText(mContext.getString(R.string.water_default_value_init, String.valueOf(totalSum)));
         txtLastWaterAdded.setText(mContext.getString(R.string.last_water_added_time, currentTime));
-//        Common.generateToastMessageShortWaterDrank(mContext, amount, Constants.WATER_ADDED);
         Log.d(TAG, "Added " + amount + "ml water. Total: " + totalSum + "ml");
     }
 
@@ -50,7 +49,6 @@ public class HomeService {
         try {
             if (amount > 0 && amount < 5000) {
                 addWater(txtDayWaterDrank, txtLastWaterAdded, amount);
-                Common.generateToastMessageShortWaterDrank(mContext, amount, Constants.WATER_ADDED);
             } else {
                 Common.generateToastMessageShortInvalidNumber(mContext, Constants.WATER_INVALID_NUMBER);
             }
