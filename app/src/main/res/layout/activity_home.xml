@@ -4,14 +4,14 @@
     android:id="@+id/mainScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@drawable/home_background"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="220dp"
-        android:background="@drawable/home_background">
+        android:layout_marginTop="40dp">
 
         <TextView
             android:id="@+id/txtCurrentGreeting"
@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="25dp"
             android:layout_toStartOf="@+id/btnUserConfig" />
 
         <TextView
@@ -339,6 +339,7 @@
                                 style="@style/expenseTextViewInfo"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
+                                android:gravity="center"
                                 android:text="@string/spent_today" />
 
                             <TextView
@@ -366,6 +367,7 @@
                                 style="@style/expenseTextViewInfo"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
+                                android:gravity="center"
                                 android:text="@string/remaining" />
 
                             <TextView

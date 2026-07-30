@@ -10,9 +10,6 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import com.android.nls.routine.R;
 import com.android.nls.routine.services.HomeService;
@@ -54,18 +51,11 @@ public class HomeActivity extends AppCompatActivity {
         WindowInsetsControllerCompat windowInsetsController = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
         windowInsetsController.setAppearanceLightStatusBars(false);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.mainScrollView), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-
         homeService = new HomeService(this);
 
         startUIComponents();
         setupWaterButtonListeners();
         setupMealButtonListeners();
-        initFields();
     }
 
     @Override
@@ -73,6 +63,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onResume();
         loadDailyWaterSum();
         loadLastWaterAddedTime();
+        initFields();
     }
 
     private void startUIComponents() {
@@ -129,7 +120,6 @@ public class HomeActivity extends AppCompatActivity {
             if (item.getItemId() == R.id.action_user_config) {
                 Intent intent = new Intent(HomeActivity.this, ConfigActivity.class);
                 startActivity(intent);
-                Log.d(TAG, "User Config menu item clicked");
                 return true;
             }
             return false;
