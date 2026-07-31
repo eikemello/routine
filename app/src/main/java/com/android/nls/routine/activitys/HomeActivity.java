@@ -14,19 +14,20 @@ import androidx.core.view.WindowInsetsControllerCompat;
 import com.android.nls.routine.R;
 import com.android.nls.routine.services.HomeService;
 import com.android.nls.routine.utils.Common;
-import com.android.nls.routine.utils.Constants;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputLayout;
 
 public class HomeActivity extends AppCompatActivity {
     private static final String TAG = Common.generateTag(HomeActivity.class);
-    private HomeService homeService;
+    private HomeService mHomeService;
 
     // Water section views
-    private TextView txtDayWater;//TODO: Turn this value editable (2500ml, 3000ml....)
-    private TextView txtDayWaterDrank;
+    private TextView txtDailyWater;
+    private TextView txtDailyWaterDrank;
     private TextView txtCurrentGreeting;
     private TextView txtCurrentDate;
     private TextView txtLastWaterAddedTime;
+    private TextInputLayout txtInputError;
     private EditText etCustomValueWater;
     private ImageButton btnUserConfig;
     private ImageButton btnAddWater;
@@ -51,7 +52,7 @@ public class HomeActivity extends AppCompatActivity {
         WindowInsetsControllerCompat windowInsetsController = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
         windowInsetsController.setAppearanceLightStatusBars(false);
 
-        homeService = new HomeService(this);
+        mHomeService = new HomeService(this);
 
         startUIComponents();
         setupWaterButtonListeners();
@@ -68,11 +69,11 @@ public class HomeActivity extends AppCompatActivity {
 
     private void startUIComponents() {
         //Water UI
-        txtDayWater = findViewById(R.id.txtDayWater);
-        txtDayWaterDrank = findViewById(R.id.txtDayWaterDrank);
-        txtDayWaterDrank.setText(this.getString(R.string.water_default_value_init, String.valueOf(0)));
+        txtDailyWater = findViewById(R.id.txtDailyWater);
+        txtDailyWaterDrank = findViewById(R.id.txtDailyWaterDrank);
+        txtDailyWaterDrank.setText(this.getString(R.string.water_default_value_init, String.valueOf(0)));
         txtLastWaterAddedTime = findViewById(R.id.txtLastWaterAddedTime);
-        txtLastWaterAddedTime.setText(this.getString(R.string.last_water_added_time, ""));
+        txtLastWaterAddedTime.setText(this.getString(R.string.last_added_at, ""));
         txtCurrentDate = findViewById(R.id.txtCurrentDate);
         txtCurrentGreeting = findViewById(R.id.txtCurrentGreeting);
         etCustomValueWater = findViewById(R.id.etCustomValueWater);
@@ -82,6 +83,7 @@ public class HomeActivity extends AppCompatActivity {
         btnAddWater1 = findViewById(R.id.btnAddWater1);
         btnAddWater2 = findViewById(R.id.btnAddWater2);
         btnAddWater3 = findViewById(R.id.btnAddWater3);
+        txtInputError = findViewById(R.id.txtInputError);
 
         //Meal UI
         btnRightMeal = findViewById(R.id.btnRightMeal);
@@ -90,25 +92,26 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void setupWaterButtonListeners() {
-        btnAddWater1.setOnClickListener(v -> homeService.addWater(txtDayWaterDrank, txtLastWaterAddedTime, Integer.parseInt(btnAddWater1.getText().toString())));
+        btnAddWater1.setOnClickListener(v -> mHomeService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, Integer.parseInt(btnAddWater1.getText().toString())));
 
-        btnAddWater2.setOnClickListener(v -> homeService.addWater(txtDayWaterDrank, txtLastWaterAddedTime, Integer.parseInt(btnAddWater2.getText().toString())));
+        btnAddWater2.setOnClickListener(v -> mHomeService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, Integer.parseInt(btnAddWater2.getText().toString())));
 
-        btnAddWater3.setOnClickListener(v -> homeService.addWater(txtDayWaterDrank, txtLastWaterAddedTime, Integer.parseInt(btnAddWater3.getText().toString())));
+        btnAddWater3.setOnClickListener(v -> mHomeService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, Integer.parseInt(btnAddWater3.getText().toString())));
 
         btnAddWater.setOnClickListener(v -> {
             String water = etCustomValueWater.getText().toString().trim();
             if (!water.isBlank()) {
-                homeService.saveCustomWaterValue(txtDayWaterDrank, txtLastWaterAddedTime, Integer.parseInt(water));
+                txtInputError.setError(null);
+                mHomeService.saveCustomWaterValue(txtDailyWaterDrank, txtLastWaterAddedTime, Integer.parseInt(water));
                 etCustomValueWater.getText().clear();
             } else {
-                Common.generateToastMessageShortInvalidNumber(this, Constants.WATER_INVALID_NUMBER);
+                txtInputError.setError("Please enter valid number!");
             }
         });
 
         btnUserConfig.setOnClickListener(this::showStyledPopupMenu);
 
-        btnMinusWater.setOnClickListener(v ->{
+        btnMinusWater.setOnClickListener(v -> {
         });
     }
 
@@ -147,19 +150,19 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void loadDailyWaterSum() {
-        int totalSum = homeService.getDailyWaterSum();
-        txtDayWaterDrank.setText(this.getString(R.string.water_default_value_init, String.valueOf(totalSum)));
+        int totalSum = mHomeService.getDailyWaterSum();
+        txtDailyWaterDrank.setText(this.getString(R.string.water_default_value_init, String.valueOf(totalSum)));
         Log.d(TAG, "Daily water sum loaded: " + totalSum + "ml");
     }
 
     private void loadLastWaterAddedTime() {
-        String lastWaterAddedTime = homeService.getLastWaterAddedTime();
-        txtLastWaterAddedTime.setText(this.getString(R.string.last_water_added_time, lastWaterAddedTime));
+        String lastWaterAddedTime = mHomeService.getLastWaterAddedTime();
+        txtLastWaterAddedTime.setText(this.getString(R.string.last_added_at, lastWaterAddedTime));
     }
 
     @Override
     protected void onDestroy() {
-        homeService.closeDb();
+        mHomeService.closeDb();
         super.onDestroy();
     }
 }

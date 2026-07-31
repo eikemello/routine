@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/mainScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -42,7 +43,7 @@
             android:layout_marginTop="25dp"
             android:layout_marginEnd="25dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/user_config"
+            android:contentDescription="@string/configure_default_values"
             android:scaleType="centerInside"
             android:src="@drawable/ic_user_config" />
     </RelativeLayout>
@@ -99,7 +100,7 @@
                             style="@style/subTitleTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/last_water_added_time" />
+                            android:text="@string/last_added_at" />
 
                     </LinearLayout>
 
@@ -110,7 +111,7 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/txtDayWater"
+                            android:id="@+id/txtDailyWater"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:text="@string/water_max"
@@ -119,7 +120,7 @@
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/txtDayWaterDrank"
+                            android:id="@+id/txtDailyWaterDrank"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/water_default_value_init"
@@ -130,28 +131,39 @@
                 </LinearLayout>
 
 
-                <RelativeLayout
+                <LinearLayout
                     android:id="@+id/relative"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:gravity="center">
+                    android:orientation="horizontal">
 
-                    <EditText
-                        android:id="@+id/etCustomValueWater"
-                        android:layout_width="200dp"
-                        android:layout_height="50dp"
-                        android:autofillHints="value"
-                        android:hint="@string/water_input_custom"
-                        android:inputType="number"
-                        android:textColorHint="#807F7F" />
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/txtInputError"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        app:errorEnabled="true"
+                        app:boxStrokeErrorColor="@color/design_default_color_error"
+                        app:startIconTint="@color/design_default_color_error"
+                        android:layout_toStartOf="@+id/btnAddWater">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etCustomValueWater"
+                            android:layout_width="225dp"
+                            android:layout_height="match_parent"
+                            android:autofillHints="value"
+                            android:hint="@string/custom_add_or_minus"
+                            android:inputType="number"
+                            android:textColorHint="#807F7F" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <ImageButton
                         android:id="@+id/btnAddWater"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:layout_marginEnd="20dp"
-                        android:layout_toStartOf="@+id/btnMinusWater"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginTop="10dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@string/add_water"
                         android:scaleType="centerInside"
@@ -161,13 +173,12 @@
                         android:id="@+id/btnMinusWater"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="20dp"
+                        android:layout_marginTop="10dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@string/minus_water"
                         android:scaleType="centerInside"
                         android:src="@drawable/ic_minus" />
-                </RelativeLayout>
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"

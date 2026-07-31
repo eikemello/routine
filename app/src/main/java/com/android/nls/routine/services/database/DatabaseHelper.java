@@ -37,7 +37,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         Constants.COLUMN_NAME_DAILY_WATER + " TEXT," +
                         Constants.COLUMN_NAME_BTN_1_ADD_WATER + " TEXT," +
                         Constants.COLUMN_NAME_BTN_2_ADD_WATER + " TEXT,"+
-                        Constants.COLUMN_NAME_BTN_3_ADD_WATER + " TEXT)";
+                        Constants.COLUMN_NAME_BTN_3_ADD_WATER + " TEXT,"+
+                        Constants.COLUMN_NAME_MONTHLY_LIMIT + " TEXT)";
 
         private static final String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + Constants.TABLE_NAME_WATER;

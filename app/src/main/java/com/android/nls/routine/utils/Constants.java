@@ -7,9 +7,15 @@ public class Constants {
     public static final String TAG = "RTN_";
 
     //HomeActivity
-    public static final String WATER_ADDED = "ml successfully added!";
     public static final String WATER_INVALID_NUMBER = "Please enter a valid number!";
-    public static final List<String> GREETINGS = Arrays.asList("Good morning!", "Good afternoon!", "Good night");
+    public static final List<String> GREETINGS = Arrays.asList("Good morning", "Good afternoon", "Good night");
+
+    //ConfigActivity
+    public static final String DAILY_WATER = "DAILY_WATER";
+    public static final String BTN_DEFAULT_1 = "BTN_DEFAULT_1";
+    public static final String BTN_DEFAULT_2 = "BTN_DEFAULT_2";
+    public static final String BTN_DEFAULT_3 = "BTN_DEFAULT_3";
+    public static final String MONTHLY_LIMIT = "MONTHLY_LIMIT";
 
     //SQLite
     public static final String TABLE_NAME_WATER = "WATER";
@@ -20,4 +26,5 @@ public class Constants {
     public static final String COLUMN_NAME_BTN_1_ADD_WATER = "BTN_1_ADD_WATER";
     public static final String COLUMN_NAME_BTN_2_ADD_WATER = "BTN_2_ADD_WATER";
     public static final String COLUMN_NAME_BTN_3_ADD_WATER = "BTN_3_ADD_WATER";
+    public static final String COLUMN_NAME_MONTHLY_LIMIT = "MONTHLY_LIMIT";
 }
