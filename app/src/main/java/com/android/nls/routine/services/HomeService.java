@@ -13,17 +13,17 @@ import com.android.nls.routine.utils.Constants;
 
 public class HomeService {
     private static final String TAG = Common.generateTag(HomeService.class);
-    private final DatabaseHelper dbHelper;
-    private final SQLiteDatabase db;
+    private final DatabaseHelper mDatabaseHelper;
+    private final SQLiteDatabase mSqliteDatabase;
     private final Context mContext;
 
     public HomeService(Context context) {
         mContext = context;
-        dbHelper = new DatabaseHelper(mContext);
-        db = dbHelper.getWritableDatabase();
+        mDatabaseHelper = new DatabaseHelper(mContext);
+        mSqliteDatabase = mDatabaseHelper.getWritableDatabase();
     }
 
-    public void addWater(TextView txtDayWaterDrank, TextView txtLastWaterAdded, int amount) {
+    public void addWater(TextView txtDailyWaterDrank, TextView txtLastWaterAdded, int amount) {
         long currentTimeMillis = System.currentTimeMillis();
         String currentTime = Common.getHourFromTimestamp(String.valueOf(currentTimeMillis));
 
@@ -31,7 +31,7 @@ public class HomeService {
         contentValues.put(Constants.COLUMN_NAME_WATER_DRANK, String.valueOf(amount));
         contentValues.put(Constants.COLUMN_NAME_WATER_TIMESTAMP, currentTimeMillis);
 
-        long newRowId = db.insert(Constants.TABLE_NAME_WATER, null, contentValues);
+        long newRowId = mSqliteDatabase.insert(Constants.TABLE_NAME_WATER, null, contentValues);
         Log.d(TAG, "Inserted row ID: " + newRowId);
 
         if (newRowId == -1) {
@@ -40,15 +40,15 @@ public class HomeService {
         }
 
         int totalSum = getDailyWaterSum();
-        txtDayWaterDrank.setText(mContext.getString(R.string.water_default_value_init, String.valueOf(totalSum)));
-        txtLastWaterAdded.setText(mContext.getString(R.string.last_water_added_time, currentTime));
+        txtDailyWaterDrank.setText(mContext.getString(R.string.water_default_value_init, String.valueOf(3000 - totalSum)));
+        txtLastWaterAdded.setText(mContext.getString(R.string.last_added_at, currentTime));
         Log.d(TAG, "Added " + amount + "ml water. Total: " + totalSum + "ml");
     }
 
-    public void saveCustomWaterValue(TextView txtDayWaterDrank, TextView txtLastWaterAdded, int amount) {
+    public void saveCustomWaterValue(TextView txtDailyWaterDrank, TextView txtLastWaterAdded, int amount) {
         try {
             if (amount > 0 && amount < 5000) {
-                addWater(txtDayWaterDrank, txtLastWaterAdded, amount);
+                addWater(txtDailyWaterDrank, txtLastWaterAdded, amount);
             } else {
                 Common.generateToastMessageShortInvalidNumber(mContext, Constants.WATER_INVALID_NUMBER);
             }
@@ -66,7 +66,7 @@ public class HomeService {
                 " WHERE " + Constants.COLUMN_NAME_WATER_TIMESTAMP + " >= ? AND " +
                 Constants.COLUMN_NAME_WATER_TIMESTAMP + " <= ?";
 
-        try (Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(startOfDay), String.valueOf(endOfDay)})) {
+        try (Cursor cursor = mSqliteDatabase.rawQuery(query, new String[]{String.valueOf(startOfDay), String.valueOf(endOfDay)})) {
             if (cursor.moveToFirst()) {
                 sum = cursor.getInt(0);
             }
@@ -82,7 +82,7 @@ public class HomeService {
                 " FROM " + Constants.TABLE_NAME_WATER +
                 " ORDER BY " + DatabaseHelper.WaterFeedEntry._ID + " DESC LIMIT 1";
 
-        try (Cursor cursor = db.rawQuery(query, null)) {
+        try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
             if (cursor.moveToFirst()) {
                 String lastTime = Common.getHourFromTimestamp(cursor.getString(0));
                 Log.d(TAG, "Last water drank time: " + lastTime);
@@ -96,6 +96,6 @@ public class HomeService {
     }
 
     public void closeDb() {
-        dbHelper.close();
+        mDatabaseHelper.close();
     }
 }

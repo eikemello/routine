@@ -28,7 +28,7 @@
 
     <style name="expenseTextViewInfo">
         <item name="android:textColor">#D5D4D4</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">15sp</item>
     </style>
 
     <style name="menuTitleTextView">
