@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">Routine</string>
     <string name="water">Water</string>
-    <string name="water_max">3000 ml</string>
+    <string name="daily_water_ml">%1$s ml</string>
     <string name="custom_add_or_minus">custom add or minus</string>
     <string name="water_default_value_init">%1$s ml</string>
-    <string name="water_default_value_50">+50</string>
-    <string name="water_default_value_100">+100</string>
-    <string name="water_default_value_250">+250</string>
+    <string name="water_default_value_50">+ %1$s</string>
+    <string name="water_default_value_100">+ %1$s</string>
+    <string name="water_default_value_250">+ %1$s</string>
     <string name="meal">Meal</string>
     <string name="how_was_your_meal">How was your meal?</string>
     <string name="last_added_at">Last added at %1$s</string>

@@ -9,6 +9,8 @@ public class Constants {
     //HomeActivity
     public static final String WATER_INVALID_NUMBER = "Please enter a valid number!";
     public static final List<String> GREETINGS = Arrays.asList("Good morning", "Good afternoon", "Good night");
+    public static final List<String> DEFAULT_ADD_WATER_BUTTON_VALUES = Arrays.asList("50", "100", "250");
+    public static final String DEFAULT_DAILY_WATER = "2500";
 
     //ConfigActivity
     public static final String DAILY_WATER = "DAILY_WATER";
