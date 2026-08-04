@@ -2,7 +2,6 @@ package com.android.nls.routine.activitys;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -62,8 +61,6 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        loadDailyWaterSum();
-        loadLastWaterAddedTime();
         initFields();
     }
 
@@ -92,11 +89,11 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void setupWaterButtonListeners() {
-        btnAddWater1.setOnClickListener(v -> mHomeService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, Integer.parseInt(btnAddWater1.getText().toString())));
+        btnAddWater1.setOnClickListener(v -> mHomeService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, btnAddWater1.getText().toString()));
 
-        btnAddWater2.setOnClickListener(v -> mHomeService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, Integer.parseInt(btnAddWater2.getText().toString())));
+        btnAddWater2.setOnClickListener(v -> mHomeService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, btnAddWater2.getText().toString()));
 
-        btnAddWater3.setOnClickListener(v -> mHomeService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, Integer.parseInt(btnAddWater3.getText().toString())));
+        btnAddWater3.setOnClickListener(v -> mHomeService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, btnAddWater3.getText().toString()));
 
         btnAddWater.setOnClickListener(v -> {
             String water = etCustomValueWater.getText().toString().trim();
@@ -147,17 +144,13 @@ public class HomeActivity extends AppCompatActivity {
     private void initFields(){
         txtCurrentDate.setText(Common.getWeekDay());
         txtCurrentGreeting.setText(Common.getCurrentGreeting());
-    }
-
-    private void loadDailyWaterSum() {
-        int totalSum = mHomeService.getDailyWaterSum();
-        txtDailyWaterDrank.setText(this.getString(R.string.water_default_value_init, String.valueOf(totalSum)));
-        Log.d(TAG, "Daily water sum loaded: " + totalSum + "ml");
-    }
-
-    private void loadLastWaterAddedTime() {
-        String lastWaterAddedTime = mHomeService.getLastWaterAddedTime();
-        txtLastWaterAddedTime.setText(this.getString(R.string.last_added_at, lastWaterAddedTime));
+        txtDailyWater.setText(this.getString(R.string.daily_water_ml, mHomeService.getDailyWater()));
+        txtDailyWaterDrank.setText(this.getString(R.string.water_default_value_init, String.valueOf(mHomeService.getDailyWaterSum())));
+        txtLastWaterAddedTime.setText(this.getString(R.string.last_added_at, mHomeService.getLastWaterAddedTime()));
+        btnAddWater1.setText(this.getString(R.string.water_default_value_50, mHomeService.getDefaultValueBtn1()));
+        btnAddWater2.setText(this.getString(R.string.water_default_value_100, mHomeService.getDefaultValueBtn2()));
+        btnAddWater3.setText(this.getString(R.string.water_default_value_250, mHomeService.getDefaultValueBtn3()));
+        txtInputError.setError(null);
     }
 
     @Override

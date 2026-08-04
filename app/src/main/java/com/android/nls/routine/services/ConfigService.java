@@ -120,7 +120,7 @@ public class ConfigService {
         Cursor cursor = mSqliteDatabase.rawQuery(
                 "SELECT " + BaseColumns._ID + " FROM " + Constants.TABLE_NAME_USER_CONFIG + " LIMIT 1", null);
 
-        if (cursor.moveToFirst()) {
+        if (cursor.moveToFirst()  && cursor.getString(0) != null) {
             // Row exists: UPDATE it
             long id = cursor.getLong(0);
             result = mSqliteDatabase.update(Constants.TABLE_NAME_USER_CONFIG,

@@ -23,12 +23,14 @@ public class HomeService {
         mSqliteDatabase = mDatabaseHelper.getWritableDatabase();
     }
 
-    public void addWater(TextView txtDailyWaterDrank, TextView txtLastWaterAdded, int amount) {
+    public void addWater(TextView txtDailyWaterDrank, TextView txtLastWaterAdded, String amount) {
+        int parsedAmount = Integer.parseInt(amount.replace("+", "").trim());
+
         long currentTimeMillis = System.currentTimeMillis();
         String currentTime = Common.getHourFromTimestamp(String.valueOf(currentTimeMillis));
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(Constants.COLUMN_NAME_WATER_DRANK, String.valueOf(amount));
+        contentValues.put(Constants.COLUMN_NAME_WATER_DRANK, String.valueOf(parsedAmount));
         contentValues.put(Constants.COLUMN_NAME_WATER_TIMESTAMP, currentTimeMillis);
 
         long newRowId = mSqliteDatabase.insert(Constants.TABLE_NAME_WATER, null, contentValues);
@@ -40,20 +42,21 @@ public class HomeService {
         }
 
         int totalSum = getDailyWaterSum();
-        txtDailyWaterDrank.setText(mContext.getString(R.string.water_default_value_init, String.valueOf(3000 - totalSum)));
+        txtDailyWaterDrank.setText(mContext.getString(R.string.water_default_value_init, String.valueOf(totalSum)));
         txtLastWaterAdded.setText(mContext.getString(R.string.last_added_at, currentTime));
-        Log.d(TAG, "Added " + amount + "ml water. Total: " + totalSum + "ml");
+        Log.d(TAG, "Added " + parsedAmount + "ml water. Total: " + totalSum + "ml");
     }
 
     public void saveCustomWaterValue(TextView txtDailyWaterDrank, TextView txtLastWaterAdded, int amount) {
         try {
             if (amount > 0 && amount < 5000) {
-                addWater(txtDailyWaterDrank, txtLastWaterAdded, amount);
+                addWater(txtDailyWaterDrank, txtLastWaterAdded, String.valueOf(amount));
             } else {
                 Common.generateToastMessageShortInvalidNumber(mContext, Constants.WATER_INVALID_NUMBER);
             }
         } catch (NumberFormatException e) {
             Common.generateToastMessageShortInvalidNumber(mContext, Constants.WATER_INVALID_NUMBER);
+            Log.e(TAG, "Number format exception on saving custom value, "+ e.getLocalizedMessage(), e);
         }
     }
 
@@ -67,8 +70,10 @@ public class HomeService {
                 Constants.COLUMN_NAME_WATER_TIMESTAMP + " <= ?";
 
         try (Cursor cursor = mSqliteDatabase.rawQuery(query, new String[]{String.valueOf(startOfDay), String.valueOf(endOfDay)})) {
-            if (cursor.moveToFirst()) {
+            if (cursor.moveToFirst() && cursor.getString(0) != null) {
                 sum = cursor.getInt(0);
+                Log.d(TAG, "Daily water sum loaded: " + sum + "ml");
+                return sum;
             }
         } catch (Exception e) {
             Log.e(TAG, "Error calculating water sum: " + e.getMessage());
@@ -83,7 +88,7 @@ public class HomeService {
                 " ORDER BY " + DatabaseHelper.WaterFeedEntry._ID + " DESC LIMIT 1";
 
         try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
-            if (cursor.moveToFirst()) {
+            if (cursor.moveToFirst() && cursor.getString(0) != null) {
                 String lastTime = Common.getHourFromTimestamp(cursor.getString(0));
                 Log.d(TAG, "Last water drank time: " + lastTime);
                 return lastTime;
@@ -97,5 +102,77 @@ public class HomeService {
 
     public void closeDb() {
         mDatabaseHelper.close();
+    }
+
+    public String getDefaultValueBtn1() {
+        String query = "SELECT " + Constants.COLUMN_NAME_BTN_1_ADD_WATER +
+                " FROM " + Constants.TABLE_NAME_USER_CONFIG +
+                " ORDER BY " + DatabaseHelper.WaterFeedEntry._ID;
+
+        try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
+            if (cursor.moveToFirst() && cursor.getString(0) != null) {
+                String btn1Water = cursor.getString(0);
+                Log.d(TAG, "Getting default value for button 1: " + btn1Water);
+                return btn1Water;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting default value for button 1: " + e.getMessage());
+        }
+
+        return Constants.DEFAULT_ADD_WATER_BUTTON_VALUES.get(0);
+    }
+
+    public String getDefaultValueBtn2() {
+        String query = "SELECT " + Constants.COLUMN_NAME_BTN_2_ADD_WATER +
+                " FROM " + Constants.TABLE_NAME_USER_CONFIG +
+                " ORDER BY " + DatabaseHelper.WaterFeedEntry._ID;
+
+        try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
+            if (cursor.moveToFirst() && cursor.getString(0) != null) {
+                String btn2Water = cursor.getString(0);
+                Log.d(TAG, "Getting default value for button 2: " + btn2Water);
+                return btn2Water;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting default value for button 2: " + e.getMessage());
+        }
+
+        return Constants.DEFAULT_ADD_WATER_BUTTON_VALUES.get(1);
+    }
+
+    public String getDefaultValueBtn3() {
+        String query = "SELECT " + Constants.COLUMN_NAME_BTN_3_ADD_WATER +
+                " FROM " + Constants.TABLE_NAME_USER_CONFIG +
+                " ORDER BY " + DatabaseHelper.WaterFeedEntry._ID;
+
+        try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
+            if (cursor.moveToFirst() && cursor.getString(0) != null) {
+                String btn3Water = cursor.getString(0);
+                Log.d(TAG, "Getting default value for button 3: " + btn3Water);
+                return btn3Water;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting default value for button 3: " + e.getMessage());
+        }
+
+        return Constants.DEFAULT_ADD_WATER_BUTTON_VALUES.get(2);
+    }
+
+    public Object getDailyWater() {
+        String query = "SELECT " + Constants.COLUMN_NAME_DAILY_WATER +
+                " FROM " + Constants.TABLE_NAME_USER_CONFIG +
+                " ORDER BY " + DatabaseHelper.WaterFeedEntry._ID;
+
+        try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
+            if (cursor.moveToFirst() && cursor.getString(0) != null) {
+                String dailyWater = cursor.getString(0);
+                Log.d(TAG, "Getting daily water: " + dailyWater);
+                return dailyWater;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting daily water: " + e.getMessage());
+        }
+
+        return Constants.DEFAULT_DAILY_WATER;
     }
 }
