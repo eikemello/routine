@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
-import com.android.nls.routine.activitys.HomeActivity;
+import com.android.nls.routine.activity.HomeActivity;
 import com.android.nls.routine.utils.Common;
 
 public class MainActivity extends AppCompatActivity {

@@ -1,4 +1,4 @@
-package com.android.nls.routine.services;
+package com.android.nls.routine.service;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -13,8 +13,8 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import com.android.nls.routine.R;
-import com.android.nls.routine.activitys.ConfigActivity;
-import com.android.nls.routine.services.database.DatabaseHelper;
+import com.android.nls.routine.activity.ConfigActivity;
+import com.android.nls.routine.service.database.DatabaseHelper;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;

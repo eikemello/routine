@@ -1,4 +1,4 @@
-package com.android.nls.routine.services;
+package com.android.nls.routine.service;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.widget.TextView;
 import com.android.nls.routine.R;
-import com.android.nls.routine.services.database.DatabaseHelper;
+import com.android.nls.routine.service.database.DatabaseHelper;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 import com.google.android.material.progressindicator.CircularProgressIndicator;

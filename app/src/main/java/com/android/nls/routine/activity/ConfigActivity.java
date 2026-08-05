@@ -1,4 +1,4 @@
-package com.android.nls.routine.activitys;
+package com.android.nls.routine.activity;
 
 import android.os.Bundle;
 import android.widget.LinearLayout;
@@ -7,7 +7,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowInsetsControllerCompat;
 import com.android.nls.routine.R;
-import com.android.nls.routine.services.ConfigService;
+import com.android.nls.routine.service.ConfigService;
 import com.android.nls.routine.utils.Constants;
 
 public class ConfigActivity extends AppCompatActivity {

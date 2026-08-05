@@ -1,4 +1,4 @@
-package com.android.nls.routine.services.database;
+package com.android.nls.routine.service.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
