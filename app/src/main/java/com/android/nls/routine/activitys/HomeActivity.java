@@ -3,7 +3,6 @@ package com.android.nls.routine.activitys;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -14,26 +13,23 @@ import com.android.nls.routine.R;
 import com.android.nls.routine.services.HomeService;
 import com.android.nls.routine.utils.Common;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 public class HomeActivity extends AppCompatActivity {
-    private static final String TAG = Common.generateTag(HomeActivity.class);
     private HomeService mHomeService;
 
     // Water section views
     private TextView txtDailyWater;
     private TextView txtDailyWaterDrank;
+    private TextView txtWaterPercentage;
     private TextView txtCurrentGreeting;
     private TextView txtCurrentDate;
     private TextView txtLastWaterAddedTime;
-    private TextInputLayout txtInputError;
-    private EditText etCustomValueWater;
     private ImageButton btnUserConfig;
-    private ImageButton btnAddWater;
-    private ImageButton btnMinusWater;
     private MaterialButton btnAddWater1;
     private MaterialButton btnAddWater2;
     private MaterialButton btnAddWater3;
+    private CircularProgressIndicator progressWater;
 
     // Meal section views
     private ImageButton btnRightMeal;
@@ -69,18 +65,16 @@ public class HomeActivity extends AppCompatActivity {
         txtDailyWater = findViewById(R.id.txtDailyWater);
         txtDailyWaterDrank = findViewById(R.id.txtDailyWaterDrank);
         txtDailyWaterDrank.setText(this.getString(R.string.water_default_value_init, String.valueOf(0)));
+        txtWaterPercentage = findViewById(R.id.txtWaterPercentage);
+        progressWater = findViewById(R.id.progressWater);
         txtLastWaterAddedTime = findViewById(R.id.txtLastWaterAddedTime);
         txtLastWaterAddedTime.setText(this.getString(R.string.last_added_at, ""));
         txtCurrentDate = findViewById(R.id.txtCurrentDate);
         txtCurrentGreeting = findViewById(R.id.txtCurrentGreeting);
-        etCustomValueWater = findViewById(R.id.etCustomValueWater);
         btnUserConfig = findViewById(R.id.btnUserConfig);
-        btnAddWater = findViewById(R.id.btnAddWater);
-        btnMinusWater = findViewById(R.id.btnMinusWater);
         btnAddWater1 = findViewById(R.id.btnAddWater1);
         btnAddWater2 = findViewById(R.id.btnAddWater2);
         btnAddWater3 = findViewById(R.id.btnAddWater3);
-        txtInputError = findViewById(R.id.txtInputError);
 
         //Meal UI
         btnRightMeal = findViewById(R.id.btnRightMeal);
@@ -89,27 +83,13 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void setupWaterButtonListeners() {
-        btnAddWater1.setOnClickListener(v -> mHomeService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, btnAddWater1.getText().toString()));
+        btnAddWater1.setOnClickListener(v -> mHomeService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, txtWaterPercentage, btnAddWater1.getText().toString()));
 
-        btnAddWater2.setOnClickListener(v -> mHomeService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, btnAddWater2.getText().toString()));
+        btnAddWater2.setOnClickListener(v -> mHomeService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, txtWaterPercentage, btnAddWater2.getText().toString()));
 
-        btnAddWater3.setOnClickListener(v -> mHomeService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, btnAddWater3.getText().toString()));
-
-        btnAddWater.setOnClickListener(v -> {
-            String water = etCustomValueWater.getText().toString().trim();
-            if (!water.isBlank()) {
-                txtInputError.setError(null);
-                mHomeService.saveCustomWaterValue(txtDailyWaterDrank, txtLastWaterAddedTime, Integer.parseInt(water));
-                etCustomValueWater.getText().clear();
-            } else {
-                txtInputError.setError("Please enter valid number!");
-            }
-        });
+        btnAddWater3.setOnClickListener(v -> mHomeService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, txtWaterPercentage, btnAddWater3.getText().toString()));
 
         btnUserConfig.setOnClickListener(this::showStyledPopupMenu);
-
-        btnMinusWater.setOnClickListener(v -> {
-        });
     }
 
     private void showStyledPopupMenu(View anchor) {
@@ -141,16 +121,19 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    private void initFields(){
+    private void initFields() {
+        String dailyWaterGoal = mHomeService.getDailyWaterGoal();
+        int dailyWaterSum = mHomeService.getDailyWaterSum();
+
         txtCurrentDate.setText(Common.getWeekDay());
         txtCurrentGreeting.setText(Common.getCurrentGreeting());
-        txtDailyWater.setText(this.getString(R.string.daily_water_ml, mHomeService.getDailyWater()));
-        txtDailyWaterDrank.setText(this.getString(R.string.water_default_value_init, String.valueOf(mHomeService.getDailyWaterSum())));
+        txtDailyWater.setText(this.getString(R.string.daily_water_ml, dailyWaterGoal));
         txtLastWaterAddedTime.setText(this.getString(R.string.last_added_at, mHomeService.getLastWaterAddedTime()));
         btnAddWater1.setText(this.getString(R.string.water_default_value_50, mHomeService.getDefaultValueBtn1()));
         btnAddWater2.setText(this.getString(R.string.water_default_value_100, mHomeService.getDefaultValueBtn2()));
         btnAddWater3.setText(this.getString(R.string.water_default_value_250, mHomeService.getDefaultValueBtn3()));
-        txtInputError.setError(null);
+        mHomeService.updateWaterProgress(progressWater, txtWaterPercentage, dailyWaterSum, dailyWaterGoal);
+        mHomeService.setDailyWaterDrank(txtDailyWaterDrank, dailyWaterSum, dailyWaterGoal);
     }
 
     @Override

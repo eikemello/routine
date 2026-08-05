@@ -15,11 +15,11 @@
     <string name="wrong_meal">Wrong meal</string>
     <string name="add_water">Add water</string>
     <string name="configure_default_values">Configure default values</string>
-    <string name="minus_water">Minus water from total</string>
     <string name="expenses">Expenses</string>
     <string name="spent_today">Spent today</string>
     <string name="remaining">Remaining</string>
     <string name="daily_water">Daily water</string>
+    <string name="daily_goal">Daily goal</string>
     <string name="default_buttons">Default buttons</string>
     <string name="button_1">Button 1</string>
     <string name="button_2">Button 2</string>
@@ -30,4 +30,6 @@
     <string name="edit_default_value">Edit default value</string>
     <string name="hint_0">0</string>
     <string name="monthly_limit_value_init">R$ %1$s</string>
+    <string name="progress">Progress</string>
+    <string name="circular_progress_init">%1$d%%</string>
 </resources>
