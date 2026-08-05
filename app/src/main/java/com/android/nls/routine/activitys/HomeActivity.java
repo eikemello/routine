@@ -122,25 +122,18 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void initFields() {
-        String dailyWater = mHomeService.getDailyWater().toString();
-        String dailyWaterDrank = String.valueOf(mHomeService.getDailyWaterSum());
+        String dailyWaterGoal = mHomeService.getDailyWaterGoal();
+        int dailyWaterSum = mHomeService.getDailyWaterSum();
 
-        if (Integer.parseInt(dailyWater) < Integer.parseInt(dailyWaterDrank)) {
-            txtDailyWaterDrank.setText(this.getString(R.string.water_default_value_init, dailyWaterDrank));
-            txtDailyWaterDrank.setTextColor(this.getColor(R.color.green));
-
-        } else {
-            txtDailyWaterDrank.setText(this.getString(R.string.water_default_value_init, String.valueOf(mHomeService.getDailyWaterSum())));
-        }
-
-        txtDailyWater.setText(this.getString(R.string.daily_water_ml, mHomeService.getDailyWater()));
         txtCurrentDate.setText(Common.getWeekDay());
         txtCurrentGreeting.setText(Common.getCurrentGreeting());
-        mHomeService.updateWaterProgress(progressWater, txtWaterPercentage, mHomeService.getDailyWaterSum());
+        txtDailyWater.setText(this.getString(R.string.daily_water_ml, dailyWaterGoal));
         txtLastWaterAddedTime.setText(this.getString(R.string.last_added_at, mHomeService.getLastWaterAddedTime()));
         btnAddWater1.setText(this.getString(R.string.water_default_value_50, mHomeService.getDefaultValueBtn1()));
         btnAddWater2.setText(this.getString(R.string.water_default_value_100, mHomeService.getDefaultValueBtn2()));
         btnAddWater3.setText(this.getString(R.string.water_default_value_250, mHomeService.getDefaultValueBtn3()));
+        mHomeService.updateWaterProgress(progressWater, txtWaterPercentage, dailyWaterSum, dailyWaterGoal);
+        mHomeService.setDailyWaterDrank(txtDailyWaterDrank, dailyWaterSum, dailyWaterGoal);
     }
 
     @Override

@@ -41,21 +41,27 @@ public class HomeService {
             return;
         }
 
-        int totalSum = getDailyWaterSum();
-        txtDailyWaterDrank.setText(mContext.getString(R.string.water_default_value_init, String.valueOf(totalSum)));
+        int dailyWaterSum = getDailyWaterSum();
+        String dailyWaterGoal = getDailyWaterGoal();
 
-        if (totalSum > Integer.parseInt((String) getDailyWater())) {
-            txtDailyWaterDrank.setTextColor(mContext.getColor(R.color.green));
-        }
+        setDailyWaterDrank(txtDailyWaterDrank, dailyWaterSum, dailyWaterGoal);
+        updateWaterProgress(progressWater, txtWaterPercentage, dailyWaterSum, dailyWaterGoal);
 
         txtLastWaterAdded.setText(mContext.getString(R.string.last_added_at, currentTime));
-        updateWaterProgress(progressWater, txtWaterPercentage, totalSum);
-        Log.d(TAG, "Added " + parsedAmount + "ml water. Total: " + totalSum + "ml");
+        Log.d(TAG, "Added " + parsedAmount + "ml water. Total: " + dailyWaterSum + "ml");
     }
 
-    public void updateWaterProgress(CircularProgressIndicator progressWater, TextView txtWaterPercentage, int totalSum) {
-        int dailyGoal = Integer.parseInt(String.valueOf(getDailyWater()));
-        long percentage = Math.min(100, Math.round((totalSum * 100.0) / dailyGoal));
+    public void setDailyWaterDrank(TextView txtDailyWaterDrank, int dailyWaterSum, String dailyWaterGoal) {
+        if (Integer.parseInt(dailyWaterGoal) < dailyWaterSum) {
+            txtDailyWaterDrank.setText(mContext.getString(R.string.water_default_value_init, String.valueOf(dailyWaterSum)));
+            txtDailyWaterDrank.setTextColor(mContext.getColor(R.color.green));
+        } else {
+            txtDailyWaterDrank.setText(mContext.getString(R.string.water_default_value_init, String.valueOf(dailyWaterSum)));
+        }
+    }
+
+    public void updateWaterProgress(CircularProgressIndicator progressWater, TextView txtWaterPercentage, int totalSum, String dailyWaterGoal) {
+        long percentage = Math.min(100, Math.round((totalSum * 100.0) / Integer.parseInt(dailyWaterGoal)));
         progressWater.setProgress((int) percentage);
         txtWaterPercentage.setText(mContext.getString(R.string.circular_progress_init, percentage));
     }
@@ -158,7 +164,7 @@ public class HomeService {
         return Constants.DEFAULT_ADD_WATER_BUTTON_VALUES.get(2);
     }
 
-    public Object getDailyWater() {
+    public String getDailyWaterGoal() {
         String query = "SELECT " + Constants.COLUMN_NAME_DAILY_WATER +
                 " FROM " + Constants.TABLE_NAME_USER_CONFIG +
                 " ORDER BY " + DatabaseHelper.WaterFeedEntry._ID;
