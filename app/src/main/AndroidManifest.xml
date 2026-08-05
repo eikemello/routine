@@ -10,6 +10,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Routine">
+
+        <service
+            android:name=".service.NotificationService"
+            android:exported="false"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService"/>
+            </intent-filter>
+        </service>
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -20,10 +31,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activitys.HomeActivity"
+            android:name=".activity.HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".activitys.ConfigActivity"
+            android:name=".activity.ConfigActivity"
             android:exported="false" />
     </application>
 

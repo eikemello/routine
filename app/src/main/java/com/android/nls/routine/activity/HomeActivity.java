@@ -1,4 +1,4 @@
-package com.android.nls.routine.activitys;
+package com.android.nls.routine.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +10,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowInsetsControllerCompat;
 import com.android.nls.routine.R;
-import com.android.nls.routine.services.HomeService;
+import com.android.nls.routine.service.HomeService;
 import com.android.nls.routine.utils.Common;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
