@@ -10,6 +10,7 @@ import com.android.nls.routine.R;
 import com.android.nls.routine.services.database.DatabaseHelper;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 public class HomeService {
     private static final String TAG = Common.generateTag(HomeService.class);
@@ -23,9 +24,8 @@ public class HomeService {
         mSqliteDatabase = mDatabaseHelper.getWritableDatabase();
     }
 
-    public void addWater(TextView txtDailyWaterDrank, TextView txtLastWaterAdded, String amount) {
+    public void addWater(TextView txtDailyWaterDrank, TextView txtLastWaterAdded, CircularProgressIndicator progressWater, TextView txtWaterPercentage, String amount) {
         int parsedAmount = Integer.parseInt(amount.replace("+", "").trim());
-
         long currentTimeMillis = System.currentTimeMillis();
         String currentTime = Common.getHourFromTimestamp(String.valueOf(currentTimeMillis));
 
@@ -43,21 +43,21 @@ public class HomeService {
 
         int totalSum = getDailyWaterSum();
         txtDailyWaterDrank.setText(mContext.getString(R.string.water_default_value_init, String.valueOf(totalSum)));
+
+        if (totalSum > Integer.parseInt((String) getDailyWater())) {
+            txtDailyWaterDrank.setTextColor(mContext.getColor(R.color.green));
+        }
+
         txtLastWaterAdded.setText(mContext.getString(R.string.last_added_at, currentTime));
+        updateWaterProgress(progressWater, txtWaterPercentage, totalSum);
         Log.d(TAG, "Added " + parsedAmount + "ml water. Total: " + totalSum + "ml");
     }
 
-    public void saveCustomWaterValue(TextView txtDailyWaterDrank, TextView txtLastWaterAdded, int amount) {
-        try {
-            if (amount > 0 && amount < 5000) {
-                addWater(txtDailyWaterDrank, txtLastWaterAdded, String.valueOf(amount));
-            } else {
-                Common.generateToastMessageShortInvalidNumber(mContext, Constants.WATER_INVALID_NUMBER);
-            }
-        } catch (NumberFormatException e) {
-            Common.generateToastMessageShortInvalidNumber(mContext, Constants.WATER_INVALID_NUMBER);
-            Log.e(TAG, "Number format exception on saving custom value, "+ e.getLocalizedMessage(), e);
-        }
+    public void updateWaterProgress(CircularProgressIndicator progressWater, TextView txtWaterPercentage, int totalSum) {
+        int dailyGoal = Integer.parseInt(String.valueOf(getDailyWater()));
+        long percentage = Math.min(100, Math.round((totalSum * 100.0) / dailyGoal));
+        progressWater.setProgress((int) percentage);
+        txtWaterPercentage.setText(mContext.getString(R.string.circular_progress_init, percentage));
     }
 
     public int getDailyWaterSum() {
