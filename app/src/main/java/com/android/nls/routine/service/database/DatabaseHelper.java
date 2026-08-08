@@ -36,8 +36,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         _ID + " INTEGER PRIMARY KEY," +
                         Constants.COLUMN_NAME_DAILY_WATER + " TEXT," +
                         Constants.COLUMN_NAME_BTN_1_ADD_WATER + " TEXT," +
-                        Constants.COLUMN_NAME_BTN_2_ADD_WATER + " TEXT,"+
-                        Constants.COLUMN_NAME_BTN_3_ADD_WATER + " TEXT,"+
+                        Constants.COLUMN_NAME_BTN_2_ADD_WATER + " TEXT," +
+                        Constants.COLUMN_NAME_BTN_3_ADD_WATER + " TEXT," +
                         Constants.COLUMN_NAME_MONTHLY_LIMIT + " TEXT)";
 
         private static final String SQL_CREATE_ENTRIES_EXPENSE_TEST =

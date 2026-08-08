@@ -9,7 +9,6 @@ public class Constants {
     //HomeActivity
     public static final String WATER_INVALID_NUMBER = "Please enter a valid number!";
     public static final List<String> GREETINGS = Arrays.asList("Good morning", "Good afternoon", "Good night");
-    public static final List<String> DEFAULT_ADD_WATER_BUTTON_VALUES = Arrays.asList("50", "100", "250");
     public static final String DEFAULT_DAILY_WATER = "2500";
 
     //ConfigActivity
@@ -21,6 +20,7 @@ public class Constants {
     public static final String DEFAULT_BTN_1_VALUE = "50";
     public static final String DEFAULT_BTN_2_VALUE = "100";
     public static final String DEFAULT_BTN_3_VALUE = "250";
+    public static final String DEFAULT_MONTHLY_LIMIT_VALUE = "1000";
 
     //SQLite
     public static final String TABLE_NAME_WATER = "WATER";

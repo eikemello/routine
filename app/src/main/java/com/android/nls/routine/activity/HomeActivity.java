@@ -11,7 +11,6 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowInsetsControllerCompat;
 import com.android.nls.routine.R;
-import com.android.nls.routine.service.ConfigService;
 import com.android.nls.routine.service.HomeCardExpenseService;
 import com.android.nls.routine.service.HomeCardWaterService;
 import com.android.nls.routine.utils.Common;
@@ -21,7 +20,6 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 public class HomeActivity extends AppCompatActivity {
     private HomeCardWaterService mHomeCardWaterService;
     private HomeCardExpenseService mHomeCardExpenseService;
-    private ConfigService mConfigService;
 
     // Water section views
     private TextView txtDailyWater;
@@ -59,7 +57,6 @@ public class HomeActivity extends AppCompatActivity {
 
         mHomeCardWaterService = new HomeCardWaterService(this);
         mHomeCardExpenseService = new HomeCardExpenseService(this);
-        mConfigService = new ConfigService(this);
 
         startUIComponents();
         setupWaterButtonListeners();
@@ -158,8 +155,8 @@ public class HomeActivity extends AppCompatActivity {
         txtCurrentGreeting.setText(Common.getCurrentGreeting());
         txtDailyWater.setText(this.getString(R.string.daily_water_ml, dailyWaterGoal));
         txtLastWaterAddedTime.setText(this.getString(R.string.last_added_at, mHomeCardWaterService.getLastWaterAddedTime()));
-        txtTotalValue.setText(this.getString(R.string.monthly_limit_value_init, mConfigService.getMonthlyLimitValue()));
-        txtTotalSpent.setText(this.getString(R.string.monthly_limit_value_init, String.valueOf(mHomeCardExpenseService.getTotalSpent())));
+        txtTotalValue.setText(this.getString(R.string.monthly_limit_value_init, mHomeCardExpenseService.getMonthlyLimitValue()));
+        txtTotalSpent.setText(this.getString(R.string.monthly_limit_value_init, mHomeCardExpenseService.getTotalSpent()));
         btnAddWater1.setText(this.getString(R.string.water_default_value_50, mHomeCardWaterService.getDefaultValueBtn1()));
         btnAddWater2.setText(this.getString(R.string.water_default_value_100, mHomeCardWaterService.getDefaultValueBtn2()));
         btnAddWater3.setText(this.getString(R.string.water_default_value_250, mHomeCardWaterService.getDefaultValueBtn3()));

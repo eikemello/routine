@@ -367,7 +367,7 @@
                         android:layout_width="50dp"
                         android:layout_height="45dp"
                         android:layout_gravity="top"
-                        android:contentDescription="@string/expenses"
+                        android:contentDescription="@string/monthly_expenses"
                         android:src="@drawable/ic_credit_card" />
 
                     <LinearLayout
@@ -388,7 +388,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentStart="true"
                                 android:layout_marginStart="1dp"
-                                android:text="@string/expenses" />
+                                android:text="@string/monthly_expenses" />
 
                             <RadioButton
                                 android:id="@+id/rbNotifyPermission"
@@ -439,7 +439,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
-                                android:text="@string/total_month" />
+                                android:text="@string/limit" />
 
                             <TextView
                                 android:id="@+id/txtTotalValue"

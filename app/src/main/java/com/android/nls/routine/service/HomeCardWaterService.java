@@ -16,12 +16,14 @@ public class HomeCardWaterService {
     private static final String TAG = Common.generateTag(HomeCardWaterService.class);
     private final DatabaseHelper mDatabaseHelper;
     private final SQLiteDatabase mSqliteDatabase;
+    private final ConfigService mConfigService;
     private final Context mContext;
 
     public HomeCardWaterService(Context context) {
         mContext = context;
         mDatabaseHelper = new DatabaseHelper(mContext);
         mSqliteDatabase = mDatabaseHelper.getWritableDatabase();
+        mConfigService = new ConfigService(mContext);
     }
 
     public void addWater(TextView txtDailyWaterDrank, TextView txtLastWaterAdded, CircularProgressIndicator progressWater, TextView txtWaterPercentage, String amount) {
@@ -106,87 +108,23 @@ public class HomeCardWaterService {
         return "";
     }
 
-    public void closeDb() {
-        mDatabaseHelper.close();
-    }
-
     public String getDefaultValueBtn1() {
-        String query = "SELECT " + Constants.COLUMN_NAME_BTN_1_ADD_WATER +
-                " FROM " + Constants.TABLE_NAME_USER_CONFIG +
-                " ORDER BY " + DatabaseHelper.WaterFeedEntry._ID;
-
-        try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
-            if (cursor.moveToFirst() && cursor.getString(0) != null) {
-                String btn1Water = cursor.getString(0);
-                Log.d(TAG, "Getting default value for button 1: " + btn1Water);
-                return btn1Water;
-            } else {
-                return Constants.DEFAULT_BTN_1_VALUE;
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error getting default value for button 1: " + e.getMessage());
-        }
-
-        return Constants.DEFAULT_ADD_WATER_BUTTON_VALUES.get(0);
+        return mConfigService.getDefaultBtn1Value();
     }
 
     public String getDefaultValueBtn2() {
-        String query = "SELECT " + Constants.COLUMN_NAME_BTN_2_ADD_WATER +
-                " FROM " + Constants.TABLE_NAME_USER_CONFIG +
-                " ORDER BY " + DatabaseHelper.WaterFeedEntry._ID;
-
-        try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
-            if (cursor.moveToFirst() && cursor.getString(0) != null) {
-                String btn2Water = cursor.getString(0);
-                Log.d(TAG, "Getting default value for button 2: " + btn2Water);
-                return btn2Water;
-            } else {
-                return Constants.DEFAULT_BTN_2_VALUE;
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error getting default value for button 2: " + e.getMessage());
-        }
-
-        return Constants.DEFAULT_ADD_WATER_BUTTON_VALUES.get(1);
+        return mConfigService.getDefaultBtn2Value();
     }
 
     public String getDefaultValueBtn3() {
-        String query = "SELECT " + Constants.COLUMN_NAME_BTN_3_ADD_WATER +
-                " FROM " + Constants.TABLE_NAME_USER_CONFIG +
-                " ORDER BY " + DatabaseHelper.WaterFeedEntry._ID;
-
-        try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
-            if (cursor.moveToFirst() && cursor.getString(0) != null) {
-                String btn3Water = cursor.getString(0);
-                Log.d(TAG, "Getting default value for button 3: " + btn3Water);
-                return btn3Water;
-            } else {
-                return Constants.DEFAULT_BTN_3_VALUE;
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error getting default value for button 3: " + e.getMessage());
-        }
-
-        return Constants.DEFAULT_ADD_WATER_BUTTON_VALUES.get(2);
+        return mConfigService.getDefaultBtn3Value();
     }
 
     public String getDailyWaterGoal() {
-        String query = "SELECT " + Constants.COLUMN_NAME_DAILY_WATER +
-                " FROM " + Constants.TABLE_NAME_USER_CONFIG +
-                " ORDER BY " + DatabaseHelper.WaterFeedEntry._ID;
+        return mConfigService.getDailyWaterGoal();
+    }
 
-        try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
-            if (cursor.moveToFirst() && cursor.getString(0) != null) {
-                String dailyWater = cursor.getString(0);
-                Log.d(TAG, "Getting daily water: " + dailyWater);
-                return dailyWater;
-            } else {
-                return Constants.DEFAULT_DAILY_WATER;
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error getting daily water: " + e.getMessage());
-        }
-
-        return Constants.DEFAULT_DAILY_WATER;
+    public void closeDb() {
+        mDatabaseHelper.close();
     }
 }

@@ -11,7 +11,7 @@ import com.android.nls.routine.service.ConfigService;
 import com.android.nls.routine.utils.Constants;
 
 public class ConfigActivity extends AppCompatActivity {
-    private TextView txtDailyWater;
+    private TextView txtDailyWaterGoal;
     private TextView txtDefaultBtn1;
     private TextView txtDefaultBtn2;
     private TextView txtDefaultBtn3;
@@ -44,7 +44,7 @@ public class ConfigActivity extends AppCompatActivity {
     }
 
     private void startUIComponents() {
-        txtDailyWater = findViewById(R.id.txtDailyWater);
+        txtDailyWaterGoal = findViewById(R.id.txtDailyWaterGoal);
         txtDefaultBtn1 = findViewById(R.id.txtDefaultBtn1);
         txtDefaultBtn2 = findViewById(R.id.txtDefaultBtn2);
         txtDefaultBtn3 = findViewById(R.id.txtDefaultBtn3);
@@ -57,7 +57,7 @@ public class ConfigActivity extends AppCompatActivity {
     }
 
     private void setupButtonListeners() {
-        btnDailyWater.setOnClickListener(v -> mConfigService.showAlertDialog(Constants.DAILY_WATER, txtDailyWater));
+        btnDailyWater.setOnClickListener(v -> mConfigService.showAlertDialog(Constants.DAILY_WATER, txtDailyWaterGoal));
         btnDefaultValue1.setOnClickListener(v -> mConfigService.showAlertDialog(Constants.BTN_DEFAULT_1, txtDefaultBtn1));
         btnDefaultValue2.setOnClickListener(v -> mConfigService.showAlertDialog(Constants.BTN_DEFAULT_2, txtDefaultBtn2));
         btnDefaultValue3.setOnClickListener(v -> mConfigService.showAlertDialog(Constants.BTN_DEFAULT_3, txtDefaultBtn3));
@@ -65,7 +65,7 @@ public class ConfigActivity extends AppCompatActivity {
     }
 
     private void initFields() {
-        txtDailyWater.setText(this.getString(R.string.water_default_value_init, mConfigService.getDailyWaterValue()));
+        txtDailyWaterGoal.setText(this.getString(R.string.water_default_value_init, mConfigService.getDailyWaterGoal()));
         txtDefaultBtn1.setText(this.getString(R.string.water_default_value_init, mConfigService.getDefaultBtn1Value()));
         txtDefaultBtn2.setText(this.getString(R.string.water_default_value_init, mConfigService.getDefaultBtn2Value()));
         txtDefaultBtn3.setText(this.getString(R.string.water_default_value_init, mConfigService.getDefaultBtn3Value()));
