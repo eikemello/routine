@@ -42,23 +42,23 @@ public class ConfigService {
 
         switch (buttonClicked) {
             case Constants.DAILY_WATER:
-                title = "Daily water";
+                title = mContext.getString(R.string.daily_water);
                 saveAction = value -> setDailyWater(value, textView);
                 break;
             case Constants.BTN_DEFAULT_1:
-                title = "Button 1 value";
+                title = mContext.getString(R.string.button_1);
                 saveAction = value -> setFirstBtnValue(value, textView);
                 break;
             case Constants.BTN_DEFAULT_2:
-                title = "Button 2 value";
+                title = mContext.getString(R.string.button_2);
                 saveAction = value -> setSecondBtnValue(value, textView);
                 break;
             case Constants.BTN_DEFAULT_3:
-                title = "Button 3 value";
+                title = mContext.getString(R.string.button_3);
                 saveAction = value -> setThirdBtnValue(value, textView);
                 break;
             case Constants.MONTHLY_LIMIT:
-                title = "Monthly limit";
+                title = mContext.getString(R.string.monthly_limit);
                 saveAction = value -> setMonthlyLimit(value, textView);
                 break;
             default:
@@ -150,7 +150,7 @@ public class ConfigService {
                 Log.d(TAG, "Daily water configured: " + dailyWater);
                 return dailyWater;
             } else {
-                return "0";
+                return Constants.DEFAULT_DAILY_WATER;
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting Daily water configured: " + e.getMessage());
@@ -168,7 +168,7 @@ public class ConfigService {
                 Log.d(TAG, "Default button 1 value configured: " + btn1Value);
                 return btn1Value;
             } else {
-                return "0";
+                return Constants.DEFAULT_BTN_1_VALUE;
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting Default button 1 value configured: " + e.getMessage());
@@ -186,7 +186,7 @@ public class ConfigService {
                 Log.d(TAG, "Default button 2 value configured: " + btn2Value);
                 return btn2Value;
             } else {
-                return "0";
+                return Constants.DEFAULT_BTN_2_VALUE;
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting Default button 2 value configured: " + e.getMessage());
@@ -204,7 +204,7 @@ public class ConfigService {
                 Log.d(TAG, "Default button 3 value configured: " + btn3Value);
                 return btn3Value;
             } else {
-                return "0";
+                return Constants.DEFAULT_BTN_3_VALUE;
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting Default button 3 value configured: " + e.getMessage());

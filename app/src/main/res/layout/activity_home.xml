@@ -377,12 +377,29 @@
                         android:orientation="vertical"
                         android:paddingLeft="12dp"
                         android:paddingRight="12dp">
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
 
-                        <TextView
-                            style="@style/titleTextView"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/expenses" />
+                            <TextView
+                                android:id="@+id/textView"
+                                style="@style/titleTextView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_marginStart="1dp"
+                                android:text="@string/expenses" />
+
+                            <RadioButton
+                                android:id="@+id/rbNotifyPermission"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_gravity="end"
+                                android:layout_marginEnd="20dp"
+                                android:text="Notify" />
+                        </RelativeLayout>
+
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -394,13 +411,13 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
-                                android:text="@string/spent_today" />
+                                android:text="@string/spent" />
 
                             <TextView
-                                android:id="@+id/txtSpentTodayValue"
+                                android:id="@+id/txtTotalSpent"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="R$ 439,00"
+                                android:text="@string/total_spent_value_init"
                                 android:textAlignment="textEnd"
                                 android:textColor="#D5D4D4"
                                 android:textSize="20sp" />
@@ -422,13 +439,13 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
-                                android:text="@string/remaining" />
+                                android:text="@string/total_month" />
 
                             <TextView
-                                android:id="@+id/txtRemainingValue"
+                                android:id="@+id/txtTotalValue"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="R$ 1.561,00"
+                                android:text="@string/total_month_value_init"
                                 android:textAlignment="textEnd"
                                 android:textColor="#E100FF09"
                                 android:textSize="20sp" />
