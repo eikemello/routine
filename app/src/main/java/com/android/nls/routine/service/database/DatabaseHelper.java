@@ -17,11 +17,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(WaterFeedEntry.SQL_CREATE_ENTRIES_WATER);
         db.execSQL(WaterFeedEntry.SQL_CREATE_ENTRIES_USER_CONFIG);
+        db.execSQL(WaterFeedEntry.SQL_CREATE_ENTRIES_EXPENSE_TEST);
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(WaterFeedEntry.SQL_DELETE_ENTRIES);
-        onCreate(db);
+
     }
 
     public static class WaterFeedEntry implements BaseColumns {
@@ -29,7 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "CREATE TABLE " + Constants.TABLE_NAME_WATER + " (" +
                         _ID + " INTEGER PRIMARY KEY," +
                         Constants.COLUMN_NAME_WATER_DRANK + " TEXT," +
-                        Constants.COLUMN_NAME_WATER_TIMESTAMP + " TEXT)";
+                        Constants.COLUMN_NAME_TIMESTAMP + " TEXT)";
 
         private static final String SQL_CREATE_ENTRIES_USER_CONFIG =
                 "CREATE TABLE " + Constants.TABLE_NAME_USER_CONFIG + " (" +
@@ -40,7 +40,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         Constants.COLUMN_NAME_BTN_3_ADD_WATER + " TEXT,"+
                         Constants.COLUMN_NAME_MONTHLY_LIMIT + " TEXT)";
 
-        private static final String SQL_DELETE_ENTRIES =
-                "DROP TABLE IF EXISTS " + Constants.TABLE_NAME_WATER;
+        private static final String SQL_CREATE_ENTRIES_EXPENSE_TEST =
+                "CREATE TABLE " + Constants.TABLE_NAME_EXPENSE_TEST + " (" +
+                        _ID + " INTEGER PRIMARY KEY," +
+                        Constants.COLUMN_NAME_EXPENSE_VALUE + " TEXT," +
+                        Constants.COLUMN_NAME_EXPENSE_TEXT + " TEXT," +
+                        Constants.COLUMN_NAME_BANK_NAME + " TEXT," +
+                        Constants.COLUMN_NAME_TIMESTAMP + " TEXT)";
     }
 }

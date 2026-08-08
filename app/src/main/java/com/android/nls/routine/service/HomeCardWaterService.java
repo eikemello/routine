@@ -12,13 +12,13 @@ import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
-public class HomeService {
-    private static final String TAG = Common.generateTag(HomeService.class);
+public class HomeCardWaterService {
+    private static final String TAG = Common.generateTag(HomeCardWaterService.class);
     private final DatabaseHelper mDatabaseHelper;
     private final SQLiteDatabase mSqliteDatabase;
     private final Context mContext;
 
-    public HomeService(Context context) {
+    public HomeCardWaterService(Context context) {
         mContext = context;
         mDatabaseHelper = new DatabaseHelper(mContext);
         mSqliteDatabase = mDatabaseHelper.getWritableDatabase();
@@ -31,7 +31,7 @@ public class HomeService {
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(Constants.COLUMN_NAME_WATER_DRANK, String.valueOf(parsedAmount));
-        contentValues.put(Constants.COLUMN_NAME_WATER_TIMESTAMP, currentTimeMillis);
+        contentValues.put(Constants.COLUMN_NAME_TIMESTAMP, currentTimeMillis);
 
         long newRowId = mSqliteDatabase.insert(Constants.TABLE_NAME_WATER, null, contentValues);
         Log.d(TAG, "Inserted row ID: " + newRowId);
@@ -72,8 +72,8 @@ public class HomeService {
         long endOfDay = Common.getEndOfDayInMillis();
 
         String query = "SELECT SUM(" + Constants.COLUMN_NAME_WATER_DRANK + ") FROM " + Constants.TABLE_NAME_WATER +
-                " WHERE " + Constants.COLUMN_NAME_WATER_TIMESTAMP + " >= ? AND " +
-                Constants.COLUMN_NAME_WATER_TIMESTAMP + " <= ?";
+                " WHERE " + Constants.COLUMN_NAME_TIMESTAMP + " >= ? AND " +
+                Constants.COLUMN_NAME_TIMESTAMP + " <= ?";
 
         try (Cursor cursor = mSqliteDatabase.rawQuery(query, new String[]{String.valueOf(startOfDay), String.valueOf(endOfDay)})) {
             if (cursor.moveToFirst() && cursor.getString(0) != null) {
@@ -89,7 +89,7 @@ public class HomeService {
     }
 
     public String getLastWaterAddedTime() {
-        String query = "SELECT " + Constants.COLUMN_NAME_WATER_TIMESTAMP +
+        String query = "SELECT " + Constants.COLUMN_NAME_TIMESTAMP +
                 " FROM " + Constants.TABLE_NAME_WATER +
                 " ORDER BY " + DatabaseHelper.WaterFeedEntry._ID + " DESC LIMIT 1";
 
@@ -120,6 +120,8 @@ public class HomeService {
                 String btn1Water = cursor.getString(0);
                 Log.d(TAG, "Getting default value for button 1: " + btn1Water);
                 return btn1Water;
+            } else {
+                return Constants.DEFAULT_BTN_1_VALUE;
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting default value for button 1: " + e.getMessage());
@@ -138,6 +140,8 @@ public class HomeService {
                 String btn2Water = cursor.getString(0);
                 Log.d(TAG, "Getting default value for button 2: " + btn2Water);
                 return btn2Water;
+            } else {
+                return Constants.DEFAULT_BTN_2_VALUE;
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting default value for button 2: " + e.getMessage());
@@ -156,6 +160,8 @@ public class HomeService {
                 String btn3Water = cursor.getString(0);
                 Log.d(TAG, "Getting default value for button 3: " + btn3Water);
                 return btn3Water;
+            } else {
+                return Constants.DEFAULT_BTN_3_VALUE;
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting default value for button 3: " + e.getMessage());
@@ -174,6 +180,8 @@ public class HomeService {
                 String dailyWater = cursor.getString(0);
                 Log.d(TAG, "Getting daily water: " + dailyWater);
                 return dailyWater;
+            } else {
+                return Constants.DEFAULT_DAILY_WATER;
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting daily water: " + e.getMessage());
