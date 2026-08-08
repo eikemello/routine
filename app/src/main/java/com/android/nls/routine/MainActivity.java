@@ -18,8 +18,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void launchHomeAct() {
-//        TODO: Keeping MainActivity because i will use it to start the background service
-//         for notify listener (future)
         Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
         finish();

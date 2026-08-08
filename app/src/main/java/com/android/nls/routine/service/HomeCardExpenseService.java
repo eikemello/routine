@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.Settings;
 import android.util.Log;
-
 import com.android.nls.routine.model.Expense;
 import com.android.nls.routine.service.database.DatabaseHelper;
 import com.android.nls.routine.utils.Common;
@@ -17,15 +16,17 @@ public class HomeCardExpenseService {
     private static final String TAG = Common.generateTag(HomeCardExpenseService.class);
     private final DatabaseHelper mDatabaseHelper;
     private final SQLiteDatabase mSqliteDatabase;
+    private final ConfigService mConfigService;
     private final Context mContext;
 
     public HomeCardExpenseService(Context context) {
         mContext = context;
         mDatabaseHelper = new DatabaseHelper(mContext);
         mSqliteDatabase = mDatabaseHelper.getWritableDatabase();
+        mConfigService = new ConfigService(mContext);
     }
 
-    public void saveExpenseTest(Expense expense){
+    public void saveExpenseTest(Expense expense) {
         long currentTimeMillis = System.currentTimeMillis();
 
         ContentValues contentValues = new ContentValues();
@@ -55,7 +56,7 @@ public class HomeCardExpenseService {
         return enabledListeners != null && enabledListeners.contains(mContext.getPackageName());
     }
 
-    public int getTotalSpent() {
+    public String getTotalSpent() {
         int sum = 0;
         long startOfMonth = Common.getStartOfMonthInMillis();
         long endOfMonth = Common.getEndOfMonthInMillis();
@@ -68,13 +69,17 @@ public class HomeCardExpenseService {
             if (cursor.moveToFirst() && cursor.getString(0) != null) {
                 sum = cursor.getInt(0);
                 Log.d(TAG, "Monthly expense sum loaded: " + sum);
-                return sum;
+                return String.valueOf(sum);
             }
         } catch (Exception e) {
             Log.e(TAG, "Error calculating expense sum: " + e.getMessage());
         }
 
-        return sum;
+        return String.valueOf(sum);
+    }
+
+    public String getMonthlyLimitValue() {
+        return mConfigService.getMonthlyLimitValue();
     }
 
     public void closeDb() {

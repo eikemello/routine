@@ -50,7 +50,7 @@
                     android:text="@string/daily_water" />
 
                 <TextView
-                    android:id="@+id/txtDailyWater"
+                    android:id="@+id/txtDailyWaterGoal"
                     style="@style/expenseTextViewInfo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -211,7 +211,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
             android:layout_marginBottom="12dp"
-            android:text="@string/expenses" />
+            android:text="@string/monthly_expenses" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -234,7 +234,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/monthly_limit" />
+                    android:text="@string/limit" />
 
                 <TextView
                     android:id="@+id/txtMonthlyLimit"

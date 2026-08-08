@@ -58,7 +58,7 @@ public class ConfigService {
                 saveAction = value -> setThirdBtnValue(value, textView);
                 break;
             case Constants.MONTHLY_LIMIT:
-                title = mContext.getString(R.string.monthly_limit);
+                title = mContext.getString(R.string.monthly_expenses);
                 saveAction = value -> setMonthlyLimit(value, textView);
                 break;
             default:
@@ -120,7 +120,7 @@ public class ConfigService {
         Cursor cursor = mSqliteDatabase.rawQuery(
                 "SELECT " + BaseColumns._ID + " FROM " + Constants.TABLE_NAME_USER_CONFIG + " LIMIT 1", null);
 
-        if (cursor.moveToFirst()  && cursor.getString(0) != null) {
+        if (cursor.moveToFirst() && cursor.getString(0) != null) {
             // Row exists: UPDATE it
             long id = cursor.getLong(0);
             result = mSqliteDatabase.update(Constants.TABLE_NAME_USER_CONFIG,
@@ -140,7 +140,7 @@ public class ConfigService {
         }
     }
 
-    public String getDailyWaterValue() {
+    public String getDailyWaterGoal() {
         String query = "SELECT " + Constants.COLUMN_NAME_DAILY_WATER +
                 " FROM " + Constants.TABLE_NAME_USER_CONFIG;
 
@@ -154,8 +154,9 @@ public class ConfigService {
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting Daily water configured: " + e.getMessage());
-            return "0";
         }
+
+        return Constants.DEFAULT_DAILY_WATER;
     }
 
     public String getDefaultBtn1Value() {
@@ -172,8 +173,9 @@ public class ConfigService {
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting Default button 1 value configured: " + e.getMessage());
-            return "0";
         }
+
+        return Constants.DEFAULT_BTN_1_VALUE;
     }
 
     public String getDefaultBtn2Value() {
@@ -190,8 +192,9 @@ public class ConfigService {
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting Default button 2 value configured: " + e.getMessage());
-            return "0";
         }
+
+        return Constants.DEFAULT_BTN_2_VALUE;
     }
 
     public String getDefaultBtn3Value() {
@@ -208,8 +211,9 @@ public class ConfigService {
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting Default button 3 value configured: " + e.getMessage());
-            return "0";
         }
+
+        return Constants.DEFAULT_BTN_2_VALUE;
     }
 
     public String getMonthlyLimitValue() {
@@ -222,12 +226,13 @@ public class ConfigService {
                 Log.d(TAG, "Monthly limit configured: " + monthlyLimit);
                 return monthlyLimit;
             } else {
-                return "0";
+                return Constants.DEFAULT_MONTHLY_LIMIT_VALUE;
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting Monthly limit configured: " + e.getMessage());
-            return "0";
         }
+
+        return Constants.DEFAULT_MONTHLY_LIMIT_VALUE;
     }
 
     private void setFieldError(TextInputLayout txtInputError) {
