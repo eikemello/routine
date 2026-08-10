@@ -22,7 +22,6 @@ public class NotificationListener extends NotificationListenerService {
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
-        Log.d(TAG, sbn.getOpPkg() + ", " + sbn.getPostTime());
         Expense expense = mBankDetector.detect(sbn);
         if (expense != null) {
             Log.d(Constants.TAG, "Detected expense: " + expense);

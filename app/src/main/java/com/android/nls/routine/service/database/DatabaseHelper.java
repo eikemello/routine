@@ -18,6 +18,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(WaterFeedEntry.SQL_CREATE_ENTRIES_WATER);
         db.execSQL(WaterFeedEntry.SQL_CREATE_ENTRIES_USER_CONFIG);
         db.execSQL(WaterFeedEntry.SQL_CREATE_ENTRIES_EXPENSE_TEST);
+        db.execSQL(WaterFeedEntry.SQL_CREATE_ENTRIES_MEAL);
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -46,6 +47,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         Constants.COLUMN_NAME_EXPENSE_VALUE + " TEXT," +
                         Constants.COLUMN_NAME_EXPENSE_TEXT + " TEXT," +
                         Constants.COLUMN_NAME_BANK_NAME + " TEXT," +
+                        Constants.COLUMN_NAME_TIMESTAMP + " TEXT)";
+
+        private static final String SQL_CREATE_ENTRIES_MEAL =
+                "CREATE TABLE " + Constants.TABLE_NAME_MEAL + " (" +
+                        _ID + " INTEGER PRIMARY KEY," +
+                        Constants.COLUMN_NAME_MEAL + " TEXT," +
+                        Constants.COLUMN_NAME_MEAL_STATUS + " TEXT," +
+                        Constants.COLUMN_NAME_MEAL_OBS + " TEXT," +
                         Constants.COLUMN_NAME_TIMESTAMP + " TEXT)";
     }
 }
