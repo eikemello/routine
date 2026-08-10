@@ -110,9 +110,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void setupWaterButtonListeners() {
         btnAddWater1.setOnClickListener(v -> mHomeCardWaterService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, txtWaterPercentage, btnAddWater1.getText().toString()));
-
         btnAddWater2.setOnClickListener(v -> mHomeCardWaterService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, txtWaterPercentage, btnAddWater2.getText().toString()));
-
         btnAddWater3.setOnClickListener(v -> mHomeCardWaterService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, txtWaterPercentage, btnAddWater3.getText().toString()));
 
         btnUserConfig.setOnClickListener(this::showStyledPopupMenu);
@@ -139,17 +137,9 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void setupMealButtonListeners() {
-        btnCorrectMeal.setOnClickListener(v -> {
-            mHomeCardMealService.showAlertDialog(Constants.CORRECT_MEAL);
-        });
-
-        btnWarningMeal.setOnClickListener(v -> {
-            mHomeCardMealService.showAlertDialog(Constants.WARNING_MEAL);
-        });
-
-        btnWrongMeal.setOnClickListener(v -> {
-            mHomeCardMealService.showAlertDialog(Constants.WRONG_MEAL);
-        });
+        btnCorrectMeal.setOnClickListener(v -> mHomeCardMealService.showAlertDialog(Constants.CORRECT_MEAL));
+        btnWarningMeal.setOnClickListener(v -> mHomeCardMealService.showAlertDialog(Constants.WARNING_MEAL));
+        btnWrongMeal.setOnClickListener(v -> mHomeCardMealService.showAlertDialog(Constants.WRONG_MEAL));
     }
 
     private void initFields() {
