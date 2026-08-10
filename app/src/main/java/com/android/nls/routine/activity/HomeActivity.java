@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -12,14 +13,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowInsetsControllerCompat;
 import com.android.nls.routine.R;
 import com.android.nls.routine.service.HomeCardExpenseService;
+import com.android.nls.routine.service.HomeCardMealService;
 import com.android.nls.routine.service.HomeCardWaterService;
 import com.android.nls.routine.utils.Common;
+import com.android.nls.routine.utils.Constants;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 public class HomeActivity extends AppCompatActivity {
     private HomeCardWaterService mHomeCardWaterService;
     private HomeCardExpenseService mHomeCardExpenseService;
+    private HomeCardMealService mHomeCardMealService;
 
     // Water section views
     private TextView txtDailyWater;
@@ -35,9 +39,9 @@ public class HomeActivity extends AppCompatActivity {
     private CircularProgressIndicator progressWater;
 
     // Meal section views
-    private ImageButton btnRightMeal;
-    private ImageButton btnWarningMeal;
-    private ImageButton btnWrongMeal;
+    private LinearLayout btnCorrectMeal;
+    private LinearLayout btnWarningMeal;
+    private LinearLayout btnWrongMeal;
 
     // Expense section views
     private RadioButton rbNotifyPermissions;
@@ -57,6 +61,7 @@ public class HomeActivity extends AppCompatActivity {
 
         mHomeCardWaterService = new HomeCardWaterService(this);
         mHomeCardExpenseService = new HomeCardExpenseService(this);
+        mHomeCardMealService = new HomeCardMealService(this);
 
         startUIComponents();
         setupWaterButtonListeners();
@@ -93,7 +98,7 @@ public class HomeActivity extends AppCompatActivity {
         btnAddWater3 = findViewById(R.id.btnAddWater3);
 
         //Meal UI
-        btnRightMeal = findViewById(R.id.btnRightMeal);
+        btnCorrectMeal = findViewById(R.id.btnCorrectMeal);
         btnWarningMeal = findViewById(R.id.btnWarningMeal);
         btnWrongMeal = findViewById(R.id.btnWrongMeal);
 
@@ -105,9 +110,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void setupWaterButtonListeners() {
         btnAddWater1.setOnClickListener(v -> mHomeCardWaterService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, txtWaterPercentage, btnAddWater1.getText().toString()));
-
         btnAddWater2.setOnClickListener(v -> mHomeCardWaterService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, txtWaterPercentage, btnAddWater2.getText().toString()));
-
         btnAddWater3.setOnClickListener(v -> mHomeCardWaterService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, txtWaterPercentage, btnAddWater3.getText().toString()));
 
         btnUserConfig.setOnClickListener(this::showStyledPopupMenu);
@@ -134,17 +137,9 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void setupMealButtonListeners() {
-        btnRightMeal.setOnClickListener(v -> {
-
-        });
-
-        btnWarningMeal.setOnClickListener(v -> {
-
-        });
-
-        btnWrongMeal.setOnClickListener(v -> {
-
-        });
+        btnCorrectMeal.setOnClickListener(v -> mHomeCardMealService.showAlertDialog(Constants.CORRECT_MEAL));
+        btnWarningMeal.setOnClickListener(v -> mHomeCardMealService.showAlertDialog(Constants.WARNING_MEAL));
+        btnWrongMeal.setOnClickListener(v -> mHomeCardMealService.showAlertDialog(Constants.WRONG_MEAL));
     }
 
     private void initFields() {
@@ -168,6 +163,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onDestroy() {
         mHomeCardWaterService.closeDb();
         mHomeCardExpenseService.closeDb();
+        mHomeCardMealService.closeDb();
         super.onDestroy();
     }
 }

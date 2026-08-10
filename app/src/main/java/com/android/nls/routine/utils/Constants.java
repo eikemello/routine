@@ -8,6 +8,7 @@ public class Constants {
 
     //HomeActivity
     public static final String WATER_INVALID_NUMBER = "Please enter a valid number!";
+    public static final String MEAL_INVALID_TEXT = "Please enter a valid text!";
     public static final List<String> GREETINGS = Arrays.asList("Good morning", "Good afternoon", "Good night");
     public static final String DEFAULT_DAILY_WATER = "2500";
 
@@ -38,6 +39,18 @@ public class Constants {
     public static final String COLUMN_NAME_EXPENSE_TEXT = "EXPENSE_TEXT";
     public static final String COLUMN_NAME_EXPENSE_VALUE = "EXPENSE_VALUE";
     public static final String COLUMN_NAME_BANK_NAME = "BANK";
+
+    public static final String TABLE_NAME_MEAL = "MEAL";
+    public static final String COLUMN_NAME_MEAL = "MEAL";
+    public static final String COLUMN_NAME_MEAL_OBS = "MEAL_OBS";
+    public static final String COLUMN_NAME_MEAL_STATUS = "MEAL_STATUS";
+    public static final String CORRECT_MEAL = "CORRECT_MEAL";
+    public static final String WARNING_MEAL = "WARNING_MEAL";
+    public static final String WRONG_MEAL = "WRONG_MEAL";
+    public static final String BREAKFAST = "breakfast";
+    public static final String LUNCH = "lunch";
+    public static final String TEA = "tea";
+    public static final String DINNER = "dinner";
 
     //Bank Detector
     public static final String BANK_BRADESCO = "bradesco";

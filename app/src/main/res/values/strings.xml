@@ -10,7 +10,7 @@
     <string name="meal">Meal</string>
     <string name="how_was_your_meal">How was your meal?</string>
     <string name="last_added_at">Last added at %1$s</string>
-    <string name="right_meal">Right meal</string>
+    <string name="correct_meal">Correct meal</string>
     <string name="warning_meal">Meal with observation</string>
     <string name="wrong_meal">Wrong meal</string>
     <string name="add_water">Add water</string>
@@ -33,4 +33,8 @@
     <string name="monthly_limit_value_init">$ %1$s,00</string>
     <string name="progress">Progress</string>
     <string name="circular_progress_init">%1$d%%</string>
+    <string name="breakfast">Breakfast</string>
+    <string name="lunch">Lunch</string>
+    <string name="tea">Tea</string>
+    <string name="dinner">Dinner</string>
 </resources>
