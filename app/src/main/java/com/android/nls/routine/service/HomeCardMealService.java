@@ -76,7 +76,7 @@ public class HomeCardMealService {
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
             Editable value = etValue.getText();
-            if (value != null && (!value.toString().trim().isEmpty())) {
+            if (value != null) {
                 saveAction.accept(value.toString().trim());
                 dialog.dismiss();
             } else {

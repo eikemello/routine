@@ -47,10 +47,10 @@ public class Constants {
     public static final String CORRECT_MEAL = "CORRECT_MEAL";
     public static final String WARNING_MEAL = "WARNING_MEAL";
     public static final String WRONG_MEAL = "WRONG_MEAL";
-    public static final String BREAKFAST = "breakfast";
-    public static final String LUNCH = "lunch";
-    public static final String TEA = "tea";
-    public static final String DINNER = "dinner";
+    public static final String BREAKFAST = "Breakfast";
+    public static final String LUNCH = "Lunch";
+    public static final String TEA = "Tea";
+    public static final String DINNER = "Dinner";
 
     //Bank Detector
     public static final String BANK_BRADESCO = "bradesco";

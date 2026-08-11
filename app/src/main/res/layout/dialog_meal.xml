@@ -65,6 +65,7 @@
                 android:id="@+id/etMealObservation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="you can add an observation"
                 android:gravity="top|start"
                 android:inputType="textMultiLine"
                 android:maxLines="5"

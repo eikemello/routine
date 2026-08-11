@@ -64,8 +64,7 @@ public class HomeActivity extends AppCompatActivity {
         mHomeCardMealService = new HomeCardMealService(this);
 
         startUIComponents();
-        setupWaterButtonListeners();
-        setupMealButtonListeners();
+        setupButtonListeners();
     }
 
     @Override
@@ -108,10 +107,14 @@ public class HomeActivity extends AppCompatActivity {
         txtTotalValue = findViewById(R.id.txtTotalValue);
     }
 
-    private void setupWaterButtonListeners() {
+    private void setupButtonListeners() {
         btnAddWater1.setOnClickListener(v -> mHomeCardWaterService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, txtWaterPercentage, btnAddWater1.getText().toString()));
         btnAddWater2.setOnClickListener(v -> mHomeCardWaterService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, txtWaterPercentage, btnAddWater2.getText().toString()));
         btnAddWater3.setOnClickListener(v -> mHomeCardWaterService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, txtWaterPercentage, btnAddWater3.getText().toString()));
+
+        btnCorrectMeal.setOnClickListener(v -> mHomeCardMealService.showAlertDialog(Constants.CORRECT_MEAL));
+        btnWarningMeal.setOnClickListener(v -> mHomeCardMealService.showAlertDialog(Constants.WARNING_MEAL));
+        btnWrongMeal.setOnClickListener(v -> mHomeCardMealService.showAlertDialog(Constants.WRONG_MEAL));
 
         btnUserConfig.setOnClickListener(this::showStyledPopupMenu);
 
@@ -119,27 +122,6 @@ public class HomeActivity extends AppCompatActivity {
             mHomeCardExpenseService.setNotifyAccess();
             rbNotifyPermissions.setChecked(false);
         });
-    }
-
-    private void showStyledPopupMenu(View anchor) {
-        PopupMenu popup = new PopupMenu(HomeActivity.this, anchor);
-        popup.getMenuInflater().inflate(R.menu.menu_user_config, popup.getMenu());
-
-        popup.setOnMenuItemClickListener(item -> {
-            if (item.getItemId() == R.id.action_user_config) {
-                Intent intent = new Intent(HomeActivity.this, ConfigActivity.class);
-                startActivity(intent);
-                return true;
-            }
-            return false;
-        });
-        popup.show();
-    }
-
-    private void setupMealButtonListeners() {
-        btnCorrectMeal.setOnClickListener(v -> mHomeCardMealService.showAlertDialog(Constants.CORRECT_MEAL));
-        btnWarningMeal.setOnClickListener(v -> mHomeCardMealService.showAlertDialog(Constants.WARNING_MEAL));
-        btnWrongMeal.setOnClickListener(v -> mHomeCardMealService.showAlertDialog(Constants.WRONG_MEAL));
     }
 
     private void initFields() {
@@ -157,6 +139,25 @@ public class HomeActivity extends AppCompatActivity {
         btnAddWater3.setText(this.getString(R.string.water_default_value_250, mHomeCardWaterService.getDefaultValueBtn3()));
         mHomeCardWaterService.updateWaterProgress(progressWater, txtWaterPercentage, dailyWaterSum, dailyWaterGoal);
         mHomeCardWaterService.setDailyWaterDrank(txtDailyWaterDrank, dailyWaterSum, dailyWaterGoal);
+    }
+
+    private void showStyledPopupMenu(View anchor) {
+        PopupMenu popup = new PopupMenu(HomeActivity.this, anchor);
+        popup.getMenuInflater().inflate(R.menu.menu_user_config, popup.getMenu());
+
+        popup.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_user_config) {
+                Intent intent = new Intent(HomeActivity.this, ConfigActivity.class);
+                startActivity(intent);
+                return true;
+            } else if (item.getItemId() == R.id.action_history) {
+                Intent intent = new Intent(HomeActivity.this, HistoryActivity.class);
+                startActivity(intent);
+                return true;
+            }
+            return false;
+        });
+        popup.show();
     }
 
     @Override

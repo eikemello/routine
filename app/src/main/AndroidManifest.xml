@@ -36,6 +36,9 @@
         <activity
             android:name=".activity.ConfigActivity"
             android:exported="false" />
+        <activity
+            android:name=".activity.HistoryActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
