@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-
 import com.android.nls.routine.model.DayDetails;
 import com.android.nls.routine.model.DayStatus;
 import com.android.nls.routine.model.ExpenseRecord;
@@ -14,7 +13,6 @@ import com.android.nls.routine.model.WeeklySummary;
 import com.android.nls.routine.service.database.DatabaseHelper;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -128,7 +126,6 @@ public class HistoryService {
     private int countWaterDaysAchieved(long startOfWeek, long endOfWeek) {
         int dailyGoal = Integer.parseInt(mConfigService.getDailyWaterGoal());
         int daysAchieved = 0;
-
         Calendar calendar = new GregorianCalendar();
         calendar.setTimeInMillis(startOfWeek);
 
@@ -148,14 +145,15 @@ public class HistoryService {
 
     private int getDaysElapsedInWeek() {
         long startOfWeek = Common.getStartOfWeekInMillis();
-        long now = System.currentTimeMillis();
         Calendar startCal = new GregorianCalendar();
         startCal.setTimeInMillis(startOfWeek);
 
+        long now = System.currentTimeMillis();
         Calendar nowCal = new GregorianCalendar();
         nowCal.setTimeInMillis(now);
 
         int days = 0;
+
         while (startCal.getTimeInMillis() <= nowCal.getTimeInMillis()) {
             days++;
             startCal.add(Calendar.DAY_OF_MONTH, 1);

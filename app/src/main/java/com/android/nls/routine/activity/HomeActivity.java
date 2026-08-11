@@ -64,8 +64,7 @@ public class HomeActivity extends AppCompatActivity {
         mHomeCardMealService = new HomeCardMealService(this);
 
         startUIComponents();
-        setupWaterButtonListeners();
-        setupMealButtonListeners();
+        setupButtonListeners();
     }
 
     @Override
@@ -108,10 +107,14 @@ public class HomeActivity extends AppCompatActivity {
         txtTotalValue = findViewById(R.id.txtTotalValue);
     }
 
-    private void setupWaterButtonListeners() {
+    private void setupButtonListeners() {
         btnAddWater1.setOnClickListener(v -> mHomeCardWaterService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, txtWaterPercentage, btnAddWater1.getText().toString()));
         btnAddWater2.setOnClickListener(v -> mHomeCardWaterService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, txtWaterPercentage, btnAddWater2.getText().toString()));
         btnAddWater3.setOnClickListener(v -> mHomeCardWaterService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, txtWaterPercentage, btnAddWater3.getText().toString()));
+
+        btnCorrectMeal.setOnClickListener(v -> mHomeCardMealService.showAlertDialog(Constants.CORRECT_MEAL));
+        btnWarningMeal.setOnClickListener(v -> mHomeCardMealService.showAlertDialog(Constants.WARNING_MEAL));
+        btnWrongMeal.setOnClickListener(v -> mHomeCardMealService.showAlertDialog(Constants.WRONG_MEAL));
 
         btnUserConfig.setOnClickListener(this::showStyledPopupMenu);
 
@@ -119,6 +122,23 @@ public class HomeActivity extends AppCompatActivity {
             mHomeCardExpenseService.setNotifyAccess();
             rbNotifyPermissions.setChecked(false);
         });
+    }
+
+    private void initFields() {
+        String dailyWaterGoal = mHomeCardWaterService.getDailyWaterGoal();
+        int dailyWaterSum = mHomeCardWaterService.getDailyWaterSum();
+
+        txtCurrentDate.setText(Common.getWeekDay());
+        txtCurrentGreeting.setText(Common.getCurrentGreeting());
+        txtDailyWater.setText(this.getString(R.string.daily_water_ml, dailyWaterGoal));
+        txtLastWaterAddedTime.setText(this.getString(R.string.last_added_at, mHomeCardWaterService.getLastWaterAddedTime()));
+        txtTotalValue.setText(this.getString(R.string.monthly_limit_value_init, mHomeCardExpenseService.getMonthlyLimitValue()));
+        txtTotalSpent.setText(this.getString(R.string.monthly_limit_value_init, mHomeCardExpenseService.getTotalSpent()));
+        btnAddWater1.setText(this.getString(R.string.water_default_value_50, mHomeCardWaterService.getDefaultValueBtn1()));
+        btnAddWater2.setText(this.getString(R.string.water_default_value_100, mHomeCardWaterService.getDefaultValueBtn2()));
+        btnAddWater3.setText(this.getString(R.string.water_default_value_250, mHomeCardWaterService.getDefaultValueBtn3()));
+        mHomeCardWaterService.updateWaterProgress(progressWater, txtWaterPercentage, dailyWaterSum, dailyWaterGoal);
+        mHomeCardWaterService.setDailyWaterDrank(txtDailyWaterDrank, dailyWaterSum, dailyWaterGoal);
     }
 
     private void showStyledPopupMenu(View anchor) {
@@ -138,29 +158,6 @@ public class HomeActivity extends AppCompatActivity {
             return false;
         });
         popup.show();
-    }
-
-    private void setupMealButtonListeners() {
-        btnCorrectMeal.setOnClickListener(v -> mHomeCardMealService.showAlertDialog(Constants.CORRECT_MEAL));
-        btnWarningMeal.setOnClickListener(v -> mHomeCardMealService.showAlertDialog(Constants.WARNING_MEAL));
-        btnWrongMeal.setOnClickListener(v -> mHomeCardMealService.showAlertDialog(Constants.WRONG_MEAL));
-    }
-
-    private void initFields() {
-        String dailyWaterGoal = mHomeCardWaterService.getDailyWaterGoal();
-        int dailyWaterSum = mHomeCardWaterService.getDailyWaterSum();
-
-        txtCurrentDate.setText(Common.getWeekDay());
-        txtCurrentGreeting.setText(Common.getCurrentGreeting());
-        txtDailyWater.setText(this.getString(R.string.daily_water_ml, dailyWaterGoal));
-        txtLastWaterAddedTime.setText(this.getString(R.string.last_added_at, mHomeCardWaterService.getLastWaterAddedTime()));
-        txtTotalValue.setText(this.getString(R.string.monthly_limit_value_init, mHomeCardExpenseService.getMonthlyLimitValue()));
-        txtTotalSpent.setText(this.getString(R.string.monthly_limit_value_init, mHomeCardExpenseService.getTotalSpent()));
-        btnAddWater1.setText(this.getString(R.string.water_default_value_50, mHomeCardWaterService.getDefaultValueBtn1()));
-        btnAddWater2.setText(this.getString(R.string.water_default_value_100, mHomeCardWaterService.getDefaultValueBtn2()));
-        btnAddWater3.setText(this.getString(R.string.water_default_value_250, mHomeCardWaterService.getDefaultValueBtn3()));
-        mHomeCardWaterService.updateWaterProgress(progressWater, txtWaterPercentage, dailyWaterSum, dailyWaterGoal);
-        mHomeCardWaterService.setDailyWaterDrank(txtDailyWaterDrank, dailyWaterSum, dailyWaterGoal);
     }
 
     @Override
