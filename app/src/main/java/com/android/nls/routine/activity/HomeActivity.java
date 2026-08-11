@@ -130,6 +130,10 @@ public class HomeActivity extends AppCompatActivity {
                 Intent intent = new Intent(HomeActivity.this, ConfigActivity.class);
                 startActivity(intent);
                 return true;
+            } else if (item.getItemId() == R.id.action_history) {
+                Intent intent = new Intent(HomeActivity.this, HistoryActivity.class);
+                startActivity(intent);
+                return true;
             }
             return false;
         });

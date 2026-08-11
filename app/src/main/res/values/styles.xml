@@ -35,4 +35,22 @@
         <item name="android:textSize">30sp</item>
         <item name="android:textStyle">bold</item>
     </style>
+
+    <style name="calendarDayHeader">
+        <item name="android:textColor">#D5D4D4</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="calendarDayCell">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">45dp</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:layout_gravity">fill_horizontal</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:background">@drawable/calendar_day_background</item>
+    </style>
 </resources>
