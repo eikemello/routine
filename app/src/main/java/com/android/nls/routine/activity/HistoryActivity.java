@@ -16,6 +16,7 @@ import com.android.nls.routine.model.DayDetails;
 import com.android.nls.routine.model.DayStatus;
 import com.android.nls.routine.model.ExpenseRecord;
 import com.android.nls.routine.model.MealRecord;
+import com.android.nls.routine.model.TrackerRecord;
 import com.android.nls.routine.model.WaterRecord;
 import com.android.nls.routine.model.WeeklySummary;
 import com.android.nls.routine.service.HistoryService;
@@ -46,9 +47,15 @@ public class HistoryActivity extends AppCompatActivity {
     private TextView txtWaterSectionTitle;
     private TextView txtMealSectionTitle;
     private TextView txtExpenseSectionTitle;
+    private TextView txtWorkoutSectionTitle;
+    private TextView txtMedicationSectionTitle;
+    private TextView txtSupplementSectionTitle;
     private LinearLayout waterDetailsContainer;
     private LinearLayout mealDetailsContainer;
     private LinearLayout expenseDetailsContainer;
+    private LinearLayout workoutDetailsContainer;
+    private LinearLayout medicationDetailsContainer;
+    private LinearLayout supplementDetailsContainer;
 
     private Calendar mCurrentMonth;
     private Calendar mCurrentWeek;
@@ -101,9 +108,15 @@ public class HistoryActivity extends AppCompatActivity {
         txtWaterSectionTitle = findViewById(R.id.txtWaterSectionTitle);
         txtMealSectionTitle = findViewById(R.id.txtMealSectionTitle);
         txtExpenseSectionTitle = findViewById(R.id.txtExpenseSectionTitle);
+        txtWorkoutSectionTitle = findViewById(R.id.txtWorkoutSectionTitle);
+        txtMedicationSectionTitle = findViewById(R.id.txtMedicationSectionTitle);
+        txtSupplementSectionTitle = findViewById(R.id.txtSupplementSectionTitle);
         waterDetailsContainer = findViewById(R.id.waterDetailsContainer);
         mealDetailsContainer = findViewById(R.id.mealDetailsContainer);
         expenseDetailsContainer = findViewById(R.id.expenseDetailsContainer);
+        workoutDetailsContainer = findViewById(R.id.workoutDetailsContainer);
+        medicationDetailsContainer = findViewById(R.id.medicationDetailsContainer);
+        supplementDetailsContainer = findViewById(R.id.supplementDetailsContainer);
     }
 
     private void setupButtonListeners() {
@@ -134,11 +147,9 @@ public class HistoryActivity extends AppCompatActivity {
     private void loadWeeklySummary() {
         WeeklySummary summary = mHistoryService.getWeeklySummary();
 
-        txtWeeklyWater.setText(getString(R.string.weekly_water_achieved,
-                summary.waterDaysAchieved(), summary.totalDays()));
+        txtWeeklyWater.setText(getString(R.string.weekly_water_achieved, summary.waterDaysAchieved(), summary.totalDays()));
         txtWeeklySpent.setText(getString(R.string.weekly_spent, summary.totalSpent()));
-        txtWeeklyMeals.setText(getString(R.string.weekly_meals,
-                summary.correctMeals(), summary.warningMeals(), summary.wrongMeals()));
+        txtWeeklyMeals.setText(getString(R.string.weekly_meals, summary.correctMeals(), summary.warningMeals(), summary.wrongMeals()));
     }
 
     private void renderCalendar() {
@@ -323,6 +334,7 @@ public class HistoryActivity extends AppCompatActivity {
         int todayDay = today.get(Calendar.DAY_OF_MONTH);
 
         if (mIsWeekView) {
+
             // Check if today is in the current displayed week
             long weekStart = Common.getStartOfDayInMillis(mCurrentWeek.getTimeInMillis());
             Calendar weekEndCal = (Calendar) mCurrentWeek.clone();
@@ -346,6 +358,7 @@ public class HistoryActivity extends AppCompatActivity {
             int month = mCurrentMonth.get(Calendar.MONTH);
 
             if (today.get(Calendar.YEAR) == year && today.get(Calendar.MONTH) == month) {
+
                 // Today is in the current displayed month
                 for (int i = 0; i < calendarGrid.getChildCount(); i++) {
                     View child = calendarGrid.getChildAt(i);
@@ -377,6 +390,7 @@ public class HistoryActivity extends AppCompatActivity {
                 ((TextView) child).setTextColor(getColor(R.color.white));
                 long cellTimestamp = getTimestampFromCell((TextView) child);
                 if (cellTimestamp > todayStart) {
+
                     // Future day: default background
                     child.setBackgroundResource(R.drawable.calendar_day_background);
                     continue;
@@ -415,7 +429,10 @@ public class HistoryActivity extends AppCompatActivity {
 
         boolean hasAnyData = !details.waterRecords().isEmpty()
                 || !details.mealRecords().isEmpty()
-                || !details.expenseRecords().isEmpty();
+                || !details.expenseRecords().isEmpty()
+                || !details.workoutRecords().isEmpty()
+                || !details.medicationRecords().isEmpty()
+                || !details.supplementRecords().isEmpty();
 
         txtNoData.setVisibility(hasAnyData ? View.GONE : View.VISIBLE);
 
@@ -468,6 +485,45 @@ public class HistoryActivity extends AppCompatActivity {
         } else {
             txtExpenseSectionTitle.setVisibility(View.GONE);
         }
+
+        // Workout details
+        workoutDetailsContainer.removeAllViews();
+        if (!details.workoutRecords().isEmpty()) {
+            txtWorkoutSectionTitle.setVisibility(View.VISIBLE);
+            for (TrackerRecord record : details.workoutRecords()) {
+                String status = record.completed() ? getString(R.string.completed) : getString(R.string.not_completed);
+                TextView tv = createDetailTextView(status);
+                workoutDetailsContainer.addView(tv);
+            }
+        } else {
+            txtWorkoutSectionTitle.setVisibility(View.GONE);
+        }
+
+        // Medication details
+        medicationDetailsContainer.removeAllViews();
+        if (!details.medicationRecords().isEmpty()) {
+            txtMedicationSectionTitle.setVisibility(View.VISIBLE);
+            for (TrackerRecord record : details.medicationRecords()) {
+                String status = record.completed() ? getString(R.string.completed) : getString(R.string.not_completed);
+                TextView tv = createDetailTextView(status);
+                medicationDetailsContainer.addView(tv);
+            }
+        } else {
+            txtMedicationSectionTitle.setVisibility(View.GONE);
+        }
+
+        // Supplement details
+        supplementDetailsContainer.removeAllViews();
+        if (!details.supplementRecords().isEmpty()) {
+            txtSupplementSectionTitle.setVisibility(View.VISIBLE);
+            for (TrackerRecord record : details.supplementRecords()) {
+                String status = record.completed() ? getString(R.string.completed) : getString(R.string.not_completed);
+                TextView tv = createDetailTextView(status);
+                supplementDetailsContainer.addView(tv);
+            }
+        } else {
+            txtSupplementSectionTitle.setVisibility(View.GONE);
+        }
     }
 
     private long getTimestampFromCell(TextView cell) {
@@ -475,6 +531,7 @@ public class HistoryActivity extends AppCompatActivity {
         int day = Integer.parseInt(text);
 
         if (mIsWeekView) {
+
             // In week view, the cell's day number corresponds to the day of the week
             // We need to find which day in the current week matches this day number
             Calendar dayCal = (Calendar) mCurrentWeek.clone();
@@ -484,6 +541,7 @@ public class HistoryActivity extends AppCompatActivity {
                 }
                 dayCal.add(Calendar.DAY_OF_MONTH, 1);
             }
+
             // Fallback: use the first day of the week
             return mCurrentWeek.getTimeInMillis();
         } else {

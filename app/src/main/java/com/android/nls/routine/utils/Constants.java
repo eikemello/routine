@@ -58,4 +58,32 @@ public class Constants {
     public static final String BANK_ITAU = "itau";
     public static final String BANK_NUBANK = "nubank";
     public static final String BANK_XP = "xp";
+
+    //Trackers
+    public static final String TABLE_NAME_TRACKERS = "TRACKERS";
+    public static final String COLUMN_NAME_TRACKER_TYPE = "TRACKER_TYPE";
+    public static final String COLUMN_NAME_TRACKER_NAME = "TRACKER_NAME";
+    public static final String COLUMN_NAME_TRACKER_ICON = "TRACKER_ICON";
+    public static final String COLUMN_NAME_TRACKER_ENABLED = "TRACKER_ENABLED";
+    public static final String COLUMN_NAME_TRACKER_DESCRIPTION = "TRACKER_DESCRIPTION";
+
+    public static final String TABLE_NAME_TRACKER_RECORDS = "TRACKER_RECORDS";
+    public static final String COLUMN_NAME_TRACKER_RECORD_TYPE = "TRACKER_RECORD_TYPE";
+    public static final String COLUMN_NAME_TRACKER_RECORD_COMPLETED = "TRACKER_RECORD_COMPLETED";
+    public static final String COLUMN_NAME_TRACKER_RECORD_NOTE = "TRACKER_RECORD_NOTE";
+    public static final String COLUMN_NAME_TRACKER_RECORD_TIMESTAMP = "TRACKER_RECORD_TIMESTAMP";
+
+    public static final String TRACKER_NAME_WATER = "Water";
+    public static final String TRACKER_NAME_MEALS = "Meals";
+    public static final String TRACKER_NAME_EXPENSES = "Expenses";
+    public static final String TRACKER_NAME_WORKOUT = "Workout";
+    public static final String TRACKER_NAME_MEDICATION = "Medication";
+    public static final String TRACKER_NAME_SUPPLEMENT = "Supplement";
+
+    public static final String TRACKER_ICON_WATER = "water";
+    public static final String TRACKER_ICON_MEALS = "meal";
+    public static final String TRACKER_ICON_EXPENSES = "expenses";
+    public static final String TRACKER_ICON_WORKOUT = "workout";
+    public static final String TRACKER_ICON_MEDICATION = "medication";
+    public static final String TRACKER_ICON_SUPPLEMENT = "supplement";
 }

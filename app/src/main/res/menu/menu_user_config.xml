@@ -4,6 +4,9 @@
         android:id="@+id/action_user_config"
         android:title="@string/configure_default_values" />
     <item
+        android:id="@+id/action_trackers"
+        android:title="@string/trackers" />
+    <item
         android:id="@+id/action_history"
         android:title="@string/history_menu" />
 </menu>
