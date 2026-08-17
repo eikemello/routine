@@ -72,4 +72,17 @@
     <string name="previous_week">Previous week</string>
     <string name="next_week">Next week</string>
     <string name="expenses">Expenses</string>
+    <string name="trackers">Trackers</string>
+    <string name="workout">Workout</string>
+    <string name="medication">Medication</string>
+    <string name="supplement">Supplement</string>
+    <string name="tracker_name">Name</string>
+    <string name="tracker_description">Description</string>
+    <string name="configure_medication">What do you want to track?</string>
+    <string name="configure_supplement">What do you want to track?</string>
+    <string name="tracker_name_required">Please enter a name</string>
+    <string name="not_completed">Not completed</string>
+    <string name="completed">Completed</string>
+    <string name="complete_workout">Complete workout</string>
+    <string name="mark_as_taken">Mark as taken</string>
 </resources>

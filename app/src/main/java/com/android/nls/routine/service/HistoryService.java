@@ -8,6 +8,8 @@ import com.android.nls.routine.model.DayDetails;
 import com.android.nls.routine.model.DayStatus;
 import com.android.nls.routine.model.ExpenseRecord;
 import com.android.nls.routine.model.MealRecord;
+import com.android.nls.routine.model.TrackerRecord;
+import com.android.nls.routine.model.TrackerType;
 import com.android.nls.routine.model.WaterRecord;
 import com.android.nls.routine.model.WeeklySummary;
 import com.android.nls.routine.service.database.DatabaseHelper;
@@ -56,8 +58,11 @@ public class HistoryService {
         List<WaterRecord> waterRecords = getWaterRecords(startOfDay, endOfDay);
         List<MealRecord> mealRecords = getMealRecords(startOfDay, endOfDay);
         List<ExpenseRecord> expenseRecords = getExpenseRecords(startOfDay, endOfDay);
+        List<TrackerRecord> workoutRecords = getTrackerRecords(TrackerType.WORKOUT, startOfDay, endOfDay);
+        List<TrackerRecord> medicationRecords = getTrackerRecords(TrackerType.MEDICATION, startOfDay, endOfDay);
+        List<TrackerRecord> supplementRecords = getTrackerRecords(TrackerType.SUPPLEMENT, startOfDay, endOfDay);
 
-        return new DayDetails(waterRecords, mealRecords, expenseRecords);
+        return new DayDetails(waterRecords, mealRecords, expenseRecords, workoutRecords, medicationRecords, supplementRecords);
     }
 
     public boolean hasDataOnDay(long timestamp) {
@@ -66,7 +71,10 @@ public class HistoryService {
 
         return hasWaterData(startOfDay, endOfDay)
                 || hasMealData(startOfDay, endOfDay)
-                || hasExpenseData(startOfDay, endOfDay);
+                || hasExpenseData(startOfDay, endOfDay)
+                || hasTrackerData(TrackerType.WORKOUT, startOfDay, endOfDay)
+                || hasTrackerData(TrackerType.MEDICATION, startOfDay, endOfDay)
+                || hasTrackerData(TrackerType.SUPPLEMENT, startOfDay, endOfDay);
     }
 
     public DayStatus getDayStatus(long timestamp) {
@@ -334,6 +342,51 @@ public class HistoryService {
             return cursor.moveToFirst();
         } catch (Exception e) {
             Log.e(TAG, "Error checking expense data: " + e.getMessage());
+        }
+
+        return false;
+    }
+
+    private List<TrackerRecord> getTrackerRecords(TrackerType type, long start, long end) {
+        List<TrackerRecord> records = new ArrayList<>();
+
+        String query = "SELECT " + Constants.COLUMN_NAME_TRACKER_RECORD_TYPE + ", " +
+                Constants.COLUMN_NAME_TRACKER_RECORD_COMPLETED + ", " +
+                Constants.COLUMN_NAME_TRACKER_RECORD_NOTE + ", " +
+                Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP +
+                " FROM " + Constants.TABLE_NAME_TRACKER_RECORDS +
+                " WHERE " + Constants.COLUMN_NAME_TRACKER_RECORD_TYPE + " = ? AND " +
+                Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " >= ? AND " +
+                Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " <= ?" +
+                " ORDER BY " + Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " ASC";
+
+        try (Cursor cursor = mSqliteDatabase.rawQuery(query,
+                new String[]{type.name(), String.valueOf(start), String.valueOf(end)})) {
+            while (cursor.moveToNext()) {
+                String typeStr = cursor.getString(0);
+                boolean completed = cursor.getInt(1) == 1;
+                String note = cursor.getString(2);
+                long timestamp = cursor.getLong(3);
+                records.add(new TrackerRecord(0, TrackerType.valueOf(typeStr), completed, note, timestamp));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting tracker records " + type + ": " + e.getMessage());
+        }
+
+        return records;
+    }
+
+    private boolean hasTrackerData(TrackerType type, long start, long end) {
+        String query = "SELECT 1 FROM " + Constants.TABLE_NAME_TRACKER_RECORDS +
+                " WHERE " + Constants.COLUMN_NAME_TRACKER_RECORD_TYPE + " = ? AND " +
+                Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " >= ? AND " +
+                Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " <= ? LIMIT 1";
+
+        try (Cursor cursor = mSqliteDatabase.rawQuery(query,
+                new String[]{type.name(), String.valueOf(start), String.valueOf(end)})) {
+            return cursor.moveToFirst();
+        } catch (Exception e) {
+            Log.e(TAG, "Error checking tracker data " + type + ": " + e.getMessage());
         }
 
         return false;
