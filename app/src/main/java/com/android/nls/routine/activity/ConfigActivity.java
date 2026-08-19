@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowInsetsControllerCompat;
 import com.android.nls.routine.R;
 import com.android.nls.routine.service.ConfigService;
+import com.android.nls.routine.utils.BottomNavHelper;
 import com.android.nls.routine.utils.Constants;
 
 public class ConfigActivity extends AppCompatActivity {
@@ -35,6 +36,7 @@ public class ConfigActivity extends AppCompatActivity {
 
         startUIComponents();
         setupButtonListeners();
+        BottomNavHelper.setup(this, R.id.nav_config);
     }
 
     @Override
@@ -69,7 +71,7 @@ public class ConfigActivity extends AppCompatActivity {
         txtDefaultBtn1.setText(this.getString(R.string.water_default_value_init, mConfigService.getDefaultBtn1Value()));
         txtDefaultBtn2.setText(this.getString(R.string.water_default_value_init, mConfigService.getDefaultBtn2Value()));
         txtDefaultBtn3.setText(this.getString(R.string.water_default_value_init, mConfigService.getDefaultBtn3Value()));
-        txtMonthlyLimit.setText(this.getString(R.string.monthly_limit_value_init, mConfigService.getMonthlyLimitValue()));
+        txtMonthlyLimit.setText(this.getString(R.string.total_expense_value_init, mConfigService.getMonthlyLimitValue()));
     }
 
     @Override

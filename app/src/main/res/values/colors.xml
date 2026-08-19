@@ -4,4 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="background">#1E1B22</color>
     <color name="green">#E100FF09</color>
+    <color name="yellow">#F2FF00</color>
+    <color name="red">#FF0000</color>
+    <color name="subTextView">#ABABAB</color>
 </resources>

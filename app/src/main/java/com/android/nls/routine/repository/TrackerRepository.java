@@ -1,4 +1,4 @@
-package com.android.nls.routine.service;
+package com.android.nls.routine.repository;
 
 import android.content.ContentValues;
 import android.content.Context;

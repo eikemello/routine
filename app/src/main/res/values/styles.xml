@@ -53,4 +53,13 @@
         <item name="android:textSize">16sp</item>
         <item name="android:background">@drawable/calendar_day_background</item>
     </style>
+
+    <style name="linearProgressBar">
+        <item name="indicatorColor">#3599FF</item>
+        <item name="indicatorDirectionCircular">clockwise</item>
+        <item name="indicatorSize">70dp</item>
+        <item name="trackColor">#E3E3E3</item>
+        <item name="trackCornerRadius">8dp</item>
+        <item name="trackThickness">5dp</item>
+    </style>
 </resources>

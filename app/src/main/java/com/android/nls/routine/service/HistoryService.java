@@ -90,6 +90,11 @@ public class HistoryService {
         int warningMeals = mealCounts[1];
         int wrongMeals = mealCounts[2];
 
+        // If there's no data at all (no water, no meals), don't color the day
+        if (waterSum == 0 && correctMeals == 0 && warningMeals == 0 && wrongMeals == 0) {
+            return DayStatus.NONE;
+        }
+
         // User's priority rules (preserved):
         //   RED: 2+ wrong meals
         //   YELLOW: 2+ warning meals OR 1 wrong meal

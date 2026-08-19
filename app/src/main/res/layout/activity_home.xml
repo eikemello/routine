@@ -1,68 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mainScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/home_background"
-    android:fillViewport="true"
-    android:scrollbars="none"
-    tools:context=".MainActivity">
+    android:background="@drawable/home_background">
 
-    <LinearLayout
-        android:id="@+id/mainLinearLayout"
+    <ScrollView
+        android:id="@+id/mainScrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <RelativeLayout
-            android:id="@+id/mainRelativeLayout"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginTop="40dp">
-
-            <TextView
-                android:id="@+id/txtCurrentGreeting"
-                style="@style/menuTitleTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="25dp"
-                android:layout_toStartOf="@+id/btnUserConfig" />
-
-            <TextView
-                android:id="@+id/txtCurrentDate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/txtCurrentGreeting"
-                android:layout_marginStart="30dp"
-                android:layout_toStartOf="@+id/btnUserConfig"
-                android:textColor="@color/white"
-                android:textSize="20sp" />
-
-            <ImageButton
-                android:id="@+id/btnUserConfig"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="25dp"
-                android:layout_marginEnd="25dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/configure_default_values"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_user_config" />
-        </RelativeLayout>
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        android:layout_marginBottom="70dp"
+        tools:context=".MainActivity">
 
         <LinearLayout
-            android:id="@+id/trackerCardsContainer"
+            android:id="@+id/mainLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp"
-            android:layout_marginTop="-120dp"
-            android:paddingBottom="40dp" />
-    </LinearLayout>
-</ScrollView>
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/mainRelativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:id="@+id/txtCurrentGreeting"
+                    style="@style/menuTitleTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="25dp" />
+
+                <TextView
+                    android:id="@+id/txtCurrentDate"
+                    style="@style/titleTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/txtCurrentGreeting"
+                    android:layout_marginStart="30dp" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/trackerCardsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-120dp"
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:paddingBottom="40dp" />
+        </LinearLayout>
+    </ScrollView>
+    <include layout="@layout/bottom_nav" />
+</FrameLayout>

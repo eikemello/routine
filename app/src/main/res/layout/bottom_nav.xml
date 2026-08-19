@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottomNavigation"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginBottom="20dp"
+    android:background="@drawable/bottom_nav_background"
+    android:baselineAligned="false"
+    android:padding="5dp"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:id="@+id/nav_home"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/nav_home_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:contentDescription="@string/home"
+            android:src="@drawable/ic_home"
+            app:tint="@color/bottom_nav_item_color" />
+
+        <TextView
+            android:id="@+id/nav_home_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/home"
+            android:textColor="@color/bottom_nav_item_color"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/nav_trackers"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/nav_trackers_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:contentDescription="@string/trackers"
+            android:src="@drawable/ic_card_track"
+            app:tint="@color/bottom_nav_item_color" />
+
+        <TextView
+            android:id="@+id/nav_trackers_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/trackers"
+            android:textColor="@color/bottom_nav_item_color"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/nav_history"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/nav_history_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:contentDescription="@string/history"
+            android:src="@drawable/ic_history"
+            app:tint="@color/bottom_nav_item_color" />
+
+        <TextView
+            android:id="@+id/nav_history_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/history"
+            android:textColor="@color/bottom_nav_item_color"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/nav_config"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/nav_config_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:contentDescription="@string/config"
+            android:src="@drawable/ic_config"
+            app:tint="@color/bottom_nav_item_color" />
+
+        <TextView
+            android:id="@+id/nav_config_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/config"
+            android:textColor="@color/bottom_nav_item_color"
+            android:textSize="11sp" />
+    </LinearLayout>
+</LinearLayout>

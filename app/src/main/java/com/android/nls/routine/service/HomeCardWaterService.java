@@ -11,6 +11,7 @@ import com.android.nls.routine.service.database.DatabaseHelper;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 public class HomeCardWaterService {
     private static final String TAG = Common.generateTag(HomeCardWaterService.class);
@@ -26,7 +27,7 @@ public class HomeCardWaterService {
         mConfigService = new ConfigService(mContext);
     }
 
-    public void addWater(TextView txtDailyWaterDrank, TextView txtLastWaterAdded, CircularProgressIndicator progressWater, TextView txtWaterPercentage, String amount) {
+    public void addWater(TextView txtDailyWaterDrank, TextView txtLastWaterAdded, LinearProgressIndicator progressWater, String amount) {
         int parsedAmount = Integer.parseInt(amount.replace("+", "").trim());
         long currentTimeMillis = System.currentTimeMillis();
         String currentTime = Common.getHourFromTimestamp(String.valueOf(currentTimeMillis));
@@ -47,14 +48,14 @@ public class HomeCardWaterService {
         String dailyWaterGoal = getDailyWaterGoal();
 
         setDailyWaterDrank(txtDailyWaterDrank, dailyWaterSum, dailyWaterGoal);
-        updateWaterProgress(progressWater, txtWaterPercentage, dailyWaterSum, dailyWaterGoal);
+        updateWaterProgress(progressWater, dailyWaterSum, dailyWaterGoal);
 
         txtLastWaterAdded.setText(mContext.getString(R.string.last_added_at, currentTime));
         Log.d(TAG, "Added " + parsedAmount + "ml water. Total: " + dailyWaterSum + "ml");
     }
 
     public void setDailyWaterDrank(TextView txtDailyWaterDrank, int dailyWaterSum, String dailyWaterGoal) {
-        if (Integer.parseInt(dailyWaterGoal) < dailyWaterSum) {
+        if (dailyWaterSum > Integer.parseInt(dailyWaterGoal)) {
             txtDailyWaterDrank.setText(mContext.getString(R.string.water_default_value_init, String.valueOf(dailyWaterSum)));
             txtDailyWaterDrank.setTextColor(mContext.getColor(R.color.green));
         } else {
@@ -62,10 +63,14 @@ public class HomeCardWaterService {
         }
     }
 
-    public void updateWaterProgress(CircularProgressIndicator progressWater, TextView txtWaterPercentage, int totalSum, String dailyWaterGoal) {
+    public void updateWaterProgress(LinearProgressIndicator progressWater, int totalSum, String dailyWaterGoal) {
         long percentage = Math.min(100, Math.round((totalSum * 100.0) / Integer.parseInt(dailyWaterGoal)));
         progressWater.setProgress((int) percentage);
-        txtWaterPercentage.setText(mContext.getString(R.string.circular_progress_init, percentage));
+    }
+
+    public void updateExpenseProgress(LinearProgressIndicator progressExpense, int totalSum, String dailyWaterGoal) {
+        long percentage = Math.min(100, Math.round((totalSum * 100.0) / Integer.parseInt(dailyWaterGoal)));
+        progressExpense.setProgress((int) percentage);
     }
 
     public int getDailyWaterSum() {

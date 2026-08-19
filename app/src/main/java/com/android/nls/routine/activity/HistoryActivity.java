@@ -20,6 +20,7 @@ import com.android.nls.routine.model.TrackerRecord;
 import com.android.nls.routine.model.WaterRecord;
 import com.android.nls.routine.model.WeeklySummary;
 import com.android.nls.routine.service.HistoryService;
+import com.android.nls.routine.utils.BottomNavHelper;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 import com.google.android.material.button.MaterialButton;
@@ -90,6 +91,7 @@ public class HistoryActivity extends AppCompatActivity {
         loadWeeklySummary();
         renderCalendar();
         selectToday();
+        BottomNavHelper.setup(this, R.id.nav_history);
     }
 
     private void startUIComponents() {

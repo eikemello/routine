@@ -15,7 +15,8 @@ import androidx.core.view.WindowInsetsControllerCompat;
 import com.android.nls.routine.R;
 import com.android.nls.routine.model.Tracker;
 import com.android.nls.routine.model.TrackerType;
-import com.android.nls.routine.service.TrackerRepository;
+import com.android.nls.routine.repository.TrackerRepository;
+import com.android.nls.routine.utils.BottomNavHelper;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
@@ -38,6 +39,7 @@ public class TrackerConfigActivity extends AppCompatActivity {
         mTrackerListContainer = findViewById(R.id.trackerListContainer);
 
         renderTrackerList();
+        BottomNavHelper.setup(this, R.id.nav_trackers);
     }
 
     @Override
@@ -56,8 +58,7 @@ public class TrackerConfigActivity extends AppCompatActivity {
 
             if (i < trackers.size() - 1) {
                 View divider = new View(this);
-                divider.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT, 1));
+                divider.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1));
                 divider.setBackgroundColor(getColor(R.color.background));
                 mTrackerListContainer.addView(divider);
             }
@@ -66,8 +67,7 @@ public class TrackerConfigActivity extends AppCompatActivity {
 
     private View createTrackerRow(Tracker tracker) {
         LinearLayout row = new LinearLayout(this);
-        row.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(56)));
+        row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(56)));
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(android.view.Gravity.CENTER_VERTICAL);
         row.setPadding(dpToPx(16), 0, dpToPx(16), 0);
@@ -77,7 +77,6 @@ public class TrackerConfigActivity extends AppCompatActivity {
         // Resolve selectableItemBackground from theme (attribute, not resource ID)
         try (TypedArray typedArray = getTheme().obtainStyledAttributes(new int[]{android.R.attr.selectableItemBackground})) {
             android.graphics.drawable.Drawable selectableBackground = typedArray.getDrawable(0);
-            typedArray.recycle();
             row.setForeground(selectableBackground);
         }
 
@@ -96,20 +95,29 @@ public class TrackerConfigActivity extends AppCompatActivity {
         name.setTextColor(getColor(R.color.white));
 
         // Checkbox
-        MaterialCheckBox checkBox = new MaterialCheckBox(this);
-        checkBox.setChecked(tracker.enabled());
-        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            mTrackerRepository.setTrackerEnabled(tracker.type(), isChecked);
-            if (isChecked && requiresConfig(tracker.type())) {
-                showTrackerConfigDialog(tracker);
-            }
-        });
+        MaterialCheckBox checkBox = getMaterialCheckBox(tracker);
 
         row.addView(icon);
         row.addView(name);
         row.addView(checkBox);
 
         return row;
+    }
+
+    private MaterialCheckBox getMaterialCheckBox(Tracker tracker) {
+        MaterialCheckBox checkBox = new MaterialCheckBox(this);
+        checkBox.setChecked(tracker.enabled());
+        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked && requiresConfig(tracker.type())) {
+                // Revert checkbox immediately - the tracker should only be enabled
+                // and saved when the user clicks "Save" in the config dialog
+                buttonView.setChecked(false);
+                showTrackerConfigDialog(tracker);
+            } else {
+                mTrackerRepository.setTrackerEnabled(tracker.type(), isChecked);
+            }
+        });
+        return checkBox;
     }
 
     private boolean requiresConfig(TrackerType type) {
@@ -153,6 +161,7 @@ public class TrackerConfigActivity extends AppCompatActivity {
             }
 
             mTrackerRepository.updateTrackerConfig(tracker.type(), name, description.isEmpty() ? null : description);
+            mTrackerRepository.setTrackerEnabled(tracker.type(), true);
             dialog.dismiss();
             renderTrackerList();
         });
@@ -160,7 +169,7 @@ public class TrackerConfigActivity extends AppCompatActivity {
 
     private int getTrackerIconRes(TrackerType type) {
         return switch (type) {
-            case WATER -> R.drawable.ic_water_drop_24px;
+            case WATER -> R.drawable.ic_water;
             case MEALS -> R.drawable.ic_meal;
             case EXPENSES -> R.drawable.ic_credit_card;
             case WORKOUT -> R.drawable.ic_workout;
