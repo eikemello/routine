@@ -258,5 +258,5 @@
         </LinearLayout>
     </LinearLayout>
 
-    <include layout="@layout/bottom_nav" />
+    <include layout="@menu/bottom_nav" />
 </FrameLayout>
