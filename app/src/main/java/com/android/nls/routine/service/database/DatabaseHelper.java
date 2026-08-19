@@ -39,8 +39,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Default enabled trackers: Water, Meals, Expenses
         // Default disabled trackers: Workout, Medication, Supplement
         insertTracker(db, Constants.TRACKER_NAME_WATER, Constants.TRACKER_ICON_WATER, 1, null);
-        insertTracker(db, Constants.TRACKER_NAME_MEALS, Constants.TRACKER_ICON_MEALS, 1, null);
         insertTracker(db, Constants.TRACKER_NAME_EXPENSES, Constants.TRACKER_ICON_EXPENSES, 1, null);
+        insertTracker(db, Constants.TRACKER_NAME_MEALS, Constants.TRACKER_ICON_MEALS, 1, null);
         insertTracker(db, Constants.TRACKER_NAME_WORKOUT, Constants.TRACKER_ICON_WORKOUT, 0, null);
         insertTracker(db, Constants.TRACKER_NAME_MEDICATION, Constants.TRACKER_ICON_MEDICATION, 0, null);
         insertTracker(db, Constants.TRACKER_NAME_SUPPLEMENT, Constants.TRACKER_ICON_SUPPLEMENT, 0, null);

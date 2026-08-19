@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@drawable/home_background"
-    android:fillViewport="true"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/MaterialCardView"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/home_background"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -53,59 +53,48 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:baselineAligned="false"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:gravity="center"
             android:orientation="horizontal"
             android:weightSum="3">
 
-            <LinearLayout
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCorrectMeal"
                 android:layout_width="0dp"
-                android:layout_height="55dp"
+                android:layout_height="50dp"
                 android:layout_weight="1"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground">
+                android:backgroundTint="@color/background"
+                android:text="@string/correct_meal"
+                android:textColor="@color/green"
+                app:strokeColor="@color/green"
+                app:strokeWidth="2sp"/>
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/correct_meal"
-                    android:src="@drawable/ic_right" />
-            </LinearLayout>
-
-            <LinearLayout
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnWarningMeal"
                 android:layout_width="0dp"
-                android:layout_height="55dp"
+                android:layout_height="50dp"
                 android:layout_weight="1"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground">
+                android:layout_marginStart="10dp"
+                android:backgroundTint="@color/background"
+                android:text="@string/warning_meal"
+                android:textColor="@color/yellow"
+                app:strokeColor="@color/yellow"
+                app:strokeWidth="2sp"/>
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/warning_meal"
-                    android:src="@drawable/ic_warning" />
-            </LinearLayout>
-
-            <LinearLayout
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnWrongMeal"
                 android:layout_width="0dp"
-                android:layout_height="55dp"
+                android:layout_height="50dp"
                 android:layout_weight="1"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/wrong_meal"
-                    android:src="@drawable/ic_wrong" />
-            </LinearLayout>
+                android:layout_marginStart="10dp"
+                android:backgroundTint="@color/background"
+                android:text="@string/wrong_meal"
+                android:textColor="@color/red"
+                app:strokeColor="@color/red"
+                app:strokeWidth="2sp"/>
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

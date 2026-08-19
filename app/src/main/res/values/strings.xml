@@ -1,25 +1,25 @@
 <resources>
     <string name="app_name">Routine</string>
+    <string name="home">Home</string>
     <string name="water">Water</string>
     <string name="daily_water_ml">%1$s ml</string>
     <string name="custom_add_or_minus">custom add or minus</string>
-    <string name="water_default_value_init">%1$s ml</string>
+    <string name="water_default_value_init">%1$s</string>
     <string name="water_default_value_50">+ %1$s</string>
     <string name="water_default_value_100">+ %1$s</string>
     <string name="water_default_value_250">+ %1$s</string>
     <string name="meal">Meal</string>
     <string name="how_was_your_meal">How was your meal?</string>
     <string name="last_added_at">Last added at %1$s</string>
-    <string name="correct_meal">Correct meal</string>
-    <string name="warning_meal">Warning meal</string>
-    <string name="wrong_meal">Wrong meal</string>
+    <string name="correct_meal">Correct</string>
+    <string name="warning_meal">Warning</string>
+    <string name="wrong_meal">Wrong</string>
     <string name="add_water">Add water</string>
     <string name="configure_default_values">Configure default values</string>
-    <string name="monthly_expenses">Monthly expenses</string>
+    <string name="config">Config</string>
     <string name="spent">Spent</string>
     <string name="limit">Limit</string>
-    <string name="total_spent_value_init">$ %1$d,00</string>
-    <string name="total_month_value_init">$ %1$d,00</string>
+    <string name="total_expense_value_init">$ %1$s,00</string>
     <string name="daily_water">Daily water</string>
     <string name="daily_goal">Daily goal</string>
     <string name="default_buttons">Default buttons</string>
@@ -30,7 +30,6 @@
     <string name="quick_buttons">Quick Buttons</string>
     <string name="edit_default_value">Edit default value</string>
     <string name="hint_0">0</string>
-    <string name="monthly_limit_value_init">$ %1$s,00</string>
     <string name="progress">Progress</string>
     <string name="circular_progress_init">%1$d%%</string>
     <string name="breakfast">Breakfast</string>
@@ -85,4 +84,6 @@
     <string name="completed">Completed</string>
     <string name="complete_workout">Complete workout</string>
     <string name="mark_as_taken">Mark as taken</string>
+    <string name="of">of</string>
+    <string name="notify">Notify</string>
 </resources>

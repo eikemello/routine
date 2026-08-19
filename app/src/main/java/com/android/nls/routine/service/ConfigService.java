@@ -58,7 +58,7 @@ public class ConfigService {
                 saveAction = value -> setThirdBtnValue(value, textView);
                 break;
             case Constants.MONTHLY_LIMIT:
-                title = mContext.getString(R.string.monthly_expenses);
+                title = mContext.getString(R.string.expenses);
                 saveAction = value -> setMonthlyLimit(value, textView);
                 break;
             default:
@@ -84,7 +84,7 @@ public class ConfigService {
     }
 
     private void setMonthlyLimit(String value, TextView txtMonthlyLimit) {
-        saveConfigValue(Constants.COLUMN_NAME_MONTHLY_LIMIT, value, txtMonthlyLimit, R.string.monthly_limit_value_init);
+        saveConfigValue(Constants.COLUMN_NAME_MONTHLY_LIMIT, value, txtMonthlyLimit, R.string.total_expense_value_init);
     }
 
     private void showSaveDialog(String title, View view, TextInputEditText etValue, Consumer<String> saveAction) {
