@@ -145,6 +145,58 @@ public class TrackerRepository {
     }
 
     /**
+     * Returns all tracker records for a given type within the given time range,
+     * ordered by timestamp ascending.
+     */
+    public List<TrackerRecord> getTrackerRecords(TrackerType type, long start, long end) {
+        List<TrackerRecord> records = new ArrayList<>();
+
+        String query = "SELECT " + Constants.COLUMN_NAME_TRACKER_RECORD_TYPE + ", " +
+                Constants.COLUMN_NAME_TRACKER_RECORD_COMPLETED + ", " +
+                Constants.COLUMN_NAME_TRACKER_RECORD_NOTE + ", " +
+                Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP +
+                " FROM " + Constants.TABLE_NAME_TRACKER_RECORDS +
+                " WHERE " + Constants.COLUMN_NAME_TRACKER_RECORD_TYPE + " = ? AND " +
+                Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " >= ? AND " +
+                Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " <= ?" +
+                " ORDER BY " + Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " ASC";
+
+        try (Cursor cursor = mSqliteDatabase.rawQuery(query,
+                new String[]{type.name(), String.valueOf(start), String.valueOf(end)})) {
+            while (cursor.moveToNext()) {
+                String typeStr = cursor.getString(0);
+                boolean completed = cursor.getInt(1) == 1;
+                String note = cursor.getString(2);
+                long timestamp = cursor.getLong(3);
+                records.add(new TrackerRecord(0, TrackerType.valueOf(typeStr), completed, note, timestamp));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting tracker records " + type + ": " + e.getMessage());
+        }
+
+        return records;
+    }
+
+    /**
+     * Returns true if any tracker record exists for the given type within the given time range.
+     */
+    public boolean hasTrackerData(TrackerType type, long start, long end) {
+        String query = "SELECT 1 FROM " + Constants.TABLE_NAME_TRACKER_RECORDS +
+                " WHERE " + Constants.COLUMN_NAME_TRACKER_RECORD_TYPE + " = ? AND " +
+                Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " >= ? AND " +
+                Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " <= ? LIMIT 1";
+
+        try (Cursor cursor = mSqliteDatabase.rawQuery(query,
+                new String[]{type.name(), String.valueOf(start), String.valueOf(end)})) {
+            return cursor.moveToFirst();
+        } catch (Exception e) {
+            Log.e(TAG, "Error checking tracker data " + type + ": " + e.getMessage());
+        }
+
+        return false;
+    }
+
+    /**
      * Returns the record for a tracker on a given day, or null if none exists.
      */
     public TrackerRecord getTrackerRecordForDay(TrackerType type, long dayTimestamp) {

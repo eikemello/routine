@@ -1,10 +1,6 @@
 package com.android.nls.routine.service;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.provider.BaseColumns;
 import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,7 +10,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import com.android.nls.routine.R;
 import com.android.nls.routine.activity.ConfigActivity;
-import com.android.nls.routine.service.database.DatabaseHelper;
+import com.android.nls.routine.repository.ConfigRepository;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -25,13 +21,11 @@ import java.util.function.Consumer;
 public class ConfigService {
     private static final String TAG = Common.generateTag(ConfigActivity.class);
     private final Context mContext;
-    private final DatabaseHelper mDatabaseHelper;
-    private final SQLiteDatabase mSqliteDatabase;
+    private final ConfigRepository mConfigRepository;
 
     public ConfigService(Context context) {
         mContext = context;
-        mDatabaseHelper = new DatabaseHelper(mContext);
-        mSqliteDatabase = mDatabaseHelper.getWritableDatabase();
+        mConfigRepository = new ConfigRepository(context);
     }
 
     public void showAlertDialog(String buttonClicked, TextView textView) {
@@ -112,127 +106,28 @@ public class ConfigService {
 
     private void saveConfigValue(String columnName, String value, TextView textView, int stringResId) {
         Log.d(TAG, "saveConfigValue: " + columnName + " = " + value);
-        long result;
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(columnName, value);
-
-        // Check if a row already exists in the table
-        Cursor cursor = mSqliteDatabase.rawQuery(
-                "SELECT " + BaseColumns._ID + " FROM " + Constants.TABLE_NAME_USER_CONFIG + " LIMIT 1", null);
-
-        if (cursor.moveToFirst() && cursor.getString(0) != null) {
-            // Row exists: UPDATE it
-            long id = cursor.getLong(0);
-            result = mSqliteDatabase.update(Constants.TABLE_NAME_USER_CONFIG,
-                    contentValues, BaseColumns._ID + " = ?", new String[]{String.valueOf(id)});
-            Log.d(TAG, "Updated row ID: " + id);
-        } else {
-            // No row exists: INSERT a new one
-            result = mSqliteDatabase.insert(Constants.TABLE_NAME_USER_CONFIG, null, contentValues);
-            Log.d(TAG, "Inserted row ID: " + result);
-        }
-        cursor.close();
-
-        if (result == -1) {
-            Log.e(TAG, "Failed to configure " + columnName);
-        } else {
-            textView.setText(mContext.getString(stringResId, value));
-        }
+        mConfigRepository.saveConfigValue(columnName, value);
+        textView.setText(mContext.getString(stringResId, value));
     }
 
     public String getDailyWaterGoal() {
-        String query = "SELECT " + Constants.COLUMN_NAME_DAILY_WATER +
-                " FROM " + Constants.TABLE_NAME_USER_CONFIG;
-
-        try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
-            if (cursor.moveToFirst() && cursor.getString(0) != null) {
-                String dailyWater = (cursor.getString(0));
-                Log.d(TAG, "Daily water configured: " + dailyWater);
-                return dailyWater;
-            } else {
-                return Constants.DEFAULT_DAILY_WATER;
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error getting Daily water configured: " + e.getMessage());
-        }
-
-        return Constants.DEFAULT_DAILY_WATER;
+        return mConfigRepository.getDailyWaterGoal();
     }
 
     public String getDefaultBtn1Value() {
-        String query = "SELECT " + Constants.COLUMN_NAME_BTN_1_ADD_WATER +
-                " FROM " + Constants.TABLE_NAME_USER_CONFIG;
-
-        try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
-            if (cursor.moveToFirst() && cursor.getString(0) != null) {
-                String btn1Value = (cursor.getString(0));
-                Log.d(TAG, "Default button 1 value configured: " + btn1Value);
-                return btn1Value;
-            } else {
-                return Constants.DEFAULT_BTN_1_VALUE;
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error getting Default button 1 value configured: " + e.getMessage());
-        }
-
-        return Constants.DEFAULT_BTN_1_VALUE;
+        return mConfigRepository.getDefaultBtn1Value();
     }
 
     public String getDefaultBtn2Value() {
-        String query = "SELECT " + Constants.COLUMN_NAME_BTN_2_ADD_WATER +
-                " FROM " + Constants.TABLE_NAME_USER_CONFIG;
-
-        try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
-            if (cursor.moveToFirst() && cursor.getString(0) != null) {
-                String btn2Value = (cursor.getString(0));
-                Log.d(TAG, "Default button 2 value configured: " + btn2Value);
-                return btn2Value;
-            } else {
-                return Constants.DEFAULT_BTN_2_VALUE;
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error getting Default button 2 value configured: " + e.getMessage());
-        }
-
-        return Constants.DEFAULT_BTN_2_VALUE;
+        return mConfigRepository.getDefaultBtn2Value();
     }
 
     public String getDefaultBtn3Value() {
-        String query = "SELECT " + Constants.COLUMN_NAME_BTN_3_ADD_WATER +
-                " FROM " + Constants.TABLE_NAME_USER_CONFIG;
-
-        try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
-            if (cursor.moveToFirst() && cursor.getString(0) != null) {
-                String btn3Value = (cursor.getString(0));
-                Log.d(TAG, "Default button 3 value configured: " + btn3Value);
-                return btn3Value;
-            } else {
-                return Constants.DEFAULT_BTN_3_VALUE;
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error getting Default button 3 value configured: " + e.getMessage());
-        }
-
-        return Constants.DEFAULT_BTN_2_VALUE;
+        return mConfigRepository.getDefaultBtn3Value();
     }
 
     public String getMonthlyLimitValue() {
-        String query = "SELECT " + Constants.COLUMN_NAME_MONTHLY_LIMIT +
-                " FROM " + Constants.TABLE_NAME_USER_CONFIG;
-
-        try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
-            if (cursor.moveToFirst() && cursor.getString(0) != null) {
-                String monthlyLimit = (cursor.getString(0));
-                Log.d(TAG, "Monthly limit configured: " + monthlyLimit);
-                return monthlyLimit;
-            } else {
-                return Constants.DEFAULT_MONTHLY_LIMIT_VALUE;
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error getting Monthly limit configured: " + e.getMessage());
-        }
-
-        return Constants.DEFAULT_MONTHLY_LIMIT_VALUE;
+        return mConfigRepository.getMonthlyLimitValue();
     }
 
     private void setFieldError(TextInputLayout txtInputError) {
@@ -250,6 +145,6 @@ public class ConfigService {
     }
 
     public void closeDb() {
-        mDatabaseHelper.close();
+        mConfigRepository.closeDb();
     }
 }

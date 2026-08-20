@@ -1,8 +1,6 @@
 package com.android.nls.routine.service;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,7 +10,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import androidx.appcompat.app.AlertDialog;
 import com.android.nls.routine.R;
-import com.android.nls.routine.service.database.DatabaseHelper;
+import com.android.nls.routine.repository.MealRepository;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -24,14 +22,12 @@ import java.util.function.Consumer;
 public class HomeCardMealService {
     private static final String TAG = Common.generateTag(HomeCardMealService.class);
     private final Context mContext;
-    private final DatabaseHelper mDatabaseHelper;
-    private final SQLiteDatabase mSqliteDatabase;
+    private final MealRepository mMealRepository;
     private String mSelectedMeal;
 
     public HomeCardMealService(Context context) {
         mContext = context;
-        mDatabaseHelper = new DatabaseHelper(mContext);
-        mSqliteDatabase = mDatabaseHelper.getWritableDatabase();
+        mMealRepository = new MealRepository(mContext);
     }
 
     public void showAlertDialog(String buttonClicked) {
@@ -99,15 +95,7 @@ public class HomeCardMealService {
 
     private void saveMealValue(String mealStatus, String currentMeal, String value) {
         Log.d(TAG, "saveMealValue: " + mealStatus + " = " + value);
-        long result;
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(Constants.COLUMN_NAME_MEAL, currentMeal);
-        contentValues.put(Constants.COLUMN_NAME_MEAL_STATUS, mealStatus);
-        contentValues.put(Constants.COLUMN_NAME_MEAL_OBS, value);
-        contentValues.put(Constants.COLUMN_NAME_TIMESTAMP, System.currentTimeMillis());
-
-        // No row exists: INSERT a new one
-        result = mSqliteDatabase.insert(Constants.TABLE_NAME_MEAL, null, contentValues);
+        long result = mMealRepository.insertMeal(currentMeal, mealStatus, value, System.currentTimeMillis());
         Log.d(TAG, "Inserted row ID: " + result);
 
         if (result == -1) {
@@ -154,6 +142,6 @@ public class HomeCardMealService {
     }
 
     public void closeDb() {
-        mDatabaseHelper.close();
+        mMealRepository.closeDb();
     }
 }
