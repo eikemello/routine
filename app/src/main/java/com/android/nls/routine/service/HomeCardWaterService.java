@@ -44,7 +44,7 @@ public class HomeCardWaterService {
     }
 
     public void setDailyWaterDrank(TextView txtDailyWaterDrank, int dailyWaterSum, String dailyWaterGoal) {
-        if (dailyWaterSum > Integer.parseInt(dailyWaterGoal)) {
+        if (dailyWaterSum >= Integer.parseInt(dailyWaterGoal)) {
             txtDailyWaterDrank.setText(mContext.getString(R.string.water_default_value_init, String.valueOf(dailyWaterSum)));
             txtDailyWaterDrank.setTextColor(mContext.getColor(R.color.green));
         } else {
