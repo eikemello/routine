@@ -16,8 +16,8 @@ public class HomeCardExpenseService {
 
     public HomeCardExpenseService(Context context) {
         mContext = context;
-        mExpenseRepository = new ExpenseRepository(context);
-        mConfigRepository = new ConfigRepository(context);
+        mExpenseRepository = new ExpenseRepository(mContext);
+        mConfigRepository = new ConfigRepository(mContext);
     }
 
     public void saveExpenseTest(Expense expense) {

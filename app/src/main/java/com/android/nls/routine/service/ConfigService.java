@@ -25,7 +25,7 @@ public class ConfigService {
 
     public ConfigService(Context context) {
         mContext = context;
-        mConfigRepository = new ConfigRepository(context);
+        mConfigRepository = new ConfigRepository(mContext);
     }
 
     public void showAlertDialog(String buttonClicked, TextView textView) {

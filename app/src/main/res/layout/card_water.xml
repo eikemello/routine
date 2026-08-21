@@ -64,7 +64,7 @@
                 android:layout_marginBottom="5dp"
                 android:layout_marginEnd="5dp"
                 android:includeFontPadding="false"
-                android:text="@string/of"
+                android:text="@string/trace"
                 android:textAlignment="textEnd" />
 
             <TextView

@@ -84,6 +84,6 @@
     <string name="completed">Completed</string>
     <string name="complete_workout">Complete workout</string>
     <string name="mark_as_taken">Mark as taken</string>
-    <string name="of">-</string>
+    <string name="trace">-</string>
     <string name="notify">Notify</string>
 </resources>
