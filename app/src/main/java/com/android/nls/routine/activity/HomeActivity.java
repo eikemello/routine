@@ -6,9 +6,11 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowInsetsControllerCompat;
+
 import com.android.nls.routine.R;
 import com.android.nls.routine.model.Tracker;
 import com.android.nls.routine.model.TrackerRecord;
@@ -156,6 +158,10 @@ public class HomeActivity extends AppCompatActivity {
 
         txtTotalValue.setText(this.getString(R.string.total_expense_value_init, monthlyLimit));
         txtTotalSpent.setText(this.getString(R.string.total_expense_value_init, totalSpent));
+
+        if (Integer.parseInt(totalSpent) > Integer.parseInt(monthlyLimit)) {
+            txtTotalSpent.setTextColor(this.getColor(R.color.red));
+        }
 
         mHomeCardWaterService.updateExpenseProgress(progressExpense, Integer.parseInt(totalSpent), monthlyLimit);
 
