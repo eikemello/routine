@@ -1,29 +1,24 @@
 package com.android.nls.routine.service;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.widget.TextView;
 import com.android.nls.routine.R;
-import com.android.nls.routine.service.database.DatabaseHelper;
+import com.android.nls.routine.repository.ConfigRepository;
+import com.android.nls.routine.repository.WaterRepository;
 import com.android.nls.routine.utils.Common;
-import com.android.nls.routine.utils.Constants;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 public class HomeCardWaterService {
     private static final String TAG = Common.generateTag(HomeCardWaterService.class);
-    private final DatabaseHelper mDatabaseHelper;
-    private final SQLiteDatabase mSqliteDatabase;
-    private final ConfigService mConfigService;
+    private final WaterRepository mWaterRepository;
+    private final ConfigRepository mConfigRepository;
     private final Context mContext;
 
     public HomeCardWaterService(Context context) {
         mContext = context;
-        mDatabaseHelper = new DatabaseHelper(mContext);
-        mSqliteDatabase = mDatabaseHelper.getWritableDatabase();
-        mConfigService = new ConfigService(mContext);
+        mWaterRepository = new WaterRepository(mContext);
+        mConfigRepository = new ConfigRepository(mContext);
     }
 
     public void addWater(TextView txtDailyWaterDrank, TextView txtLastWaterAdded, LinearProgressIndicator progressWater, String amount) {
@@ -31,12 +26,7 @@ public class HomeCardWaterService {
         long currentTimeMillis = System.currentTimeMillis();
         String currentTime = Common.getHourFromTimestamp(String.valueOf(currentTimeMillis));
 
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(Constants.COLUMN_NAME_WATER_DRANK, String.valueOf(parsedAmount));
-        contentValues.put(Constants.COLUMN_NAME_TIMESTAMP, currentTimeMillis);
-
-        long newRowId = mSqliteDatabase.insert(Constants.TABLE_NAME_WATER, null, contentValues);
-        Log.d(TAG, "Inserted row ID: " + newRowId);
+        long newRowId = mWaterRepository.insertWater(parsedAmount, currentTimeMillis);
 
         if (newRowId == -1) {
             Log.e(TAG, "Failed to insert water record");
@@ -54,7 +44,7 @@ public class HomeCardWaterService {
     }
 
     public void setDailyWaterDrank(TextView txtDailyWaterDrank, int dailyWaterSum, String dailyWaterGoal) {
-        if (dailyWaterSum > Integer.parseInt(dailyWaterGoal)) {
+        if (dailyWaterSum >= Integer.parseInt(dailyWaterGoal)) {
             txtDailyWaterDrank.setText(mContext.getString(R.string.water_default_value_init, String.valueOf(dailyWaterSum)));
             txtDailyWaterDrank.setTextColor(mContext.getColor(R.color.green));
         } else {
@@ -73,62 +63,37 @@ public class HomeCardWaterService {
     }
 
     public int getDailyWaterSum() {
-        int sum = 0;
         long startOfDay = Common.getStartOfDayInMillis();
         long endOfDay = Common.getEndOfDayInMillis();
-
-        String query = "SELECT SUM(" + Constants.COLUMN_NAME_WATER_DRANK + ") FROM " + Constants.TABLE_NAME_WATER +
-                " WHERE " + Constants.COLUMN_NAME_TIMESTAMP + " >= ? AND " +
-                Constants.COLUMN_NAME_TIMESTAMP + " <= ?";
-
-        try (Cursor cursor = mSqliteDatabase.rawQuery(query, new String[]{String.valueOf(startOfDay), String.valueOf(endOfDay)})) {
-            if (cursor.moveToFirst() && cursor.getString(0) != null) {
-                sum = cursor.getInt(0);
-                Log.d(TAG, "Daily water sum loaded: " + sum + "ml");
-                return sum;
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error calculating water sum: " + e.getMessage());
-        }
-
-        return sum;
+        return mWaterRepository.getWaterSum(startOfDay, endOfDay);
     }
 
     public String getLastWaterAddedTime() {
-        String query = "SELECT " + Constants.COLUMN_NAME_TIMESTAMP +
-                " FROM " + Constants.TABLE_NAME_WATER +
-                " ORDER BY " + DatabaseHelper.WaterFeedEntry._ID + " DESC LIMIT 1";
-
-        try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
-            if (cursor.moveToFirst() && cursor.getString(0) != null) {
-                String lastTime = Common.getHourFromTimestamp(cursor.getString(0));
-                Log.d(TAG, "Last water drank time: " + lastTime);
-                return lastTime;
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error getting last drank time: " + e.getMessage());
+        long lastTimestamp = mWaterRepository.getLastWaterAddedTimestamp();
+        if (lastTimestamp == 0) {
+            return "";
         }
-
-        return "";
+        return Common.getHourFromTimestamp(String.valueOf(lastTimestamp));
     }
 
     public String getDefaultValueBtn1() {
-        return mConfigService.getDefaultBtn1Value();
+        return mConfigRepository.getDefaultBtn1Value();
     }
 
     public String getDefaultValueBtn2() {
-        return mConfigService.getDefaultBtn2Value();
+        return mConfigRepository.getDefaultBtn2Value();
     }
 
     public String getDefaultValueBtn3() {
-        return mConfigService.getDefaultBtn3Value();
+        return mConfigRepository.getDefaultBtn3Value();
     }
 
     public String getDailyWaterGoal() {
-        return mConfigService.getDailyWaterGoal();
+        return mConfigRepository.getDailyWaterGoal();
     }
 
     public void closeDb() {
-        mDatabaseHelper.close();
+        mWaterRepository.closeDb();
+        mConfigRepository.closeDb();
     }
 }

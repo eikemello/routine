@@ -22,7 +22,6 @@ import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
-
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
@@ -156,6 +155,10 @@ public class HomeActivity extends AppCompatActivity {
 
         txtTotalValue.setText(this.getString(R.string.total_expense_value_init, monthlyLimit));
         txtTotalSpent.setText(this.getString(R.string.total_expense_value_init, totalSpent));
+
+        if (Integer.parseInt(totalSpent) > Integer.parseInt(monthlyLimit)) {
+            txtTotalSpent.setTextColor(this.getColor(R.color.red));
+        }
 
         mHomeCardWaterService.updateExpenseProgress(progressExpense, Integer.parseInt(totalSpent), monthlyLimit);
 

@@ -49,37 +49,33 @@
 
             <TextView
                 android:id="@+id/txtDailyWaterDrank"
+                style="@style/textViewCardInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:includeFontPadding="false"
                 android:text="@string/water_default_value_init"
-                android:textAlignment="textEnd"
-                android:textColor="#3599FF"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textAlignment="textEnd" />
 
             <TextView
+                style="@style/textViewCardInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
                 android:layout_marginBottom="5dp"
+                android:layout_marginEnd="5dp"
                 android:includeFontPadding="false"
-                android:text=" / "
-                android:textAlignment="textEnd"
-                android:textColor="#3599FF"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:text="@string/trace"
+                android:textAlignment="textEnd" />
 
             <TextView
                 android:id="@+id/txtDailyWater"
+                style="@style/textViewCardInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:includeFontPadding="false"
                 android:text="@string/daily_water_ml"
-                android:textAlignment="textEnd"
-                android:textColor="#3599FF"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textAlignment="textEnd" />
         </LinearLayout>
 
         <FrameLayout

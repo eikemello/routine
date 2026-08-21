@@ -41,7 +41,7 @@
 
                 <TextView
                     android:id="@+id/txtTotalSpent"
-                    style="@style/subTitleTextView"
+                    style="@style/textViewCardInfo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/textView"
@@ -50,18 +50,19 @@
 
                 <TextView
                     android:id="@+id/txtTotalSpent2"
-                    style="@style/subTitleTextView"
+                    style="@style/textViewCardInfo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/textView"
                     android:layout_marginStart="5dp"
                     android:layout_toEndOf="@+id/txtTotalSpent"
-                    android:text="@string/of"
+                    android:text="@string/trace"
                     android:textAlignment="textEnd" />
 
                 <TextView
                     android:id="@+id/txtTotalValue"
-                    style="@style/subTitleTextView"
+                    style="@style/textViewCardInfo"
+                    android:textColor="#3599FF"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/textView"
