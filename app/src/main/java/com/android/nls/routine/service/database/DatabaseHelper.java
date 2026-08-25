@@ -28,7 +28,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion < 2) {
+        if (oldVersion < DATABASE_VERSION) {
             db.execSQL(WaterFeedEntry.SQL_CREATE_ENTRIES_TRACKERS);
             db.execSQL(WaterFeedEntry.SQL_CREATE_ENTRIES_TRACKER_RECORDS);
             insertDefaultTrackers(db);

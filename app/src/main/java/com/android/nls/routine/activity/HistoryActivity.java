@@ -72,19 +72,8 @@ public class HistoryActivity extends AppCompatActivity {
         windowInsetsController.setAppearanceLightStatusBars(false);
 
         mHistoryService = new HistoryService(this);
-        mCurrentMonth = new GregorianCalendar();
-        mCurrentMonth.set(Calendar.DAY_OF_MONTH, 1);
-        mCurrentMonth.set(Calendar.HOUR_OF_DAY, 0);
-        mCurrentMonth.set(Calendar.MINUTE, 0);
-        mCurrentMonth.set(Calendar.SECOND, 0);
-        mCurrentMonth.set(Calendar.MILLISECOND, 0);
-
-        mCurrentWeek = new GregorianCalendar();
-        mCurrentWeek.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-        mCurrentWeek.set(Calendar.HOUR_OF_DAY, 0);
-        mCurrentWeek.set(Calendar.MINUTE, 0);
-        mCurrentWeek.set(Calendar.SECOND, 0);
-        mCurrentWeek.set(Calendar.MILLISECOND, 0);
+        mCurrentMonth = initializeCurrentMonth();
+        mCurrentWeek = initializeCurrentWeek();
 
         startUIComponents();
         setupButtonListeners();
@@ -572,6 +561,33 @@ public class HistoryActivity extends AppCompatActivity {
             return getString(R.string.wrong_meal);
         }
         return status;
+    }
+
+    private Calendar initializeCurrentMonth() {
+        Calendar calendar = new GregorianCalendar();
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar;
+    }
+
+    private Calendar initializeCurrentWeek() {
+        Calendar calendar = new GregorianCalendar();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        // Calculate the Monday of the current week explicitly.
+        // Do NOT use set(DAY_OF_WEEK, MONDAY): it depends on the locale's
+        // firstDayOfWeek (e.g. SUNDAY in en-US), which can yield the wrong Monday
+        // (e.g. on a Sunday it would return the NEXT week's Monday).
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        int daysFromMonday = (dayOfWeek + 5) % 7; // Sunday=1 -> 6, Monday=2 -> 0, ..., Saturday=7 -> 5
+        calendar.add(Calendar.DAY_OF_MONTH, -daysFromMonday);
+        return calendar;
     }
 
     private int dpToPx(int dp) {
