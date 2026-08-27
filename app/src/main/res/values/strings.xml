@@ -86,4 +86,6 @@
     <string name="mark_as_taken">Mark as taken</string>
     <string name="trace">-</string>
     <string name="notify">Notify</string>
+    <string name="card_statement_closing">Card statement closing</string>
+    <string name="card_statement_closing_date_init_value">%1$s</string>
 </resources>

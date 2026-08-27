@@ -18,10 +18,12 @@ public class Constants {
     public static final String BTN_DEFAULT_2 = "BTN_DEFAULT_2";
     public static final String BTN_DEFAULT_3 = "BTN_DEFAULT_3";
     public static final String MONTHLY_LIMIT = "MONTHLY_LIMIT";
+    public static final String CARD_STATEMENT_CLOSING = "CARD_STATEMENT_CLOSING";
     public static final String DEFAULT_BTN_1_VALUE = "50";
     public static final String DEFAULT_BTN_2_VALUE = "100";
     public static final String DEFAULT_BTN_3_VALUE = "250";
     public static final String DEFAULT_MONTHLY_LIMIT_VALUE = "1000";
+    public static final String DEFAULT_CARD_STATEMENT_CLOSING = "01/xx";
 
     //SQLite
     public static final String TABLE_NAME_WATER = "WATER";
@@ -34,6 +36,7 @@ public class Constants {
     public static final String COLUMN_NAME_BTN_2_ADD_WATER = "BTN_2_ADD_WATER";
     public static final String COLUMN_NAME_BTN_3_ADD_WATER = "BTN_3_ADD_WATER";
     public static final String COLUMN_NAME_MONTHLY_LIMIT = "MONTHLY_LIMIT";
+    public static final String COLUMN_NAME_CARD_STATEMENT_CLOSING = "CARD_STATEMENT_CLOSING";
 
     public static final String TABLE_NAME_EXPENSE_TEST = "EXPENSE_TEST";
     public static final String COLUMN_NAME_EXPENSE_TEXT = "EXPENSE_TEXT";

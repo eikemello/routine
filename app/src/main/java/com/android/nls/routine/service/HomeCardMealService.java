@@ -116,7 +116,7 @@ public class HomeCardMealService {
         if (hour >= 5 && hour <= 10) {
             rbBreakfast.setChecked(true);
             mSelectedMeal = Constants.BREAKFAST;
-        } else if (hour >= 11 && hour < 15) {
+        } else if (hour >= 11 && hour <= 15) {
             rbLunch.setChecked(true);
             mSelectedMeal = Constants.LUNCH;
         } else if (hour >= 16 && hour < 20) {

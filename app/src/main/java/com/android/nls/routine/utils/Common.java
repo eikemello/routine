@@ -52,6 +52,29 @@ public class Common {
         return calendar.getTimeInMillis();
     }
 
+    /**
+     * Returns the start (00:00:00.000) of the most recent occurrence of the given
+     * day of the month. Used to reset the expense total on the card statement
+     * closing day: if today's day is >= closingDay, it returns that day of the
+     * current month; otherwise, that day of the previous month.
+     */
+    public static long getStartOfExpenseCycleInMillis(int closingDay) {
+        Calendar now = new GregorianCalendar();
+        Calendar start = new GregorianCalendar();
+
+        if (now.get(Calendar.DAY_OF_MONTH) >= closingDay) {
+            start.set(Calendar.MONTH, now.get(Calendar.MONTH));
+        } else {
+            start.set(Calendar.MONTH, now.get(Calendar.MONTH) - 1);
+        }
+        start.set(Calendar.DAY_OF_MONTH, Math.min(closingDay, start.getActualMaximum(Calendar.DAY_OF_MONTH)));
+        start.set(Calendar.HOUR_OF_DAY, 0);
+        start.set(Calendar.MINUTE, 0);
+        start.set(Calendar.SECOND, 0);
+        start.set(Calendar.MILLISECOND, 0);
+        return start.getTimeInMillis();
+    }
+
     public static long getStartOfWeekInMillis() {
         Calendar calendar = new GregorianCalendar();
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);

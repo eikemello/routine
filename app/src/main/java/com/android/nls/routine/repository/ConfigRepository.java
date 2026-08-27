@@ -67,6 +67,10 @@ public class ConfigRepository {
         return getConfigValue(Constants.COLUMN_NAME_MONTHLY_LIMIT, Constants.DEFAULT_MONTHLY_LIMIT_VALUE);
     }
 
+    public String getCardStatementClosingDate() {
+        return getConfigValue(Constants.COLUMN_NAME_CARD_STATEMENT_CLOSING, Constants.DEFAULT_CARD_STATEMENT_CLOSING);
+    }
+
     public String getConfigValue(String columnName, String defaultValue) {
         String query = "SELECT " + columnName +
                 " FROM " + Constants.TABLE_NAME_USER_CONFIG;
