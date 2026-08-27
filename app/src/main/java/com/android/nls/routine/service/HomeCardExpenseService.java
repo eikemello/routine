@@ -38,10 +38,26 @@ public class HomeCardExpenseService {
     }
 
     public String getTotalSpent() {
-        long startOfMonth = Common.getStartOfMonthInMillis();
-        long endOfMonth = Common.getEndOfMonthInMillis();
-        double sum = mExpenseRepository.getTotalSpent(startOfMonth, endOfMonth);
+        int closingDay = parseClosingDay(mConfigRepository.getCardStatementClosingDate());
+        long startOfCycle = Common.getStartOfExpenseCycleInMillis(closingDay);
+        long now = System.currentTimeMillis();
+        double sum = mExpenseRepository.getTotalSpent(startOfCycle, now);
         return String.valueOf((int) sum);
+    }
+
+    /**
+     * Parses the saved closing day (e.g. "05" or "01/xx") into an int.
+     * Falls back to 1 if the value is missing or invalid.
+     */
+    private int parseClosingDay(String value) {
+        try {
+            int day = Integer.parseInt(value.split("/")[0].trim());
+            if (day >= 1 && day <= 31) {
+                return day;
+            }
+        } catch (NumberFormatException ignored) {
+        }
+        return 1;
     }
 
     public String getMonthlyLimitValue() {

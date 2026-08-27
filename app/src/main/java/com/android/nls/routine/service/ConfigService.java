@@ -31,6 +31,7 @@ public class ConfigService {
     public void showAlertDialog(String buttonClicked, TextView textView) {
         String title;
         Consumer<String> saveAction;
+        int maxLength = 6;
         View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_config_default_values, new FrameLayout(mContext), false);
         TextInputEditText etValue = view.findViewById(R.id.etValue);
 
@@ -55,10 +56,15 @@ public class ConfigService {
                 title = mContext.getString(R.string.expenses);
                 saveAction = value -> setMonthlyLimit(value, textView);
                 break;
+            case Constants.CARD_STATEMENT_CLOSING:
+                title = mContext.getString(R.string.card_statement_closing);
+                maxLength = 2;
+                saveAction = value -> setCardStatementClosingDate(value, textView);
+                break;
             default:
                 return;
         }
-        showSaveDialog(title, view, etValue, saveAction);
+        showSaveDialog(title, view, etValue, saveAction, maxLength);
     }
 
     private void setDailyWater(String value, TextView txtDailyWater) {
@@ -81,7 +87,11 @@ public class ConfigService {
         saveConfigValue(Constants.COLUMN_NAME_MONTHLY_LIMIT, value, txtMonthlyLimit, R.string.total_expense_value_init);
     }
 
-    private void showSaveDialog(String title, View view, TextInputEditText etValue, Consumer<String> saveAction) {
+    private void setCardStatementClosingDate(String value, TextView txtCardStatementClosingDate) {
+        saveConfigValue(Constants.COLUMN_NAME_CARD_STATEMENT_CLOSING, value, txtCardStatementClosingDate, R.string.card_statement_closing_date_init_value);
+    }
+
+    private void showSaveDialog(String title, View view, TextInputEditText etValue, Consumer<String> saveAction, int maxLength) {
         TextInputLayout txtInputError = view.findViewById(R.id.txtInputError);
         txtInputError.setError(null);
 
@@ -95,7 +105,7 @@ public class ConfigService {
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
             Editable value = etValue.getText();
-            if (checkFieldValue(value)) {
+            if (checkFieldValue(value, maxLength)) {
                 saveAction.accept(value.toString().trim());
                 dialog.dismiss();
             } else {
@@ -130,17 +140,21 @@ public class ConfigService {
         return mConfigRepository.getMonthlyLimitValue();
     }
 
+    public String getCardStatementClosingDate() {
+        return mConfigRepository.getCardStatementClosingDate();
+    }
+
     private void setFieldError(TextInputLayout txtInputError) {
         txtInputError.setError(Constants.WATER_INVALID_NUMBER);
     }
 
-    private boolean checkFieldValue(Editable value) {
+    private boolean checkFieldValue(Editable value, int maxLength) {
         if (value == null) {
             return false;
         } else {
             return (!value.toString().trim().isEmpty()
                     && value.toString().matches("\\d+")
-                    && value.length() < 5);
+                    && value.length() <= maxLength);
         }
     }
 

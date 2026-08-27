@@ -10,7 +10,7 @@ import com.android.nls.routine.utils.Constants;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = Common.generateTag(DatabaseHelper.class);
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private static final String DATABASE_NAME = "Routine";
 
     public DatabaseHelper(Context context) {
@@ -72,7 +72,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         Constants.COLUMN_NAME_BTN_1_ADD_WATER + " TEXT," +
                         Constants.COLUMN_NAME_BTN_2_ADD_WATER + " TEXT," +
                         Constants.COLUMN_NAME_BTN_3_ADD_WATER + " TEXT," +
-                        Constants.COLUMN_NAME_MONTHLY_LIMIT + " TEXT)";
+                        Constants.COLUMN_NAME_MONTHLY_LIMIT + " TEXT," +
+                        Constants.COLUMN_NAME_CARD_STATEMENT_CLOSING + " TEXT)";
 
         private static final String SQL_CREATE_ENTRIES_EXPENSE_TEST =
                 "CREATE TABLE " + Constants.TABLE_NAME_EXPENSE_TEST + " (" +

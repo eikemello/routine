@@ -17,11 +17,13 @@ public class ConfigActivity extends AppCompatActivity {
     private TextView txtDefaultBtn2;
     private TextView txtDefaultBtn3;
     private TextView txtMonthlyLimit;
+    private TextView txtCardStatementClosingDate;
     private LinearLayout btnDailyWater;
     private LinearLayout btnDefaultValue1;
     private LinearLayout btnDefaultValue2;
     private LinearLayout btnDefaultValue3;
     private LinearLayout btnMonthlyLimit;
+    private LinearLayout btnCardStatementClosing;
     private ConfigService mConfigService;
 
     @Override
@@ -51,11 +53,13 @@ public class ConfigActivity extends AppCompatActivity {
         txtDefaultBtn2 = findViewById(R.id.txtDefaultBtn2);
         txtDefaultBtn3 = findViewById(R.id.txtDefaultBtn3);
         txtMonthlyLimit = findViewById(R.id.txtMonthlyLimit);
+        txtCardStatementClosingDate = findViewById(R.id.txtCardStatementClosingDate);
         btnDailyWater = findViewById(R.id.btnDailyWater);
         btnDefaultValue1 = findViewById(R.id.btnDefaultValue1);
         btnDefaultValue2 = findViewById(R.id.btnDefaultValue2);
         btnDefaultValue3 = findViewById(R.id.btnDefaultValue3);
         btnMonthlyLimit = findViewById(R.id.btnMonthlyLimit);
+        btnCardStatementClosing = findViewById(R.id.btnCardStatementClosing);
     }
 
     private void setupButtonListeners() {
@@ -64,6 +68,7 @@ public class ConfigActivity extends AppCompatActivity {
         btnDefaultValue2.setOnClickListener(v -> mConfigService.showAlertDialog(Constants.BTN_DEFAULT_2, txtDefaultBtn2));
         btnDefaultValue3.setOnClickListener(v -> mConfigService.showAlertDialog(Constants.BTN_DEFAULT_3, txtDefaultBtn3));
         btnMonthlyLimit.setOnClickListener(v -> mConfigService.showAlertDialog(Constants.MONTHLY_LIMIT, txtMonthlyLimit));
+        btnCardStatementClosing.setOnClickListener(v -> mConfigService.showAlertDialog(Constants.CARD_STATEMENT_CLOSING, txtCardStatementClosingDate));
     }
 
     private void initFields() {
@@ -72,6 +77,7 @@ public class ConfigActivity extends AppCompatActivity {
         txtDefaultBtn2.setText(this.getString(R.string.water_default_value_init, mConfigService.getDefaultBtn2Value()));
         txtDefaultBtn3.setText(this.getString(R.string.water_default_value_init, mConfigService.getDefaultBtn3Value()));
         txtMonthlyLimit.setText(this.getString(R.string.total_expense_value_init, mConfigService.getMonthlyLimitValue()));
+        txtCardStatementClosingDate.setText(this.getString(R.string.card_statement_closing_date_init_value, mConfigService.getCardStatementClosingDate()));
     }
 
     @Override
