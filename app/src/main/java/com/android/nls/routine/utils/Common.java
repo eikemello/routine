@@ -58,7 +58,7 @@ public class Common {
      * closing day: if today's day is >= closingDay, it returns that day of the
      * current month; otherwise, that day of the previous month.
      */
-    public static long getStartOfExpenseCycleInMillis(int closingDay) {
+    public static long getStartOfExpenseCycleInMillis(double closingDay) {
         Calendar now = new GregorianCalendar();
         Calendar start = new GregorianCalendar();
 
@@ -67,7 +67,7 @@ public class Common {
         } else {
             start.set(Calendar.MONTH, now.get(Calendar.MONTH) - 1);
         }
-        start.set(Calendar.DAY_OF_MONTH, Math.min(closingDay, start.getActualMaximum(Calendar.DAY_OF_MONTH)));
+        start.set(Calendar.DAY_OF_MONTH, (int) Math.min(closingDay, start.getActualMaximum(Calendar.DAY_OF_MONTH)));
         start.set(Calendar.HOUR_OF_DAY, 0);
         start.set(Calendar.MINUTE, 0);
         start.set(Calendar.SECOND, 0);

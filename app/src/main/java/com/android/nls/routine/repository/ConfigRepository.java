@@ -47,37 +47,37 @@ public class ConfigRepository {
         }
     }
 
-    public String getDailyWaterGoal() {
+    public double getDailyWaterGoal() {
         return getConfigValue(Constants.COLUMN_NAME_DAILY_WATER, Constants.DEFAULT_DAILY_WATER);
     }
 
-    public String getDefaultBtn1Value() {
+    public double getDefaultBtn1Value() {
         return getConfigValue(Constants.COLUMN_NAME_BTN_1_ADD_WATER, Constants.DEFAULT_BTN_1_VALUE);
     }
 
-    public String getDefaultBtn2Value() {
+    public double getDefaultBtn2Value() {
         return getConfigValue(Constants.COLUMN_NAME_BTN_2_ADD_WATER, Constants.DEFAULT_BTN_2_VALUE);
     }
 
-    public String getDefaultBtn3Value() {
+    public double getDefaultBtn3Value() {
         return getConfigValue(Constants.COLUMN_NAME_BTN_3_ADD_WATER, Constants.DEFAULT_BTN_3_VALUE);
     }
 
-    public String getMonthlyLimitValue() {
+    public double getMonthlyLimitValue() {
         return getConfigValue(Constants.COLUMN_NAME_MONTHLY_LIMIT, Constants.DEFAULT_MONTHLY_LIMIT_VALUE);
     }
 
-    public String getCardStatementClosingDate() {
+    public double getCardStatementClosingDate() {
         return getConfigValue(Constants.COLUMN_NAME_CARD_STATEMENT_CLOSING, Constants.DEFAULT_CARD_STATEMENT_CLOSING);
     }
 
-    public String getConfigValue(String columnName, String defaultValue) {
+    public double getConfigValue(String columnName, double defaultValue) {
         String query = "SELECT " + columnName +
                 " FROM " + Constants.TABLE_NAME_USER_CONFIG;
 
         try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
             if (cursor.moveToFirst() && cursor.getString(0) != null) {
-                String value = cursor.getString(0);
+                double value = cursor.getDouble(0);
                 Log.d(TAG, "Config " + columnName + " loaded: " + value);
                 return value;
             }

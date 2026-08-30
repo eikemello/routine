@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.provider.Settings;
 import com.android.nls.routine.model.Expense;
+import com.android.nls.routine.model.ExpenseRecord;
 import com.android.nls.routine.repository.ConfigRepository;
 import com.android.nls.routine.repository.ExpenseRepository;
 import com.android.nls.routine.utils.Common;
@@ -37,21 +38,25 @@ public class HomeCardExpenseService {
         return enabledListeners != null && enabledListeners.contains(mContext.getPackageName());
     }
 
-    public String getTotalSpent() {
-        int closingDay = parseClosingDay(mConfigRepository.getCardStatementClosingDate());
+    public double getTotalSpent() {
+        double closingDay = parseClosingDay(mConfigRepository.getCardStatementClosingDate());
         long startOfCycle = Common.getStartOfExpenseCycleInMillis(closingDay);
         long now = System.currentTimeMillis();
-        double sum = mExpenseRepository.getTotalSpent(startOfCycle, now);
-        return String.valueOf((int) sum);
+        return mExpenseRepository.getTotalSpent(startOfCycle, now);
+    }
+
+    public ExpenseRecord getLastExpenseRecord(){
+        return mExpenseRepository.getLastExpenseRecord();
     }
 
     /**
      * Parses the saved closing day (e.g. "05" or "01/xx") into an int.
      * Falls back to 1 if the value is missing or invalid.
      */
-    private int parseClosingDay(String value) {
+    private int parseClosingDay(double value) {
+        String valueToString = String.valueOf(value);
         try {
-            int day = Integer.parseInt(value.split("/")[0].trim());
+            int day = Integer.parseInt(valueToString.split("/")[0].trim());
             if (day >= 1 && day <= 31) {
                 return day;
             }
@@ -60,7 +65,7 @@ public class HomeCardExpenseService {
         return 1;
     }
 
-    public String getMonthlyLimitValue() {
+    public double getMonthlyLimitValue() {
         return mConfigRepository.getMonthlyLimitValue();
     }
 
