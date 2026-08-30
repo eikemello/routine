@@ -3,7 +3,6 @@ package com.android.nls.routine.parser;
 import android.service.notification.StatusBarNotification;
 import android.text.TextUtils;
 import android.util.Log;
-
 import com.android.nls.routine.utils.Common;
 
 public class NotificationTextExtractor {
