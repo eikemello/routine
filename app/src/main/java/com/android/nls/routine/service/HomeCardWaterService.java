@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.TextView;
 import com.android.nls.routine.R;
+import com.android.nls.routine.model.WaterRecord;
 import com.android.nls.routine.repository.ConfigRepository;
 import com.android.nls.routine.repository.WaterRepository;
 import com.android.nls.routine.utils.Common;
@@ -34,31 +35,31 @@ public class HomeCardWaterService {
         }
 
         int dailyWaterSum = getDailyWaterSum();
-        String dailyWaterGoal = getDailyWaterGoal();
+        double dailyWaterGoal = getDailyWaterGoal();
 
         setDailyWaterDrank(txtDailyWaterDrank, dailyWaterSum, dailyWaterGoal);
         updateWaterProgress(progressWater, dailyWaterSum, dailyWaterGoal);
 
-        txtLastWaterAdded.setText(mContext.getString(R.string.last_added_at, currentTime));
+        txtLastWaterAdded.setText(mContext.getString(R.string.last_added_at, currentTime, String.valueOf(parsedAmount)));
         Log.d(TAG, "Added " + parsedAmount + "ml water. Total: " + dailyWaterSum + "ml");
     }
 
-    public void setDailyWaterDrank(TextView txtDailyWaterDrank, int dailyWaterSum, String dailyWaterGoal) {
-        if (dailyWaterSum >= Integer.parseInt(dailyWaterGoal)) {
-            txtDailyWaterDrank.setText(mContext.getString(R.string.water_default_value_init, String.valueOf(dailyWaterSum)));
+    public void setDailyWaterDrank(TextView txtDailyWaterDrank, double dailyWaterSum, double dailyWaterGoal) {
+        if (dailyWaterSum >= dailyWaterGoal) {
+            txtDailyWaterDrank.setText(mContext.getString(R.string.water_default_value_init, dailyWaterSum));
             txtDailyWaterDrank.setTextColor(mContext.getColor(R.color.green));
         } else {
-            txtDailyWaterDrank.setText(mContext.getString(R.string.water_default_value_init, String.valueOf(dailyWaterSum)));
+            txtDailyWaterDrank.setText(mContext.getString(R.string.water_default_value_init, dailyWaterSum));
         }
     }
 
-    public void updateWaterProgress(LinearProgressIndicator progressWater, int totalSum, String dailyWaterGoal) {
-        long percentage = Math.min(100, Math.round((totalSum * 100.0) / Integer.parseInt(dailyWaterGoal)));
+    public void updateWaterProgress(LinearProgressIndicator progressWater, int totalSum, double dailyWaterGoal) {
+        long percentage = Math.min(100, Math.round((totalSum * 100.0) / dailyWaterGoal));
         progressWater.setProgress((int) percentage);
     }
 
-    public void updateExpenseProgress(LinearProgressIndicator progressExpense, int totalSum, String dailyWaterGoal) {
-        long percentage = Math.min(100, Math.round((totalSum * 100.0) / Integer.parseInt(dailyWaterGoal)));
+    public void updateExpenseProgress(LinearProgressIndicator progressExpense, double totalSum, double dailyWaterGoal) {
+        long percentage = Math.min(100, Math.round((totalSum * 100.0) / dailyWaterGoal));
         progressExpense.setProgress((int) percentage);
     }
 
@@ -68,27 +69,23 @@ public class HomeCardWaterService {
         return mWaterRepository.getWaterSum(startOfDay, endOfDay);
     }
 
-    public String getLastWaterAddedTime() {
-        long lastTimestamp = mWaterRepository.getLastWaterAddedTimestamp();
-        if (lastTimestamp == 0) {
-            return "";
-        }
-        return Common.getHourFromTimestamp(String.valueOf(lastTimestamp));
+    public WaterRecord getLastWaterAddedRecord() {
+        return mWaterRepository.getLastWaterAddedRecord();
     }
 
-    public String getDefaultValueBtn1() {
+    public double getDefaultValueBtn1() {
         return mConfigRepository.getDefaultBtn1Value();
     }
 
-    public String getDefaultValueBtn2() {
+    public double getDefaultValueBtn2() {
         return mConfigRepository.getDefaultBtn2Value();
     }
 
-    public String getDefaultValueBtn3() {
+    public double getDefaultValueBtn3() {
         return mConfigRepository.getDefaultBtn3Value();
     }
 
-    public String getDailyWaterGoal() {
+    public double getDailyWaterGoal() {
         return mConfigRepository.getDailyWaterGoal();
     }
 

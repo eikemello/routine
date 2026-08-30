@@ -56,22 +56,24 @@ public class WaterRepository {
     }
 
     /**
-     * Returns the timestamp of the last water record, or 0 if none exists.
+     * Returns the last water record (amount and timestamp), or null if none exists.
      */
-    public long getLastWaterAddedTimestamp() {
-        String query = "SELECT " + Constants.COLUMN_NAME_TIMESTAMP +
+    public WaterRecord getLastWaterAddedRecord() {
+        String query = "SELECT " + Constants.COLUMN_NAME_TIMESTAMP + ", " + Constants.COLUMN_NAME_WATER_DRANK +
                 " FROM " + Constants.TABLE_NAME_WATER +
                 " ORDER BY " + BaseColumns._ID + " DESC LIMIT 1";
 
         try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
-            if (cursor.moveToFirst() && cursor.getString(0) != null) {
-                return cursor.getLong(0);
+            if (cursor.moveToFirst() && !cursor.isNull(0)) {
+                long timestamp = cursor.getLong(0);
+                int amount = cursor.getInt(1);
+                return new WaterRecord(amount, timestamp);
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error getting last drank time: " + e.getMessage());
+            Log.e(TAG, "Error getting last drank record: " + e.getMessage());
         }
 
-        return 0;
+        return null;
     }
 
     /**

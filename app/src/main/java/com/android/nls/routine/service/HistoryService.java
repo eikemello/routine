@@ -84,7 +84,7 @@ public class HistoryService {
         long endOfDay = Common.getEndOfDayInMillis(timestamp);
 
         int waterSum = mWaterRepository.getWaterSum(startOfDay, endOfDay);
-        int dailyGoal = Integer.parseInt(mConfigRepository.getDailyWaterGoal());
+        double dailyGoal = mConfigRepository.getDailyWaterGoal();
         boolean waterAchieved = waterSum >= dailyGoal;
 
         int[] mealCounts = mMealRepository.getMealCounts(startOfDay, endOfDay);
@@ -139,7 +139,7 @@ public class HistoryService {
     }
 
     private int countWaterDaysAchieved(long startOfWeek, long endOfWeek) {
-        int dailyGoal = Integer.parseInt(mConfigRepository.getDailyWaterGoal());
+        double dailyGoal = mConfigRepository.getDailyWaterGoal();
         int daysAchieved = 0;
         Calendar calendar = new GregorianCalendar();
         calendar.setTimeInMillis(startOfWeek);

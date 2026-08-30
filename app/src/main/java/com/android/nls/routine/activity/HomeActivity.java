@@ -4,15 +4,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowInsetsControllerCompat;
 import com.android.nls.routine.R;
+import com.android.nls.routine.model.ExpenseRecord;
 import com.android.nls.routine.model.Tracker;
 import com.android.nls.routine.model.TrackerRecord;
 import com.android.nls.routine.model.TrackerType;
+import com.android.nls.routine.model.WaterRecord;
 import com.android.nls.routine.service.HomeCardExpenseService;
 import com.android.nls.routine.service.HomeCardMealService;
 import com.android.nls.routine.service.HomeCardWaterService;
@@ -111,11 +112,17 @@ public class HomeActivity extends AppCompatActivity {
         MaterialButton btnAddWater2 = card.findViewById(R.id.btnAddWater2);
         MaterialButton btnAddWater3 = card.findViewById(R.id.btnAddWater3);
 
-        String dailyWaterGoal = mHomeCardWaterService.getDailyWaterGoal();
+        double dailyWaterGoal = mHomeCardWaterService.getDailyWaterGoal();
         int dailyWaterSum = mHomeCardWaterService.getDailyWaterSum();
 
         txtDailyWater.setText(this.getString(R.string.daily_water_ml, dailyWaterGoal));
-        txtLastWaterAddedTime.setText(this.getString(R.string.last_added_at, mHomeCardWaterService.getLastWaterAddedTime()));
+
+        WaterRecord lastWaterRecord = mHomeCardWaterService.getLastWaterAddedRecord();
+        if (lastWaterRecord != null) {
+            String lastWaterHour = Common.getHourFromTimestamp(String.valueOf(lastWaterRecord.timestamp()));
+            txtLastWaterAddedTime.setText(this.getString(R.string.last_added_at, lastWaterHour, String.valueOf(lastWaterRecord.amount())));
+        }
+
         btnAddWater1.setText(this.getString(R.string.water_default_value_50, mHomeCardWaterService.getDefaultValueBtn1()));
         btnAddWater2.setText(this.getString(R.string.water_default_value_100, mHomeCardWaterService.getDefaultValueBtn2()));
         btnAddWater3.setText(this.getString(R.string.water_default_value_250, mHomeCardWaterService.getDefaultValueBtn3()));
@@ -145,34 +152,24 @@ public class HomeActivity extends AppCompatActivity {
 
     private View createExpenseCard(LayoutInflater inflater) {
         View card = inflater.inflate(R.layout.card_expense, mTrackerCardsContainer, false);
-        String monthlyLimit = mHomeCardExpenseService.getMonthlyLimitValue();
-        String totalSpent = mHomeCardExpenseService.getTotalSpent();
+        double monthlyLimit = mHomeCardExpenseService.getMonthlyLimitValue();
+        double totalSpent = mHomeCardExpenseService.getTotalSpent();
+        ExpenseRecord expenseRecord = mHomeCardExpenseService.getLastExpenseRecord();
 
-        RadioButton rbNotifyPermissions = card.findViewById(R.id.rbNotifyPermission);
         TextView txtTotalSpent = card.findViewById(R.id.txtTotalSpent);
         TextView txtTotalValue = card.findViewById(R.id.txtTotalValue);
+        TextView txtLastExpenseRecord = card.findViewById(R.id.txtLastExpenseRecord);
         LinearProgressIndicator progressExpense = card.findViewById(R.id.progressExpense);
 
         txtTotalValue.setText(this.getString(R.string.total_expense_value_init, monthlyLimit));
         txtTotalSpent.setText(this.getString(R.string.total_expense_value_init, totalSpent));
+        txtLastExpenseRecord.setText(this.getString(R.string.last_expense, expenseRecord.amount(), expenseRecord.bank()));
 
-        if (Integer.parseInt(totalSpent) > Integer.parseInt(monthlyLimit)) {
+        if (totalSpent > monthlyLimit) {
             txtTotalSpent.setTextColor(this.getColor(R.color.red));
         }
 
-        mHomeCardWaterService.updateExpenseProgress(progressExpense, Integer.parseInt(totalSpent), monthlyLimit);
-
-        if (mHomeCardExpenseService.isNotifyAccessEnabled()) {
-            rbNotifyPermissions.setChecked(true);
-        } else {
-            mHomeCardExpenseService.setNotifyAccess();
-            rbNotifyPermissions.setChecked(false);
-        }
-
-        rbNotifyPermissions.setOnClickListener(view -> {
-            mHomeCardExpenseService.setNotifyAccess();
-            rbNotifyPermissions.setChecked(false);
-        });
+        mHomeCardWaterService.updateExpenseProgress(progressExpense, totalSpent, monthlyLimit);
 
         return card;
     }

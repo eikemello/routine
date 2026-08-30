@@ -29,57 +29,56 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_toStartOf="@+id/rbNotifyPermission"
                 android:layout_toEndOf="@+id/imgCreditCard">
 
                 <TextView
-                    android:id="@+id/textView"
+                    android:id="@+id/txtExpenses"
                     style="@style/titleTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/expenses" />
 
                 <TextView
+                    android:id="@+id/txtLastExpenseRecord"
+                    style="@style/subTitleTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txtExpenses"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/last_expense" />
+
+                <TextView
                     android:id="@+id/txtTotalSpent"
                     style="@style/textViewCardInfo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/textView"
+                    android:layout_toStartOf="@+id/txtTrace"
+                    android:layout_marginEnd="5dp"
                     android:text="@string/total_expense_value_init"
                     android:textAlignment="textEnd" />
 
                 <TextView
-                    android:id="@+id/txtTotalSpent2"
+                    android:id="@+id/txtTrace"
                     style="@style/textViewCardInfo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/textView"
-                    android:layout_marginStart="5dp"
-                    android:layout_toEndOf="@+id/txtTotalSpent"
+                    android:layout_toStartOf="@+id/txtTotalValue"
+                    android:layout_marginEnd="5dp"
                     android:text="@string/trace"
                     android:textAlignment="textEnd" />
 
                 <TextView
                     android:id="@+id/txtTotalValue"
                     style="@style/textViewCardInfo"
-                    android:textColor="#3599FF"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/textView"
-                    android:layout_marginStart="5dp"
-                    android:layout_toEndOf="@+id/txtTotalSpent2"
+                    android:layout_alignParentEnd="true"
                     android:text="@string/total_expense_value_init"
-                    android:textAlignment="textEnd" />
+                    android:textAlignment="textEnd"
+                    android:textColor="#3599FF" />
             </RelativeLayout>
 
-            <RadioButton
-                android:id="@+id/rbNotifyPermission"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_alignParentEnd="true"
-                android:layout_gravity="end"
-                android:layout_marginEnd="5dp"
-                android:text="@string/notify" />
+
         </RelativeLayout>
 
         <FrameLayout

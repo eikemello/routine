@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.BaseColumns;
 import android.util.Log;
 import com.android.nls.routine.model.Expense;
 import com.android.nls.routine.model.ExpenseRecord;
@@ -101,6 +102,27 @@ public class ExpenseRepository {
         }
 
         return false;
+    }
+
+    /**
+     * Returns the last expense record (value and bank), or null if none exists.
+     */
+    public ExpenseRecord getLastExpenseRecord() {
+        String query = "SELECT " + Constants.COLUMN_NAME_EXPENSE_VALUE + ", " + Constants.COLUMN_NAME_BANK_NAME +
+                " FROM " + Constants.TABLE_NAME_EXPENSE_TEST +
+                " ORDER BY " + BaseColumns._ID + " DESC LIMIT 1";
+
+        try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
+            if (cursor.moveToFirst() && !cursor.isNull(0)) {
+                double amount = cursor.getDouble(0);
+                String bank = cursor.getString(1);
+                return new ExpenseRecord(amount, null, bank, 0);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting last drank record: " + e.getMessage());
+        }
+
+        return null;
     }
 
     public void closeDb() {

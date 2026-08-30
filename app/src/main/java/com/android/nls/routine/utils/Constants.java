@@ -10,7 +10,7 @@ public class Constants {
     public static final String WATER_INVALID_NUMBER = "Please enter a valid number!";
     public static final String MEAL_INVALID_TEXT = "Please enter a valid text!";
     public static final List<String> GREETINGS = Arrays.asList("Good morning", "Good afternoon", "Good night");
-    public static final String DEFAULT_DAILY_WATER = "2500";
+    public static final double DEFAULT_DAILY_WATER = 2500;
 
     //ConfigActivity
     public static final String DAILY_WATER = "DAILY_WATER";
@@ -19,11 +19,11 @@ public class Constants {
     public static final String BTN_DEFAULT_3 = "BTN_DEFAULT_3";
     public static final String MONTHLY_LIMIT = "MONTHLY_LIMIT";
     public static final String CARD_STATEMENT_CLOSING = "CARD_STATEMENT_CLOSING";
-    public static final String DEFAULT_BTN_1_VALUE = "50";
-    public static final String DEFAULT_BTN_2_VALUE = "100";
-    public static final String DEFAULT_BTN_3_VALUE = "250";
-    public static final String DEFAULT_MONTHLY_LIMIT_VALUE = "1000";
-    public static final String DEFAULT_CARD_STATEMENT_CLOSING = "01/xx";
+    public static final double DEFAULT_BTN_1_VALUE = 50;
+    public static final double DEFAULT_BTN_2_VALUE = 100;
+    public static final double DEFAULT_BTN_3_VALUE = 250;
+    public static final double DEFAULT_MONTHLY_LIMIT_VALUE = 1000;
+    public static final double DEFAULT_CARD_STATEMENT_CLOSING = 1;
 
     //SQLite
     public static final String TABLE_NAME_WATER = "WATER";
