@@ -10,7 +10,7 @@
         android:orientation="vertical"
         android:padding="10dp">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
@@ -24,59 +24,63 @@
                 android:contentDescription="@string/water"
                 android:src="@drawable/ic_water" />
 
-            <LinearLayout
-                android:layout_width="0dp"
+            <RelativeLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp">
+                android:layout_toEndOf="@+id/imgViewWater"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp">
 
                 <TextView
+                    android:id="@+id/txtWaterTitle"
                     style="@style/titleTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/water" />
 
                 <TextView
+                    android:id="@+id/txtDailyWaterDrank"
+                    style="@style/textViewCardInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toStartOf="@+id/textView"
+                    android:layout_marginEnd="5dp"
+                    android:includeFontPadding="false"
+                    android:text="@string/water_default_value_init" />
+
+                <TextView
+                    android:id="@+id/textView"
+                    style="@style/textViewCardInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_toStartOf="@+id/txtDailyWater"
+                    android:includeFontPadding="false"
+                    android:text="@string/trace"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/txtDailyWater"
+                    style="@style/textViewCardInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginBottom="5dp"
+                    android:includeFontPadding="false"
+                    android:text="@string/daily_water_ml"
+                    android:textAlignment="textEnd" />
+                <TextView
                     android:id="@+id/txtLastWaterAddedTime"
                     style="@style/subTitleTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/txtWaterTitle"
                     android:layout_marginBottom="5dp"
                     android:text="@string/last_added_at" />
-            </LinearLayout>
+            </RelativeLayout>
 
-            <TextView
-                android:id="@+id/txtDailyWaterDrank"
-                style="@style/textViewCardInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:includeFontPadding="false"
-                android:text="@string/water_default_value_init"
-                android:textAlignment="textEnd" />
-
-            <TextView
-                style="@style/textViewCardInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginBottom="5dp"
-                android:layout_marginEnd="5dp"
-                android:includeFontPadding="false"
-                android:text="@string/trace"
-                android:textAlignment="textEnd" />
-
-            <TextView
-                android:id="@+id/txtDailyWater"
-                style="@style/textViewCardInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:includeFontPadding="false"
-                android:text="@string/daily_water_ml"
-                android:textAlignment="textEnd" />
-        </LinearLayout>
+        </RelativeLayout>
 
         <FrameLayout
             android:layout_width="wrap_content"

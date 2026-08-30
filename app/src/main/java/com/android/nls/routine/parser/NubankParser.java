@@ -21,7 +21,6 @@ public class NubankParser implements Parser {
         Matcher matcher = AMOUNT_PATTERN.matcher(text);
         if (!matcher.find()) {
             return  new Expense(0, sbn.getOpPkg() + ", !matcher", BANK_NAME, sbn.getPostTime());
-
         }
 
         double amount = parseAmount(Objects.requireNonNull(matcher.group(1)));

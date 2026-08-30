@@ -18,12 +18,14 @@ public class ConfigActivity extends AppCompatActivity {
     private TextView txtDefaultBtn3;
     private TextView txtMonthlyLimit;
     private TextView txtCardStatementClosingDate;
+    private TextView txtNotifyAccess;
     private LinearLayout btnDailyWater;
     private LinearLayout btnDefaultValue1;
     private LinearLayout btnDefaultValue2;
     private LinearLayout btnDefaultValue3;
     private LinearLayout btnMonthlyLimit;
     private LinearLayout btnCardStatementClosing;
+    private LinearLayout btnAllowNotifyAccess;
     private ConfigService mConfigService;
 
     @Override
@@ -54,12 +56,14 @@ public class ConfigActivity extends AppCompatActivity {
         txtDefaultBtn3 = findViewById(R.id.txtDefaultBtn3);
         txtMonthlyLimit = findViewById(R.id.txtMonthlyLimit);
         txtCardStatementClosingDate = findViewById(R.id.txtCardStatementClosingDate);
+        txtNotifyAccess = findViewById(R.id.txtNotifyAccess);
         btnDailyWater = findViewById(R.id.btnDailyWater);
         btnDefaultValue1 = findViewById(R.id.btnDefaultValue1);
         btnDefaultValue2 = findViewById(R.id.btnDefaultValue2);
         btnDefaultValue3 = findViewById(R.id.btnDefaultValue3);
         btnMonthlyLimit = findViewById(R.id.btnMonthlyLimit);
         btnCardStatementClosing = findViewById(R.id.btnCardStatementClosing);
+        btnAllowNotifyAccess = findViewById(R.id.btnAllowNotifyAccess);
     }
 
     private void setupButtonListeners() {
@@ -69,6 +73,10 @@ public class ConfigActivity extends AppCompatActivity {
         btnDefaultValue3.setOnClickListener(v -> mConfigService.showAlertDialog(Constants.BTN_DEFAULT_3, txtDefaultBtn3));
         btnMonthlyLimit.setOnClickListener(v -> mConfigService.showAlertDialog(Constants.MONTHLY_LIMIT, txtMonthlyLimit));
         btnCardStatementClosing.setOnClickListener(v -> mConfigService.showAlertDialog(Constants.CARD_STATEMENT_CLOSING, txtCardStatementClosingDate));
+        btnAllowNotifyAccess.setOnClickListener(v -> {
+            mConfigService.setNotifyAccess();
+            txtNotifyAccess.setText(this.getResources().getString(R.string.no));
+        });
     }
 
     private void initFields() {
@@ -78,6 +86,8 @@ public class ConfigActivity extends AppCompatActivity {
         txtDefaultBtn3.setText(this.getString(R.string.water_default_value_init, mConfigService.getDefaultBtn3Value()));
         txtMonthlyLimit.setText(this.getString(R.string.total_expense_value_init, mConfigService.getMonthlyLimitValue()));
         txtCardStatementClosingDate.setText(this.getString(R.string.card_statement_closing_date_init_value, mConfigService.getCardStatementClosingDate()));
+        txtNotifyAccess.setText(mConfigService.isNotifyAccessEnabled() ? this.getResources().getString(R.string.yes)
+                : this.getResources().getString(R.string.no));
     }
 
     @Override

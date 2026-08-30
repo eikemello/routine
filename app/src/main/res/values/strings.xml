@@ -2,15 +2,15 @@
     <string name="app_name">Routine</string>
     <string name="home">Home</string>
     <string name="water">Water</string>
-    <string name="daily_water_ml">%1$s ml</string>
+    <string name="daily_water_ml">%1$.0f ml</string>
     <string name="custom_add_or_minus">custom add or minus</string>
-    <string name="water_default_value_init">%1$s</string>
-    <string name="water_default_value_50">+ %1$s</string>
-    <string name="water_default_value_100">+ %1$s</string>
-    <string name="water_default_value_250">+ %1$s</string>
+    <string name="water_default_value_init">%1$.0f</string>
+    <string name="water_default_value_50">+ %1$.0f</string>
+    <string name="water_default_value_100">+ %1$.0f</string>
+    <string name="water_default_value_250">+ %1$.0f</string>
     <string name="meal">Meal</string>
     <string name="how_was_your_meal">How was your meal?</string>
-    <string name="last_added_at">Last added at %1$s</string>
+    <string name="last_added_at">Last added at %1$s with %2$sml</string>
     <string name="correct_meal">Correct</string>
     <string name="warning_meal">Warning</string>
     <string name="wrong_meal">Wrong</string>
@@ -19,7 +19,7 @@
     <string name="config">Config</string>
     <string name="spent">Spent</string>
     <string name="limit">Limit</string>
-    <string name="total_expense_value_init">$ %1$s,00</string>
+    <string name="total_expense_value_init">%1$.2f</string>
     <string name="daily_water">Daily water</string>
     <string name="daily_goal">Daily goal</string>
     <string name="default_buttons">Default buttons</string>
@@ -87,5 +87,9 @@
     <string name="trace">-</string>
     <string name="notify">Notify</string>
     <string name="card_statement_closing">Card statement closing</string>
-    <string name="card_statement_closing_date_init_value">%1$s</string>
+    <string name="card_statement_closing_date_init_value">%1$.0f</string>
+    <string name="last_expense">Last expense was %1$.2f from %2$s bank</string>
+    <string name="notify_access_allowed">Allowed notify access</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
 </resources>

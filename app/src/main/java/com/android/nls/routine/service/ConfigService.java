@@ -1,6 +1,8 @@
 package com.android.nls.routine.service;
 
 import android.content.Context;
+import android.content.Intent;
+import android.provider.Settings;
 import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -120,28 +122,41 @@ public class ConfigService {
         textView.setText(mContext.getString(stringResId, value));
     }
 
-    public String getDailyWaterGoal() {
+    public double getDailyWaterGoal() {
         return mConfigRepository.getDailyWaterGoal();
     }
 
-    public String getDefaultBtn1Value() {
+    public double getDefaultBtn1Value() {
         return mConfigRepository.getDefaultBtn1Value();
     }
 
-    public String getDefaultBtn2Value() {
+    public double getDefaultBtn2Value() {
         return mConfigRepository.getDefaultBtn2Value();
     }
 
-    public String getDefaultBtn3Value() {
+    public double getDefaultBtn3Value() {
         return mConfigRepository.getDefaultBtn3Value();
     }
 
-    public String getMonthlyLimitValue() {
+    public double getMonthlyLimitValue() {
         return mConfigRepository.getMonthlyLimitValue();
     }
 
-    public String getCardStatementClosingDate() {
+    public double getCardStatementClosingDate() {
         return mConfigRepository.getCardStatementClosingDate();
+    }
+
+    public void setNotifyAccess() {
+        Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+        mContext.startActivity(intent);
+    }
+
+    public boolean isNotifyAccessEnabled() {
+        String enabledListeners = Settings.Secure.getString(
+                mContext.getContentResolver(),
+                "enabled_notification_listeners"
+        );
+        return enabledListeners != null && enabledListeners.contains(mContext.getPackageName());
     }
 
     private void setFieldError(TextInputLayout txtInputError) {
