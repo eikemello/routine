@@ -111,6 +111,16 @@ public class Common {
         return dateFormat.format(new Date(timestamp));
     }
 
+    public static String getAbbreviatedMonthFromTimestamp(long timestamp) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM", Locale.ENGLISH);
+        return dateFormat.format(new Date(timestamp));
+    }
+
+    public static String getAbbreviatedMonthYearFromTimestamp(long timestamp) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM yyyy", Locale.ENGLISH);
+        return dateFormat.format(new Date(timestamp));
+    }
+
     public static String getHourFromTimestamp(String timestamp) {
         try {
             long timestampMillis = Long.parseLong(timestamp);

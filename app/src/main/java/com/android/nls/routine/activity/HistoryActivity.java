@@ -163,7 +163,8 @@ public class HistoryActivity extends AppCompatActivity {
         if (startDate.equals(endDate)) {
             txtMonthYear.setText(startDate);
         } else {
-            txtMonthYear.setText(startDate + " - " + endDate);
+            txtMonthYear.setText(Common.getAbbreviatedMonthFromTimestamp(mCurrentWeek.getTimeInMillis()) +
+                    " - " + Common.getAbbreviatedMonthYearFromTimestamp(weekEnd.getTimeInMillis()));
         }
 
         btnToggleView.setText(getString(R.string.month_view));
