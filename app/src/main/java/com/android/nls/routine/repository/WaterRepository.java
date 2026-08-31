@@ -11,7 +11,9 @@ import com.android.nls.routine.service.database.DatabaseHelper;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WaterRepository {
     private static final String TAG = Common.generateTag(WaterRepository.class);
@@ -100,6 +102,32 @@ public class WaterRepository {
         }
 
         return records;
+    }
+
+    /**
+     * Returns the total water amount per day within the given time range.
+     * The map keys are the start-of-day timestamps (local timezone).
+     */
+    public Map<Long, Integer> getDailyWaterSums(long start, long end) {
+        Map<Long, Integer> dailySums = new HashMap<>();
+
+        String query = "SELECT " + Constants.COLUMN_NAME_TIMESTAMP + ", " + Constants.COLUMN_NAME_WATER_DRANK +
+                " FROM " + Constants.TABLE_NAME_WATER +
+                " WHERE " + Constants.COLUMN_NAME_TIMESTAMP + " >= ? AND " +
+                Constants.COLUMN_NAME_TIMESTAMP + " <= ?";
+
+        try (Cursor cursor = mSqliteDatabase.rawQuery(query, new String[]{String.valueOf(start), String.valueOf(end)})) {
+            while (cursor.moveToNext()) {
+                long timestamp = cursor.getLong(0);
+                int amount = cursor.getInt(1);
+                long dayStart = Common.getStartOfDayInMillis(timestamp);
+                dailySums.merge(dayStart, amount, Integer::sum);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting daily water sums: " + e.getMessage());
+        }
+
+        return dailySums;
     }
 
     /**

@@ -18,6 +18,7 @@ import com.android.nls.routine.utils.Common;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 
 public class HistoryService {
     private final WaterRepository mWaterRepository;
@@ -161,16 +162,17 @@ public class HistoryService {
 
     private int countWaterDaysAchieved(long startOfWeek, long endOfWeek) {
         double dailyGoal = mConfigRepository.getDailyWaterGoal();
+        Map<Long, Integer> dailySums = mWaterRepository.getDailyWaterSums(startOfWeek, endOfWeek);
+
         int daysAchieved = 0;
         Calendar calendar = new GregorianCalendar();
         calendar.setTimeInMillis(startOfWeek);
 
         while (calendar.getTimeInMillis() <= endOfWeek) {
             long dayStart = calendar.getTimeInMillis();
-            long dayEnd = Common.getEndOfDayInMillis(dayStart);
-            int daySum = mWaterRepository.getWaterSum(dayStart, dayEnd);
+            Integer daySum = dailySums.get(dayStart);
 
-            if (daySum >= dailyGoal) {
+            if (daySum != null && daySum >= dailyGoal) {
                 daysAchieved++;
             }
             calendar.add(Calendar.DAY_OF_MONTH, 1);
