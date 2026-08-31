@@ -19,7 +19,8 @@ public class WaterRepository {
     private final SQLiteDatabase mSqliteDatabase;
 
     public WaterRepository(Context context) {
-        mDatabaseHelper = new DatabaseHelper(context);
+        mDatabaseHelper = DatabaseHelper.getInstance(context);
+        mDatabaseHelper.acquire();
         mSqliteDatabase = mDatabaseHelper.getWritableDatabase();
     }
 
@@ -119,6 +120,6 @@ public class WaterRepository {
     }
 
     public void closeDb() {
-        mDatabaseHelper.close();
+        mDatabaseHelper.release();
     }
 }

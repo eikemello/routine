@@ -21,7 +21,8 @@ public class TrackerRepository {
     private final SQLiteDatabase mSqliteDatabase;
 
     public TrackerRepository(Context context) {
-        mDatabaseHelper = new DatabaseHelper(context);
+        mDatabaseHelper = DatabaseHelper.getInstance(context);
+        mDatabaseHelper.acquire();
         mSqliteDatabase = mDatabaseHelper.getWritableDatabase();
     }
 
@@ -258,6 +259,6 @@ public class TrackerRepository {
     }
 
     public void closeDb() {
-        mDatabaseHelper.close();
+        mDatabaseHelper.release();
     }
 }

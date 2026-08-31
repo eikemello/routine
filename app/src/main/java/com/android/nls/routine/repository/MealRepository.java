@@ -18,7 +18,8 @@ public class MealRepository {
     private final SQLiteDatabase mSqliteDatabase;
 
     public MealRepository(Context context) {
-        mDatabaseHelper = new DatabaseHelper(context);
+        mDatabaseHelper = DatabaseHelper.getInstance(context);
+        mDatabaseHelper.acquire();
         mSqliteDatabase = mDatabaseHelper.getWritableDatabase();
     }
 
@@ -113,6 +114,6 @@ public class MealRepository {
     }
 
     public void closeDb() {
-        mDatabaseHelper.close();
+        mDatabaseHelper.release();
     }
 }

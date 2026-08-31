@@ -12,9 +12,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = Common.generateTag(DatabaseHelper.class);
     private static final int DATABASE_VERSION = 3;
     private static final String DATABASE_NAME = "Routine";
+    private static DatabaseHelper sInstance;
+    private static int sReferenceCount = 0;
 
-    public DatabaseHelper(Context context) {
+    /**
+     * Returns the shared DatabaseHelper instance, creating it on first use.
+     * Callers must call {@link #acquire()} when they start using the instance
+     * and {@link #release()} when they are done, so the underlying database
+     * is only closed when the last holder releases it.
+     */
+    public static synchronized DatabaseHelper getInstance(Context context) {
+        if (sInstance == null) {
+            sInstance = new DatabaseHelper(context.getApplicationContext());
+        }
+        return sInstance;
+    }
+
+    private DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    public synchronized void acquire() {
+        sReferenceCount++;
+        Log.d(TAG, "DatabaseHelper acquired. References: " + sReferenceCount);
+    }
+
+    public synchronized void release() {
+        sReferenceCount--;
+        if (sReferenceCount <= 0) {
+            sReferenceCount = 0;
+            Log.d(TAG, "DatabaseHelper released. Closing database.");
+            close();
+            sInstance = null;
+        } else {
+            Log.d(TAG, "DatabaseHelper released. References: " + sReferenceCount);
+        }
     }
 
     public void onCreate(SQLiteDatabase db) {

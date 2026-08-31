@@ -20,7 +20,8 @@ public class ExpenseRepository {
     private final SQLiteDatabase mSqliteDatabase;
 
     public ExpenseRepository(Context context) {
-        mDatabaseHelper = new DatabaseHelper(context);
+        mDatabaseHelper = DatabaseHelper.getInstance(context);
+        mDatabaseHelper.acquire();
         mSqliteDatabase = mDatabaseHelper.getWritableDatabase();
     }
 
@@ -126,6 +127,6 @@ public class ExpenseRepository {
     }
 
     public void closeDb() {
-        mDatabaseHelper.close();
+        mDatabaseHelper.release();
     }
 }
