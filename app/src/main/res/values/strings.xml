@@ -39,6 +39,7 @@
     <string name="history">History</string>
     <string name="back">Back</string>
     <string name="weekly_summary">Weekly Summary</string>
+    <string name="monthly_summary">Monthly Summary</string>
     <string name="weekly_water_default">Water: -</string>
     <string name="weekly_spent_default">Spent: -</string>
     <string name="weekly_meals_default">Meals: -</string>
@@ -92,4 +93,6 @@
     <string name="notify_access_allowed">Allowed notify access</string>
     <string name="yes">yes</string>
     <string name="no">no</string>
+    <string name="other">Other</string>
+    <string name="add_an_observation">you can add an observation</string>
 </resources>
