@@ -31,6 +31,7 @@ public class HistoryActivity extends AppCompatActivity {
     private HistoryService mHistoryService;
 
     // Weekly summary views
+    private TextView txtSummaryTitle;
     private TextView txtWeeklyWater;
     private TextView txtWeeklySpent;
     private TextView txtWeeklyMeals;
@@ -77,13 +78,14 @@ public class HistoryActivity extends AppCompatActivity {
 
         startUIComponents();
         setupButtonListeners();
-        loadWeeklySummary();
+        loadSummary();
         renderCalendar();
         selectToday();
         BottomNavHelper.setup(this, R.id.nav_history);
     }
 
     private void startUIComponents() {
+        txtSummaryTitle = findViewById(R.id.txtSummaryTitle);
         txtWeeklyWater = findViewById(R.id.txtWeeklyWater);
         txtWeeklySpent = findViewById(R.id.txtWeeklySpent);
         txtWeeklyMeals = findViewById(R.id.txtWeeklyMeals);
@@ -118,6 +120,7 @@ public class HistoryActivity extends AppCompatActivity {
                 mCurrentMonth.add(Calendar.MONTH, -1);
             }
             renderCalendar();
+            loadSummary();
         });
 
         btnNextMonth.setOnClickListener(v -> {
@@ -127,16 +130,26 @@ public class HistoryActivity extends AppCompatActivity {
                 mCurrentMonth.add(Calendar.MONTH, 1);
             }
             renderCalendar();
+            loadSummary();
         });
 
         btnToggleView.setOnClickListener(v -> {
             mIsWeekView = !mIsWeekView;
             renderCalendar();
+            loadSummary();
         });
     }
 
-    private void loadWeeklySummary() {
-        WeeklySummary summary = mHistoryService.getWeeklySummary();
+    private void loadSummary() {
+        WeeklySummary summary;
+        if (mIsWeekView) {
+            txtSummaryTitle.setText(getString(R.string.weekly_summary));
+            summary = mHistoryService.getWeeklySummary();
+        } else {
+
+            txtSummaryTitle.setText(getString(R.string.monthly_summary));
+            summary = mHistoryService.getMonthlySummary(mCurrentMonth);
+        }
 
         txtWeeklyWater.setText(getString(R.string.weekly_water_achieved, summary.waterDaysAchieved(), summary.totalDays()));
         txtWeeklySpent.setText(getString(R.string.weekly_spent, summary.totalSpent()));
@@ -163,7 +176,8 @@ public class HistoryActivity extends AppCompatActivity {
         if (startDate.equals(endDate)) {
             txtMonthYear.setText(startDate);
         } else {
-            txtMonthYear.setText(startDate + " - " + endDate);
+            txtMonthYear.setText(Common.getAbbreviatedMonthFromTimestamp(mCurrentWeek.getTimeInMillis()) +
+                    " - " + Common.getAbbreviatedMonthYearFromTimestamp(weekEnd.getTimeInMillis()));
         }
 
         btnToggleView.setText(getString(R.string.month_view));

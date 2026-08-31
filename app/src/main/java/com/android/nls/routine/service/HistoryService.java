@@ -53,6 +53,27 @@ public class HistoryService {
         );
     }
 
+    public WeeklySummary getMonthlySummary(Calendar month) {
+        long startOfMonth = Common.getStartOfDayInMillis(month.getTimeInMillis());
+        Calendar endCal = (Calendar) month.clone();
+        endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+        long endOfMonth = Common.getEndOfDayInMillis(endCal.getTimeInMillis());
+
+        int waterDaysAchieved = countWaterDaysAchieved(startOfMonth, endOfMonth);
+        int totalDays = getDaysElapsedInMonth(month);
+        double totalSpent = mExpenseRepository.getTotalSpent(startOfMonth, endOfMonth);
+        int[] mealCounts = mMealRepository.getMealCounts(startOfMonth, endOfMonth);
+
+        return new WeeklySummary(
+                waterDaysAchieved,
+                totalDays,
+                totalSpent,
+                mealCounts[0],
+                mealCounts[1],
+                mealCounts[2]
+        );
+    }
+
     public DayDetails getDayDetails(long timestamp) {
         long startOfDay = Common.getStartOfDayInMillis(timestamp);
         long endOfDay = Common.getEndOfDayInMillis(timestamp);
@@ -170,6 +191,34 @@ public class HistoryService {
         int days = 0;
 
         while (startCal.getTimeInMillis() <= nowCal.getTimeInMillis()) {
+            days++;
+            startCal.add(Calendar.DAY_OF_MONTH, 1);
+        }
+
+        return days;
+    }
+
+    private int getDaysElapsedInMonth(Calendar month) {
+        Calendar startCal = (Calendar) month.clone();
+        startCal.set(Calendar.DAY_OF_MONTH, 1);
+        startCal.set(Calendar.HOUR_OF_DAY, 0);
+        startCal.set(Calendar.MINUTE, 0);
+        startCal.set(Calendar.SECOND, 0);
+        startCal.set(Calendar.MILLISECOND, 0);
+
+        long now = System.currentTimeMillis();
+        Calendar nowCal = new GregorianCalendar();
+        nowCal.setTimeInMillis(now);
+
+        // If the displayed month is in the future, return 0 days elapsed
+        if (startCal.getTimeInMillis() > nowCal.getTimeInMillis()) {
+            return 0;
+        }
+
+        int days = 0;
+        while (startCal.getTimeInMillis() <= nowCal.getTimeInMillis()
+                && startCal.get(Calendar.MONTH) == month.get(Calendar.MONTH)
+                && startCal.get(Calendar.YEAR) == month.get(Calendar.YEAR)) {
             days++;
             startCal.add(Calendar.DAY_OF_MONTH, 1);
         }

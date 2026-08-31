@@ -1,7 +1,5 @@
 package com.android.nls.routine.utils;
 
-import android.content.Context;
-import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -25,26 +23,6 @@ public class Common {
 
     public static long getEndOfDayInMillis() {
         Calendar calendar = new GregorianCalendar();
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-        calendar.set(Calendar.MILLISECOND, 999);
-        return calendar.getTimeInMillis();
-    }
-
-    public static long getStartOfMonthInMillis() {
-        Calendar calendar = new GregorianCalendar();
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTimeInMillis();
-    }
-
-    public static long getEndOfMonthInMillis() {
-        Calendar calendar = new GregorianCalendar();
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
         calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 59);
         calendar.set(Calendar.SECOND, 59);
@@ -77,18 +55,25 @@ public class Common {
 
     public static long getStartOfWeekInMillis() {
         Calendar calendar = new GregorianCalendar();
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
+
+        // Calculate the Monday of the current week explicitly.
+        // Do NOT use set(DAY_OF_WEEK, MONDAY): it depends on the locale's
+        // firstDayOfWeek (e.g. SUNDAY in en-US), which can yield the wrong Monday
+        // (e.g. on a Sunday it would return the NEXT week's Monday).
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        int daysFromMonday = (dayOfWeek + 5) % 7; // Sunday=1 -> 6, Monday=2 -> 0, ..., Saturday=7 -> 5
+        calendar.add(Calendar.DAY_OF_MONTH, -daysFromMonday);
         return calendar.getTimeInMillis();
     }
 
     public static long getEndOfWeekInMillis() {
         Calendar calendar = new GregorianCalendar();
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-        calendar.add(Calendar.DAY_OF_WEEK, 6);
+        calendar.setTimeInMillis(getStartOfWeekInMillis());
+        calendar.add(Calendar.DAY_OF_MONTH, 6);
         calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 59);
         calendar.set(Calendar.SECOND, 59);
@@ -126,6 +111,16 @@ public class Common {
         return dateFormat.format(new Date(timestamp));
     }
 
+    public static String getAbbreviatedMonthFromTimestamp(long timestamp) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM", Locale.ENGLISH);
+        return dateFormat.format(new Date(timestamp));
+    }
+
+    public static String getAbbreviatedMonthYearFromTimestamp(long timestamp) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM yyyy", Locale.ENGLISH);
+        return dateFormat.format(new Date(timestamp));
+    }
+
     public static String getHourFromTimestamp(String timestamp) {
         try {
             long timestampMillis = Long.parseLong(timestamp);
@@ -153,13 +148,5 @@ public class Common {
         } else {
             return Constants.GREETINGS.get(2);
         }
-    }
-
-    public static void generateToastMessageShortWaterDrank(Context context, int amount, String message) {
-        Toast.makeText(context, amount + message, Toast.LENGTH_SHORT).show();
-    }
-
-    public static void generateToastMessageShortInvalidNumber(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 }
