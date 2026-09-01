@@ -30,7 +30,7 @@ public class WaterRepository {
 
     public long insertWater(int amount, long timestamp) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(Constants.COLUMN_NAME_WATER_DRANK, String.valueOf(amount));
+        contentValues.put(Constants.COLUMN_NAME_WATER_DRANK, amount);
         contentValues.put(Constants.COLUMN_NAME_TIMESTAMP, timestamp);
 
         long newRowId = mSqliteDatabase.insert(Constants.TABLE_NAME_WATER, null, contentValues);
@@ -155,23 +155,6 @@ public class WaterRepository {
         }
 
         return daysWithData;
-    }
-
-    /**
-     * Returns true if any water record exists within the given time range.
-     */
-    public boolean hasWaterData(long start, long end) {
-        String query = "SELECT 1 FROM " + Constants.TABLE_NAME_WATER +
-                " WHERE " + Constants.COLUMN_NAME_TIMESTAMP + " >= ? AND " +
-                Constants.COLUMN_NAME_TIMESTAMP + " <= ? LIMIT 1";
-
-        try (Cursor cursor = mSqliteDatabase.rawQuery(query, new String[]{String.valueOf(start), String.valueOf(end)})) {
-            return cursor.moveToFirst();
-        } catch (Exception e) {
-            Log.e(TAG, "Error checking water data: " + e.getMessage());
-        }
-
-        return false;
     }
 
     public void closeDb() {

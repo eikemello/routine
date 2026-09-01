@@ -93,18 +93,6 @@ public class HistoryService {
         return new DayDetails(waterRecords, mealRecords, expenseRecords, workoutRecords, medicationRecords, supplementRecords);
     }
 
-    public boolean hasDataOnDay(long timestamp) {
-        long startOfDay = Common.getStartOfDayInMillis(timestamp);
-        long endOfDay = Common.getEndOfDayInMillis(timestamp);
-
-        return mWaterRepository.hasWaterData(startOfDay, endOfDay)
-                || mMealRepository.hasMealData(startOfDay, endOfDay)
-                || mExpenseRepository.hasExpenseData(startOfDay, endOfDay)
-                || mTrackerRepository.hasTrackerData(TrackerType.WORKOUT, startOfDay, endOfDay)
-                || mTrackerRepository.hasTrackerData(TrackerType.MEDICATION, startOfDay, endOfDay)
-                || mTrackerRepository.hasTrackerData(TrackerType.SUPPLEMENT, startOfDay, endOfDay);
-    }
-
     /**
      * Computes the DayStatus and hasData flag for every day in the given range
      * using a small fixed number of queries (one per table),

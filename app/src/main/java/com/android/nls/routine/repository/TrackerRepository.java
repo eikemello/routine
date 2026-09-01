@@ -206,25 +206,6 @@ public class TrackerRepository {
     }
 
     /**
-     * Returns true if any tracker record exists for the given type within the given time range.
-     */
-    public boolean hasTrackerData(TrackerType type, long start, long end) {
-        String query = "SELECT 1 FROM " + Constants.TABLE_NAME_TRACKER_RECORDS +
-                " WHERE " + Constants.COLUMN_NAME_TRACKER_RECORD_TYPE + " = ? AND " +
-                Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " >= ? AND " +
-                Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " <= ? LIMIT 1";
-
-        try (Cursor cursor = mSqliteDatabase.rawQuery(query,
-                new String[]{type.name(), String.valueOf(start), String.valueOf(end)})) {
-            return cursor.moveToFirst();
-        } catch (Exception e) {
-            Log.e(TAG, "Error checking tracker data " + type + ": " + e.getMessage());
-        }
-
-        return false;
-    }
-
-    /**
      * Returns the record for a tracker on a given day, or null if none exists.
      */
     public TrackerRecord getTrackerRecordForDay(TrackerType type, long dayTimestamp) {

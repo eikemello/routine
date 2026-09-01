@@ -146,20 +146,6 @@ public class ExpenseRepository {
         return daysWithData;
     }
 
-    public boolean hasExpenseData(long start, long end) {
-        String query = "SELECT 1 FROM " + Constants.TABLE_NAME_EXPENSE_TEST +
-                " WHERE " + Constants.COLUMN_NAME_TIMESTAMP + " >= ? AND " +
-                Constants.COLUMN_NAME_TIMESTAMP + " <= ? LIMIT 1";
-
-        try (Cursor cursor = mSqliteDatabase.rawQuery(query, new String[]{String.valueOf(start), String.valueOf(end)})) {
-            return cursor.moveToFirst();
-        } catch (Exception e) {
-            Log.e(TAG, "Error checking expense data: " + e.getMessage());
-        }
-
-        return false;
-    }
-
     /**
      * Returns the last expense record (value and bank), or null if none exists.
      */

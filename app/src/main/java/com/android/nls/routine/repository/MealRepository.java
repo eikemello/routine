@@ -159,23 +159,6 @@ public class MealRepository {
         return daysWithData;
     }
 
-    /**
-     * Returns true if any meal record exists within the given time range.
-     */
-    public boolean hasMealData(long start, long end) {
-        String query = "SELECT 1 FROM " + Constants.TABLE_NAME_MEAL +
-                " WHERE " + Constants.COLUMN_NAME_TIMESTAMP + " >= ? AND " +
-                Constants.COLUMN_NAME_TIMESTAMP + " <= ? LIMIT 1";
-
-        try (Cursor cursor = mSqliteDatabase.rawQuery(query, new String[]{String.valueOf(start), String.valueOf(end)})) {
-            return cursor.moveToFirst();
-        } catch (Exception e) {
-            Log.e(TAG, "Error checking meal data: " + e.getMessage());
-        }
-
-        return false;
-    }
-
     public void closeDb() {
         mDatabaseHelper.release();
     }
