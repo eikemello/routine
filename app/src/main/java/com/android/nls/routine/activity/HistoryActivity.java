@@ -162,8 +162,6 @@ public class HistoryActivity extends AppCompatActivity {
     private void renderCalendar() {
         calendarGrid.removeAllViews();
 
-        // Load all day statuses for the displayed range in a small fixed number
-        // of queries (one per table), instead of querying per day cell.
         long rangeStart;
         long rangeEnd;
         if (mIsWeekView) {

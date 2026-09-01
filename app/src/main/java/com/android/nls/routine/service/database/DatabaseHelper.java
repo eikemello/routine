@@ -10,7 +10,7 @@ import com.android.nls.routine.utils.Constants;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = Common.generateTag(DatabaseHelper.class);
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
     private static final String DATABASE_NAME = "Routine";
     private static DatabaseHelper sInstance;
     private static int sReferenceCount = 0;
@@ -65,11 +65,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Future schema changes should be added here, guarded by version checks.
     }
 
-    /**
-     * Creates indexes on all TIMESTAMP columns and tracker type columns.
-     * Every query filters by timestamp range, so these indexes eliminate
-     * full table scans and dramatically speed up queries as data grows.
-     */
     private void createIndexes(SQLiteDatabase db) {
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_water_timestamp ON " +
                 Constants.TABLE_NAME_WATER + "(" + Constants.COLUMN_NAME_TIMESTAMP + ")");
@@ -77,8 +72,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Constants.TABLE_NAME_EXPENSE_TEST + "(" + Constants.COLUMN_NAME_TIMESTAMP + ")");
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_meal_timestamp ON " +
                 Constants.TABLE_NAME_MEAL + "(" + Constants.COLUMN_NAME_TIMESTAMP + ")");
-        db.execSQL("CREATE INDEX IF NOT EXISTS idx_tracker_records_type ON " +
-                Constants.TABLE_NAME_TRACKER_RECORDS + "(" + Constants.COLUMN_NAME_TRACKER_RECORD_TYPE + ")");
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_tracker_records_type_timestamp ON " +
+                Constants.TABLE_NAME_TRACKER_RECORDS + "(" +
+                Constants.COLUMN_NAME_TRACKER_RECORD_TYPE + ", " +
+                Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + ")");
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_tracker_records_timestamp ON " +
                 Constants.TABLE_NAME_TRACKER_RECORDS + "(" + Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + ")");
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_trackers_type ON " +
@@ -87,6 +84,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void insertDefaultTrackers(SQLiteDatabase db) {
+
         // Default enabled trackers: Water, Meals, Expenses
         // Default disabled trackers: Workout, Medication, Supplement
         insertTracker(db, Constants.TRACKER_NAME_WATER, Constants.TRACKER_ICON_WATER, 1, null);
