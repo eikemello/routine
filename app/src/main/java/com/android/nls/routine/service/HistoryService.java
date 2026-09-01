@@ -3,6 +3,7 @@ package com.android.nls.routine.service;
 import android.content.Context;
 import com.android.nls.routine.model.DayDetails;
 import com.android.nls.routine.model.DayStatus;
+import com.android.nls.routine.model.DayStatusInfo;
 import com.android.nls.routine.model.ExpenseRecord;
 import com.android.nls.routine.model.MealRecord;
 import com.android.nls.routine.model.TrackerRecord;
@@ -17,7 +18,11 @@ import com.android.nls.routine.repository.WaterRepository;
 import com.android.nls.routine.utils.Common;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class HistoryService {
     private final WaterRepository mWaterRepository;
@@ -88,30 +93,55 @@ public class HistoryService {
         return new DayDetails(waterRecords, mealRecords, expenseRecords, workoutRecords, medicationRecords, supplementRecords);
     }
 
-    public boolean hasDataOnDay(long timestamp) {
-        long startOfDay = Common.getStartOfDayInMillis(timestamp);
-        long endOfDay = Common.getEndOfDayInMillis(timestamp);
+    /**
+     * Computes the DayStatus and hasData flag for every day in the given range
+     * using a small fixed number of queries (one per table),
+     *
+     * @return a map keyed by start-of-day timestamp
+     */
+    public Map<Long, DayStatusInfo> getDayStatusesForRange(long start, long end) {
+        double dailyGoal = mConfigRepository.getDailyWaterGoal();
 
-        return mWaterRepository.hasWaterData(startOfDay, endOfDay)
-                || mMealRepository.hasMealData(startOfDay, endOfDay)
-                || mExpenseRepository.hasExpenseData(startOfDay, endOfDay)
-                || mTrackerRepository.hasTrackerData(TrackerType.WORKOUT, startOfDay, endOfDay)
-                || mTrackerRepository.hasTrackerData(TrackerType.MEDICATION, startOfDay, endOfDay)
-                || mTrackerRepository.hasTrackerData(TrackerType.SUPPLEMENT, startOfDay, endOfDay);
+        Map<Long, Integer> dailyWaterSums = mWaterRepository.getDailyWaterSums(start, end);
+        Map<Long, int[]> dailyMealCounts = mMealRepository.getDailyMealCounts(start, end);
+        Set<Long> daysWithWater = mWaterRepository.getDaysWithWaterData(start, end);
+        Set<Long> daysWithMeals = mMealRepository.getDaysWithMealData(start, end);
+        Set<Long> daysWithExpenses = mExpenseRepository.getDaysWithExpenseData(start, end);
+        Set<Long> daysWithTrackers = mTrackerRepository.getDaysWithTrackerData(start, end);
+
+        Map<Long, DayStatusInfo> result = new HashMap<>();
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTimeInMillis(start);
+
+        while (calendar.getTimeInMillis() <= end) {
+            long dayStart = calendar.getTimeInMillis();
+
+            int waterSum = dailyWaterSums.getOrDefault(dayStart, 0);
+            int[] mealCounts = dailyMealCounts.getOrDefault(dayStart, new int[3]);
+            int correctMeals = mealCounts[0];
+            int warningMeals = mealCounts[1];
+            int wrongMeals = mealCounts[2];
+
+            boolean hasData = daysWithWater.contains(dayStart)
+                    || daysWithMeals.contains(dayStart)
+                    || daysWithExpenses.contains(dayStart)
+                    || daysWithTrackers.contains(dayStart);
+
+            DayStatus status = computeDayStatus(waterSum, correctMeals, warningMeals, wrongMeals, dailyGoal);
+            result.put(dayStart, new DayStatusInfo(status, hasData));
+
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+
+        return result;
     }
 
-    public DayStatus getDayStatus(long timestamp) {
-        long startOfDay = Common.getStartOfDayInMillis(timestamp);
-        long endOfDay = Common.getEndOfDayInMillis(timestamp);
-
-        int waterSum = mWaterRepository.getWaterSum(startOfDay, endOfDay);
-        double dailyGoal = mConfigRepository.getDailyWaterGoal();
+    /**
+     * Computes the DayStatus from the given water sum and meal counts.
+     * Shared by the single-day and batch-range paths so the logic stays in one place.
+     */
+    private DayStatus computeDayStatus(int waterSum, int correctMeals, int warningMeals, int wrongMeals, double dailyGoal) {
         boolean waterAchieved = waterSum >= dailyGoal;
-
-        int[] mealCounts = mMealRepository.getMealCounts(startOfDay, endOfDay);
-        int correctMeals = mealCounts[0];
-        int warningMeals = mealCounts[1];
-        int wrongMeals = mealCounts[2];
 
         // If there's no data at all (no water, no meals), don't color the day
         if (waterSum == 0 && correctMeals == 0 && warningMeals == 0 && wrongMeals == 0) {
@@ -161,16 +191,17 @@ public class HistoryService {
 
     private int countWaterDaysAchieved(long startOfWeek, long endOfWeek) {
         double dailyGoal = mConfigRepository.getDailyWaterGoal();
+        Map<Long, Integer> dailySums = mWaterRepository.getDailyWaterSums(startOfWeek, endOfWeek);
+
         int daysAchieved = 0;
         Calendar calendar = new GregorianCalendar();
         calendar.setTimeInMillis(startOfWeek);
 
         while (calendar.getTimeInMillis() <= endOfWeek) {
             long dayStart = calendar.getTimeInMillis();
-            long dayEnd = Common.getEndOfDayInMillis(dayStart);
-            int daySum = mWaterRepository.getWaterSum(dayStart, dayEnd);
+            Integer daySum = dailySums.get(dayStart);
 
-            if (daySum >= dailyGoal) {
+            if (daySum != null && daySum >= dailyGoal) {
                 daysAchieved++;
             }
             calendar.add(Calendar.DAY_OF_MONTH, 1);

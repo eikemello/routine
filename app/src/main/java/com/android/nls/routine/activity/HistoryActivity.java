@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsControllerCompat;
 import com.android.nls.routine.R;
 import com.android.nls.routine.model.DayDetails;
 import com.android.nls.routine.model.DayStatus;
+import com.android.nls.routine.model.DayStatusInfo;
 import com.android.nls.routine.model.ExpenseRecord;
 import com.android.nls.routine.model.MealRecord;
 import com.android.nls.routine.model.TrackerRecord;
@@ -26,6 +27,7 @@ import com.android.nls.routine.utils.Constants;
 import com.google.android.material.button.MaterialButton;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Map;
 
 public class HistoryActivity extends AppCompatActivity {
     private HistoryService mHistoryService;
@@ -63,6 +65,7 @@ public class HistoryActivity extends AppCompatActivity {
     private Calendar mCurrentWeek;
     private long mSelectedDayTimestamp;
     private boolean mIsWeekView = true;
+    private Map<Long, DayStatusInfo> mDayStatusCache;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,6 +162,21 @@ public class HistoryActivity extends AppCompatActivity {
     private void renderCalendar() {
         calendarGrid.removeAllViews();
 
+        long rangeStart;
+        long rangeEnd;
+        if (mIsWeekView) {
+            rangeStart = Common.getStartOfDayInMillis(mCurrentWeek.getTimeInMillis());
+            Calendar weekEndCal = (Calendar) mCurrentWeek.clone();
+            weekEndCal.add(Calendar.DAY_OF_MONTH, 6);
+            rangeEnd = Common.getEndOfDayInMillis(weekEndCal.getTimeInMillis());
+        } else {
+            rangeStart = Common.getStartOfDayInMillis(mCurrentMonth.getTimeInMillis());
+            Calendar monthEndCal = (Calendar) mCurrentMonth.clone();
+            monthEndCal.set(Calendar.DAY_OF_MONTH, monthEndCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+            rangeEnd = Common.getEndOfDayInMillis(monthEndCal.getTimeInMillis());
+        }
+        mDayStatusCache = mHistoryService.getDayStatusesForRange(rangeStart, rangeEnd);
+
         if (mIsWeekView) {
             renderWeekView();
         } else {
@@ -209,7 +227,8 @@ public class HistoryActivity extends AppCompatActivity {
             if (isFutureDay) {
                 dayCell.setBackgroundResource(R.drawable.calendar_day_background);
             } else {
-                DayStatus dayStatus = mHistoryService.getDayStatus(dayTimestamp);
+                DayStatusInfo info = mDayStatusCache.get(Common.getStartOfDayInMillis(dayTimestamp));
+                DayStatus dayStatus = info != null ? info.status() : DayStatus.NONE;
                 switch (dayStatus) {
                     case GREEN:
                         dayCell.setBackgroundResource(R.drawable.calendar_day_green);
@@ -221,7 +240,7 @@ public class HistoryActivity extends AppCompatActivity {
                         dayCell.setBackgroundResource(R.drawable.calendar_day_red);
                         break;
                     default:
-                        if (dayStatus == DayStatus.NONE && mHistoryService.hasDataOnDay(dayTimestamp)) {
+                        if (dayStatus == DayStatus.NONE && info != null && info.hasData()) {
                             dayCell.setBackgroundResource(R.drawable.calendar_day_has_data);
                         } else {
                             dayCell.setBackgroundResource(R.drawable.calendar_day_background);
@@ -290,7 +309,8 @@ public class HistoryActivity extends AppCompatActivity {
                 // Future days: no coloring, just default background
                 dayCell.setBackgroundResource(R.drawable.calendar_day_background);
             } else {
-                DayStatus dayStatus = mHistoryService.getDayStatus(dayTimestamp);
+                DayStatusInfo info = mDayStatusCache.get(Common.getStartOfDayInMillis(dayTimestamp));
+                DayStatus dayStatus = info != null ? info.status() : DayStatus.NONE;
                 switch (dayStatus) {
                     case GREEN:
                         dayCell.setBackgroundResource(R.drawable.calendar_day_green);
@@ -302,7 +322,7 @@ public class HistoryActivity extends AppCompatActivity {
                         dayCell.setBackgroundResource(R.drawable.calendar_day_red);
                         break;
                     default:
-                        if (dayStatus == DayStatus.NONE && mHistoryService.hasDataOnDay(dayTimestamp)) {
+                        if (dayStatus == DayStatus.NONE && info != null && info.hasData()) {
                             dayCell.setBackgroundResource(R.drawable.calendar_day_has_data);
                         } else {
                             dayCell.setBackgroundResource(R.drawable.calendar_day_background);
@@ -400,7 +420,8 @@ public class HistoryActivity extends AppCompatActivity {
                     child.setBackgroundResource(R.drawable.calendar_day_background);
                     continue;
                 }
-                DayStatus cellStatus = mHistoryService.getDayStatus(cellTimestamp);
+                DayStatusInfo cellInfo = mDayStatusCache.get(Common.getStartOfDayInMillis(cellTimestamp));
+                DayStatus cellStatus = cellInfo != null ? cellInfo.status() : DayStatus.NONE;
                 switch (cellStatus) {
                     case GREEN:
                         child.setBackgroundResource(R.drawable.calendar_day_green);
@@ -412,7 +433,7 @@ public class HistoryActivity extends AppCompatActivity {
                         child.setBackgroundResource(R.drawable.calendar_day_red);
                         break;
                     default:
-                        if (mHistoryService.hasDataOnDay(cellTimestamp)) {
+                        if (cellInfo != null && cellInfo.hasData()) {
                             child.setBackgroundResource(R.drawable.calendar_day_has_data);
                         } else {
                             child.setBackgroundResource(R.drawable.calendar_day_background);

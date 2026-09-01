@@ -12,7 +12,11 @@ import com.android.nls.routine.service.database.DatabaseHelper;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ExpenseRepository {
     private static final String TAG = Common.generateTag(ExpenseRepository.class);
@@ -20,7 +24,8 @@ public class ExpenseRepository {
     private final SQLiteDatabase mSqliteDatabase;
 
     public ExpenseRepository(Context context) {
-        mDatabaseHelper = new DatabaseHelper(context);
+        mDatabaseHelper = DatabaseHelper.getInstance(context);
+        mDatabaseHelper.acquire();
         mSqliteDatabase = mDatabaseHelper.getWritableDatabase();
     }
 
@@ -61,6 +66,32 @@ public class ExpenseRepository {
     }
 
     /**
+     * Returns the total expense amount per day within the given time range.
+     * The map keys are the start-of-day timestamps (local timezone).
+     */
+    public Map<Long, Double> getDailyExpenseSums(long start, long end) {
+        Map<Long, Double> dailySums = new HashMap<>();
+
+        String query = "SELECT " + Constants.COLUMN_NAME_TIMESTAMP + ", " + Constants.COLUMN_NAME_EXPENSE_VALUE +
+                " FROM " + Constants.TABLE_NAME_EXPENSE_TEST +
+                " WHERE " + Constants.COLUMN_NAME_TIMESTAMP + " >= ? AND " +
+                Constants.COLUMN_NAME_TIMESTAMP + " <= ?";
+
+        try (Cursor cursor = mSqliteDatabase.rawQuery(query, new String[]{String.valueOf(start), String.valueOf(end)})) {
+            while (cursor.moveToNext()) {
+                long timestamp = cursor.getLong(0);
+                double amount = cursor.getDouble(1);
+                long dayStart = Common.getStartOfDayInMillis(timestamp);
+                dailySums.merge(dayStart, amount, Double::sum);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting daily expense sums: " + e.getMessage());
+        }
+
+        return dailySums;
+    }
+
+    /**
      * Returns all expense records within the given time range, ordered by timestamp ascending.
      */
     public List<ExpenseRecord> getExpenseRecords(long start, long end) {
@@ -90,18 +121,29 @@ public class ExpenseRepository {
         return records;
     }
 
-    public boolean hasExpenseData(long start, long end) {
-        String query = "SELECT 1 FROM " + Constants.TABLE_NAME_EXPENSE_TEST +
+    /**
+     * Returns the set of day-start timestamps that have any expense records
+     * within the given time range.
+     */
+    public Set<Long> getDaysWithExpenseData(long start, long end) {
+        Set<Long> daysWithData = new HashSet<>();
+
+        String query = "SELECT " + Constants.COLUMN_NAME_TIMESTAMP +
+                " FROM " + Constants.TABLE_NAME_EXPENSE_TEST +
                 " WHERE " + Constants.COLUMN_NAME_TIMESTAMP + " >= ? AND " +
-                Constants.COLUMN_NAME_TIMESTAMP + " <= ? LIMIT 1";
+                Constants.COLUMN_NAME_TIMESTAMP + " <= ?";
 
         try (Cursor cursor = mSqliteDatabase.rawQuery(query, new String[]{String.valueOf(start), String.valueOf(end)})) {
-            return cursor.moveToFirst();
+            while (cursor.moveToNext()) {
+                long timestamp = cursor.getLong(0);
+                long dayStart = Common.getStartOfDayInMillis(timestamp);
+                daysWithData.add(dayStart);
+            }
         } catch (Exception e) {
-            Log.e(TAG, "Error checking expense data: " + e.getMessage());
+            Log.e(TAG, "Error getting days with expense data: " + e.getMessage());
         }
 
-        return false;
+        return daysWithData;
     }
 
     /**
@@ -126,6 +168,6 @@ public class ExpenseRepository {
     }
 
     public void closeDb() {
-        mDatabaseHelper.close();
+        mDatabaseHelper.release();
     }
 }

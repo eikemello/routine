@@ -16,7 +16,8 @@ public class ConfigRepository {
     private final SQLiteDatabase mSqliteDatabase;
 
     public ConfigRepository(Context context) {
-        mDatabaseHelper = new DatabaseHelper(context);
+        mDatabaseHelper = DatabaseHelper.getInstance(context);
+        mDatabaseHelper.acquire();
         mSqliteDatabase = mDatabaseHelper.getWritableDatabase();
     }
 
@@ -89,6 +90,6 @@ public class ConfigRepository {
     }
 
     public void closeDb() {
-        mDatabaseHelper.close();
+        mDatabaseHelper.release();
     }
 }

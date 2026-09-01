@@ -10,11 +10,43 @@ import com.android.nls.routine.utils.Constants;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = Common.generateTag(DatabaseHelper.class);
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 5;
     private static final String DATABASE_NAME = "Routine";
+    private static DatabaseHelper sInstance;
+    private static int sReferenceCount = 0;
 
-    public DatabaseHelper(Context context) {
+    /**
+     * Returns the shared DatabaseHelper instance, creating it on first use.
+     * Callers must call {@link #acquire()} when they start using the instance
+     * and {@link #release()} when they are done, so the underlying database
+     * is only closed when the last holder releases it.
+     */
+    public static synchronized DatabaseHelper getInstance(Context context) {
+        if (sInstance == null) {
+            sInstance = new DatabaseHelper(context.getApplicationContext());
+        }
+        return sInstance;
+    }
+
+    private DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    public synchronized void acquire() {
+        sReferenceCount++;
+        Log.d(TAG, "DatabaseHelper acquired. References: " + sReferenceCount);
+    }
+
+    public synchronized void release() {
+        sReferenceCount--;
+        if (sReferenceCount <= 0) {
+            sReferenceCount = 0;
+            Log.d(TAG, "DatabaseHelper released. Closing database.");
+            close();
+            sInstance = null;
+        } else {
+            Log.d(TAG, "DatabaseHelper released. References: " + sReferenceCount);
+        }
     }
 
     public void onCreate(SQLiteDatabase db) {
@@ -24,18 +56,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(WaterFeedEntry.SQL_CREATE_ENTRIES_MEAL);
         db.execSQL(WaterFeedEntry.SQL_CREATE_ENTRIES_TRACKERS);
         db.execSQL(WaterFeedEntry.SQL_CREATE_ENTRIES_TRACKER_RECORDS);
+        createIndexes(db);
         insertDefaultTrackers(db);
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion < DATABASE_VERSION) {
-            db.execSQL(WaterFeedEntry.SQL_CREATE_ENTRIES_TRACKERS);
-            db.execSQL(WaterFeedEntry.SQL_CREATE_ENTRIES_TRACKER_RECORDS);
-            insertDefaultTrackers(db);
-        }
+        // No migrations needed yet — the app has not been released.
+        // Future schema changes should be added here, guarded by version checks.
+    }
+
+    private void createIndexes(SQLiteDatabase db) {
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_water_timestamp ON " +
+                Constants.TABLE_NAME_WATER + "(" + Constants.COLUMN_NAME_TIMESTAMP + ")");
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_expense_timestamp ON " +
+                Constants.TABLE_NAME_EXPENSE_TEST + "(" + Constants.COLUMN_NAME_TIMESTAMP + ")");
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_meal_timestamp ON " +
+                Constants.TABLE_NAME_MEAL + "(" + Constants.COLUMN_NAME_TIMESTAMP + ")");
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_tracker_records_type_timestamp ON " +
+                Constants.TABLE_NAME_TRACKER_RECORDS + "(" +
+                Constants.COLUMN_NAME_TRACKER_RECORD_TYPE + ", " +
+                Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + ")");
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_tracker_records_timestamp ON " +
+                Constants.TABLE_NAME_TRACKER_RECORDS + "(" + Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + ")");
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_trackers_type ON " +
+                Constants.TABLE_NAME_TRACKERS + "(" + Constants.COLUMN_NAME_TRACKER_TYPE + ")");
+        Log.d(TAG, "Created database indexes");
     }
 
     private void insertDefaultTrackers(SQLiteDatabase db) {
+
         // Default enabled trackers: Water, Meals, Expenses
         // Default disabled trackers: Workout, Medication, Supplement
         insertTracker(db, Constants.TRACKER_NAME_WATER, Constants.TRACKER_ICON_WATER, 1, null);
@@ -62,8 +111,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         private static final String SQL_CREATE_ENTRIES_WATER =
                 "CREATE TABLE " + Constants.TABLE_NAME_WATER + " (" +
                         _ID + " INTEGER PRIMARY KEY," +
-                        Constants.COLUMN_NAME_WATER_DRANK + " TEXT," +
-                        Constants.COLUMN_NAME_TIMESTAMP + " TEXT)";
+                        Constants.COLUMN_NAME_WATER_DRANK + " INTEGER," +
+                        Constants.COLUMN_NAME_TIMESTAMP + " INTEGER)";
 
         private static final String SQL_CREATE_ENTRIES_USER_CONFIG =
                 "CREATE TABLE " + Constants.TABLE_NAME_USER_CONFIG + " (" +
@@ -78,10 +127,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         private static final String SQL_CREATE_ENTRIES_EXPENSE_TEST =
                 "CREATE TABLE " + Constants.TABLE_NAME_EXPENSE_TEST + " (" +
                         _ID + " INTEGER PRIMARY KEY," +
-                        Constants.COLUMN_NAME_EXPENSE_VALUE + " TEXT," +
+                        Constants.COLUMN_NAME_EXPENSE_VALUE + " REAL," +
                         Constants.COLUMN_NAME_EXPENSE_TEXT + " TEXT," +
                         Constants.COLUMN_NAME_BANK_NAME + " TEXT," +
-                        Constants.COLUMN_NAME_TIMESTAMP + " TEXT)";
+                        Constants.COLUMN_NAME_TIMESTAMP + " INTEGER)";
 
         private static final String SQL_CREATE_ENTRIES_MEAL =
                 "CREATE TABLE " + Constants.TABLE_NAME_MEAL + " (" +
@@ -89,7 +138,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         Constants.COLUMN_NAME_MEAL + " TEXT," +
                         Constants.COLUMN_NAME_MEAL_STATUS + " TEXT," +
                         Constants.COLUMN_NAME_MEAL_OBS + " TEXT," +
-                        Constants.COLUMN_NAME_TIMESTAMP + " TEXT)";
+                        Constants.COLUMN_NAME_TIMESTAMP + " INTEGER)";
 
         private static final String SQL_CREATE_ENTRIES_TRACKERS =
                 "CREATE TABLE " + Constants.TABLE_NAME_TRACKERS + " (" +
@@ -106,6 +155,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         Constants.COLUMN_NAME_TRACKER_RECORD_TYPE + " TEXT," +
                         Constants.COLUMN_NAME_TRACKER_RECORD_COMPLETED + " INTEGER," +
                         Constants.COLUMN_NAME_TRACKER_RECORD_NOTE + " TEXT," +
-                        Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " TEXT)";
+                        Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " INTEGER)";
     }
 }

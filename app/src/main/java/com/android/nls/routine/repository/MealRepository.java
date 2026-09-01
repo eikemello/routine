@@ -10,7 +10,11 @@ import com.android.nls.routine.service.database.DatabaseHelper;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class MealRepository {
     private static final String TAG = Common.generateTag(MealRepository.class);
@@ -18,7 +22,8 @@ public class MealRepository {
     private final SQLiteDatabase mSqliteDatabase;
 
     public MealRepository(Context context) {
-        mDatabaseHelper = new DatabaseHelper(context);
+        mDatabaseHelper = DatabaseHelper.getInstance(context);
+        mDatabaseHelper.acquire();
         mSqliteDatabase = mDatabaseHelper.getWritableDatabase();
     }
 
@@ -66,6 +71,40 @@ public class MealRepository {
     }
 
     /**
+     * Returns the meal counts (correct, warning, wrong) per day within the given time range.
+     * The map keys are the start-of-day timestamps (local timezone).
+     */
+    public Map<Long, int[]> getDailyMealCounts(long start, long end) {
+        Map<Long, int[]> dailyCounts = new HashMap<>();
+
+        String query = "SELECT " + Constants.COLUMN_NAME_TIMESTAMP + ", " + Constants.COLUMN_NAME_MEAL_STATUS +
+                " FROM " + Constants.TABLE_NAME_MEAL +
+                " WHERE " + Constants.COLUMN_NAME_TIMESTAMP + " >= ? AND " +
+                Constants.COLUMN_NAME_TIMESTAMP + " <= ?";
+
+        try (Cursor cursor = mSqliteDatabase.rawQuery(query, new String[]{String.valueOf(start), String.valueOf(end)})) {
+            while (cursor.moveToNext()) {
+                long timestamp = cursor.getLong(0);
+                String status = cursor.getString(1);
+                long dayStart = Common.getStartOfDayInMillis(timestamp);
+
+                int[] counts = dailyCounts.computeIfAbsent(dayStart, k -> new int[3]);
+                if (Constants.CORRECT_MEAL.equals(status)) {
+                    counts[0]++;
+                } else if (Constants.WARNING_MEAL.equals(status)) {
+                    counts[1]++;
+                } else if (Constants.WRONG_MEAL.equals(status)) {
+                    counts[2]++;
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting daily meal counts: " + e.getMessage());
+        }
+
+        return dailyCounts;
+    }
+
+    /**
      * Returns all meal records within the given time range, ordered by timestamp ascending.
      */
     public List<MealRecord> getMealRecords(long start, long end) {
@@ -96,23 +135,31 @@ public class MealRepository {
     }
 
     /**
-     * Returns true if any meal record exists within the given time range.
+     * Returns the set of day-start timestamps that have any meal records
+     * within the given time range.
      */
-    public boolean hasMealData(long start, long end) {
-        String query = "SELECT 1 FROM " + Constants.TABLE_NAME_MEAL +
+    public Set<Long> getDaysWithMealData(long start, long end) {
+        Set<Long> daysWithData = new HashSet<>();
+
+        String query = "SELECT " + Constants.COLUMN_NAME_TIMESTAMP +
+                " FROM " + Constants.TABLE_NAME_MEAL +
                 " WHERE " + Constants.COLUMN_NAME_TIMESTAMP + " >= ? AND " +
-                Constants.COLUMN_NAME_TIMESTAMP + " <= ? LIMIT 1";
+                Constants.COLUMN_NAME_TIMESTAMP + " <= ?";
 
         try (Cursor cursor = mSqliteDatabase.rawQuery(query, new String[]{String.valueOf(start), String.valueOf(end)})) {
-            return cursor.moveToFirst();
+            while (cursor.moveToNext()) {
+                long timestamp = cursor.getLong(0);
+                long dayStart = Common.getStartOfDayInMillis(timestamp);
+                daysWithData.add(dayStart);
+            }
         } catch (Exception e) {
-            Log.e(TAG, "Error checking meal data: " + e.getMessage());
+            Log.e(TAG, "Error getting days with meal data: " + e.getMessage());
         }
 
-        return false;
+        return daysWithData;
     }
 
     public void closeDb() {
-        mDatabaseHelper.close();
+        mDatabaseHelper.release();
     }
 }

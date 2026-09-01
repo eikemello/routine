@@ -11,7 +11,11 @@ import com.android.nls.routine.service.database.DatabaseHelper;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class WaterRepository {
     private static final String TAG = Common.generateTag(WaterRepository.class);
@@ -19,13 +23,14 @@ public class WaterRepository {
     private final SQLiteDatabase mSqliteDatabase;
 
     public WaterRepository(Context context) {
-        mDatabaseHelper = new DatabaseHelper(context);
+        mDatabaseHelper = DatabaseHelper.getInstance(context);
+        mDatabaseHelper.acquire();
         mSqliteDatabase = mDatabaseHelper.getWritableDatabase();
     }
 
     public long insertWater(int amount, long timestamp) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(Constants.COLUMN_NAME_WATER_DRANK, String.valueOf(amount));
+        contentValues.put(Constants.COLUMN_NAME_WATER_DRANK, amount);
         contentValues.put(Constants.COLUMN_NAME_TIMESTAMP, timestamp);
 
         long newRowId = mSqliteDatabase.insert(Constants.TABLE_NAME_WATER, null, contentValues);
@@ -102,23 +107,57 @@ public class WaterRepository {
     }
 
     /**
-     * Returns true if any water record exists within the given time range.
+     * Returns the total water amount per day within the given time range.
+     * The map keys are the start-of-day timestamps (local timezone).
      */
-    public boolean hasWaterData(long start, long end) {
-        String query = "SELECT 1 FROM " + Constants.TABLE_NAME_WATER +
+    public Map<Long, Integer> getDailyWaterSums(long start, long end) {
+        Map<Long, Integer> dailySums = new HashMap<>();
+
+        String query = "SELECT " + Constants.COLUMN_NAME_TIMESTAMP + ", " + Constants.COLUMN_NAME_WATER_DRANK +
+                " FROM " + Constants.TABLE_NAME_WATER +
                 " WHERE " + Constants.COLUMN_NAME_TIMESTAMP + " >= ? AND " +
-                Constants.COLUMN_NAME_TIMESTAMP + " <= ? LIMIT 1";
+                Constants.COLUMN_NAME_TIMESTAMP + " <= ?";
 
         try (Cursor cursor = mSqliteDatabase.rawQuery(query, new String[]{String.valueOf(start), String.valueOf(end)})) {
-            return cursor.moveToFirst();
+            while (cursor.moveToNext()) {
+                long timestamp = cursor.getLong(0);
+                int amount = cursor.getInt(1);
+                long dayStart = Common.getStartOfDayInMillis(timestamp);
+                dailySums.merge(dayStart, amount, Integer::sum);
+            }
         } catch (Exception e) {
-            Log.e(TAG, "Error checking water data: " + e.getMessage());
+            Log.e(TAG, "Error getting daily water sums: " + e.getMessage());
         }
 
-        return false;
+        return dailySums;
+    }
+
+    /**
+     * Returns the set of day-start timestamps that have any water records
+     * within the given time range.
+     */
+    public Set<Long> getDaysWithWaterData(long start, long end) {
+        Set<Long> daysWithData = new HashSet<>();
+
+        String query = "SELECT " + Constants.COLUMN_NAME_TIMESTAMP +
+                " FROM " + Constants.TABLE_NAME_WATER +
+                " WHERE " + Constants.COLUMN_NAME_TIMESTAMP + " >= ? AND " +
+                Constants.COLUMN_NAME_TIMESTAMP + " <= ?";
+
+        try (Cursor cursor = mSqliteDatabase.rawQuery(query, new String[]{String.valueOf(start), String.valueOf(end)})) {
+            while (cursor.moveToNext()) {
+                long timestamp = cursor.getLong(0);
+                long dayStart = Common.getStartOfDayInMillis(timestamp);
+                daysWithData.add(dayStart);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting days with water data: " + e.getMessage());
+        }
+
+        return daysWithData;
     }
 
     public void closeDb() {
-        mDatabaseHelper.close();
+        mDatabaseHelper.release();
     }
 }
