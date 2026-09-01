@@ -34,11 +34,11 @@ public class DayScore {
     /**
      * Computes the DayStatus for a single day.
      *
-     * @param waterSum              total ml of water consumed that day
-     * @param dailyGoal             configured daily water goal in ml
-     * @param mealCountsByType      map of meal type -> [correct, warning, wrong] counts
-     * @param trackerCompletions    map of tracker type -> completed flag
-     * @param enabledTrackers       set of enabled tracker types (excluding EXPENSES)
+     * @param waterSum           total ml of water consumed that day
+     * @param dailyGoal          configured daily water goal in ml
+     * @param mealCountsByType   map of meal type -> [correct, warning, wrong] counts
+     * @param trackerCompletions map of tracker type -> completed flag
+     * @param enabledTrackers    set of enabled tracker types (excluding EXPENSES)
      * @return the DayStatus for the day
      */
     public static DayStatus compute(int waterSum, double dailyGoal,
@@ -95,6 +95,123 @@ public class DayScore {
         } else {
             return DayStatus.RED;
         }
+    }
+
+    /**
+     * Builds a human-readable breakdown of the score calculation for a day,
+     * including the final weighted average total.
+     * Example: "Water 100%, Meals 40% (Breakfast 10%, Lunch 10%, Tea 10%, Dinner 10%), Workout 100% → Total: 80%"
+     */
+    public static String getBreakdown(int waterSum, double dailyGoal,
+                                      Map<String, int[]> mealCountsByType,
+                                      Map<TrackerType, Boolean> trackerCompletions,
+                                      java.util.Set<TrackerType> enabledTrackers) {
+        if (enabledTrackers == null || enabledTrackers.isEmpty()) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        double cardWeight = 1.0 / enabledTrackers.size();
+        double totalScore = 0.0;
+
+        for (TrackerType type : enabledTrackers) {
+            if (sb.length() > 0) {
+                sb.append(", ");
+            }
+
+            switch (type) {
+                case WATER:
+                    double waterPct = dailyGoal > 0
+                            ? Math.min(waterSum / dailyGoal, 1.0) * 100.0
+                            : 0.0;
+                    sb.append("Water ").append(Math.round(waterPct)).append("%");
+                    totalScore += (waterPct / 100.0) * cardWeight;
+                    break;
+
+                case MEALS:
+                    double mealsPct = computeMealsScore(mealCountsByType) * 100.0;
+                    sb.append(appendMealsBreakdown(mealCountsByType, cardWeight));
+                    totalScore += (mealsPct / 100.0) * cardWeight;
+                    break;
+
+                case WORKOUT:
+                    boolean workoutDone = trackerCompletions != null
+                            && Boolean.TRUE.equals(trackerCompletions.get(TrackerType.WORKOUT));
+                    sb.append("Workout ").append(workoutDone ? "100%" : "0%");
+                    totalScore += (workoutDone ? 1.0 : 0.0) * cardWeight;
+                    break;
+
+                case MEDICATION:
+                    boolean medDone = trackerCompletions != null
+                            && Boolean.TRUE.equals(trackerCompletions.get(TrackerType.MEDICATION));
+                    sb.append("Medication ").append(medDone ? "100%" : "0%");
+                    totalScore += (medDone ? 1.0 : 0.0) * cardWeight;
+                    break;
+
+                case SUPPLEMENT:
+                    boolean suppDone = trackerCompletions != null
+                            && Boolean.TRUE.equals(trackerCompletions.get(TrackerType.SUPPLEMENT));
+                    sb.append("Supplement ").append(suppDone ? "100%" : "0%");
+                    totalScore += (suppDone ? 1.0 : 0.0) * cardWeight;
+                    break;
+
+                case EXPENSES:
+                    // Not included
+                    break;
+            }
+        }
+
+        double totalPct = totalScore * 100.0;
+        sb.append(" → Total: ").append(Math.round(totalPct)).append("%");
+
+        return sb.toString();
+    }
+
+    /**
+     * Appends the meals breakdown to the given StringBuilder.
+     * Example -> "Meals 40% (Breakfast 10%, Lunch 10%, Tea 10%, Dinner 10%)"
+     */
+    private static String appendMealsBreakdown(Map<String, int[]> mealCountsByType, double cardWeight) {
+        double mealsPct = computeMealsScore(mealCountsByType) * 100.0;
+        double mealWeightPct = mealWeightPercentage(cardWeight);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Meals ").append(Math.round(mealsPct)).append("%");
+
+        boolean hasAnyMeal = false;
+        for (String mealType : MEAL_TYPES) {
+            int[] counts = mealCountsByType != null ? mealCountsByType.get(mealType) : null;
+            if (counts != null) {
+                hasAnyMeal = true;
+                break;
+            }
+        }
+
+        if (hasAnyMeal) {
+            sb.append(" (");
+            boolean first = true;
+            for (String mealType : MEAL_TYPES) {
+                int[] counts = mealCountsByType != null ? mealCountsByType.get(mealType) : null;
+                if (counts != null) {
+                    if (!first) {
+                        sb.append(", ");
+                    }
+                    sb.append(mealType).append(" ").append(Math.round(mealWeightPct)).append("%");
+                    first = false;
+                }
+            }
+            sb.append(")");
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Converts a card weight into the percentage each meal contributes to the total score.
+     * E.g. card weight 0.333 -> each of 4 meals = 8.33%
+     */
+    private static double mealWeightPercentage(double cardWeight) {
+        return cardWeight / MEAL_TYPES.length * 100.0;
     }
 
     /**

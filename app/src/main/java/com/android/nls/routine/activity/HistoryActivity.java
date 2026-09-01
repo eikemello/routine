@@ -60,6 +60,8 @@ public class HistoryActivity extends AppCompatActivity {
     private LinearLayout workoutDetailsContainer;
     private LinearLayout medicationDetailsContainer;
     private LinearLayout supplementDetailsContainer;
+    private TextView txtScoreBreakdown;
+    private View viewScoreStatus;
 
     private Calendar mCurrentMonth;
     private Calendar mCurrentWeek;
@@ -113,6 +115,8 @@ public class HistoryActivity extends AppCompatActivity {
         workoutDetailsContainer = findViewById(R.id.workoutDetailsContainer);
         medicationDetailsContainer = findViewById(R.id.medicationDetailsContainer);
         supplementDetailsContainer = findViewById(R.id.supplementDetailsContainer);
+        txtScoreBreakdown = findViewById(R.id.txtScoreBreakdown);
+        viewScoreStatus = findViewById(R.id.viewScoreStatus);
     }
 
     private void setupButtonListeners() {
@@ -450,6 +454,34 @@ public class HistoryActivity extends AppCompatActivity {
         }
 
         txtSelectedDate.setText(Common.getDateFromTimestamp(timestamp));
+
+        // Show score breakdown for the selected day with status color indicator
+        DayStatusInfo dayInfo = mDayStatusCache.get(Common.getStartOfDayInMillis(timestamp));
+        if (dayInfo != null && dayInfo.scoreBreakdown() != null && !dayInfo.scoreBreakdown().isEmpty()) {
+            txtScoreBreakdown.setText(dayInfo.scoreBreakdown());
+            txtScoreBreakdown.setTextColor(getColor(R.color.white));
+
+            switch (dayInfo.status()) {
+                case GREEN:
+                    viewScoreStatus.setBackgroundResource(R.drawable.calendar_day_green);
+                    viewScoreStatus.setVisibility(View.VISIBLE);
+                    break;
+                case YELLOW:
+                    viewScoreStatus.setBackgroundResource(R.drawable.calendar_day_yellow);
+                    viewScoreStatus.setVisibility(View.VISIBLE);
+                    break;
+                case RED:
+                    viewScoreStatus.setBackgroundResource(R.drawable.calendar_day_red);
+                    viewScoreStatus.setVisibility(View.VISIBLE);
+                    break;
+                default:
+                    viewScoreStatus.setVisibility(View.GONE);
+                    break;
+            }
+        } else {
+            txtScoreBreakdown.setText("");
+            viewScoreStatus.setVisibility(View.GONE);
+        }
 
         DayDetails details = mHistoryService.getDayDetails(timestamp);
 

@@ -137,7 +137,8 @@ public class HistoryService {
                     || daysWithTrackers.contains(dayStart);
 
             DayStatus status = DayScore.compute(waterSum, dailyGoal, mealCountsByType, trackerCompletions, enabledTrackers);
-            result.put(dayStart, new DayStatusInfo(status, hasData));
+            String breakdown = DayScore.getBreakdown(waterSum, dailyGoal, mealCountsByType, trackerCompletions, enabledTrackers);
+            result.put(dayStart, new DayStatusInfo(status, hasData, breakdown));
 
             calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
