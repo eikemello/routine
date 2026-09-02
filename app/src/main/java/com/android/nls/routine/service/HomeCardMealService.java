@@ -30,7 +30,7 @@ public class HomeCardMealService {
         mMealRepository = new MealRepository(mContext);
     }
 
-    public void showAlertDialog(String buttonClicked) {
+    public void showAlertDialog(String buttonClicked, Runnable onSaved) {
         String title;
         Consumer<String> saveAction;
         View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_meal, new FrameLayout(mContext), false);
@@ -54,11 +54,11 @@ public class HomeCardMealService {
             default:
                 return;
         }
-        showSaveDialog(title, view, etValue, saveAction);
+        showSaveDialog(title, view, etValue, saveAction, onSaved);
     }
 
 
-    private void showSaveDialog(String title, View view, TextInputEditText etValue, Consumer<String> saveAction) {
+    private void showSaveDialog(String title, View view, TextInputEditText etValue, Consumer<String> saveAction, Runnable onSaved) {
         TextInputLayout txtInputError = view.findViewById(R.id.txtInputError);
         txtInputError.setError(null);
 
@@ -75,6 +75,10 @@ public class HomeCardMealService {
             if (value != null) {
                 saveAction.accept(value.toString().trim());
                 dialog.dismiss();
+
+                if (onSaved != null) {
+                    onSaved.run();
+                }
             } else {
                 txtInputError.setError(Constants.MEAL_INVALID_TEXT);
             }

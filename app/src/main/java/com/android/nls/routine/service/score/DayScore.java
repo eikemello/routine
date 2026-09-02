@@ -100,7 +100,6 @@ public class DayScore {
     /**
      * Builds a human-readable breakdown of the score calculation for a day,
      * including the final weighted average total.
-     * Example: "Water 100%, Meals 40% (Breakfast 10%, Lunch 10%, Tea 10%, Dinner 10%), Workout 100% → Total: 80%"
      */
     public static String getBreakdown(int waterSum, double dailyGoal,
                                       Map<String, int[]> mealCountsByType,
@@ -162,7 +161,7 @@ public class DayScore {
         }
 
         double totalPct = totalScore * 100.0;
-        sb.append(" → Total: ").append(Math.round(totalPct)).append("%");
+        sb.append("\nTotal: ").append(Math.round(totalPct)).append("%");
 
         return sb.toString();
     }
@@ -191,7 +190,7 @@ public class DayScore {
             sb.append(" (");
             boolean first = true;
             for (String mealType : MEAL_TYPES) {
-                int[] counts = mealCountsByType != null ? mealCountsByType.get(mealType) : null;
+                int[] counts = mealCountsByType.get(mealType);
                 if (counts != null) {
                     if (!first) {
                         sb.append(", ");
