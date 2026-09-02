@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Routine</string>
+    <string name="app_name">Rotta</string>
     <string name="home">Home</string>
     <string name="water">Water</string>
     <string name="daily_water_ml">%1$.0f ml</string>
