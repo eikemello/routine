@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -24,8 +23,9 @@
             <RelativeLayout
                 android:id="@+id/mainRelativeLayout"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="20dp">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp" >
 
                 <TextView
                     android:id="@+id/txtCurrentGreeting"
@@ -42,17 +42,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/txtCurrentGreeting"
-                    android:layout_marginStart="30dp" />
+                    android:layout_marginStart="22dp" />
             </RelativeLayout>
+
+            <include
+                android:id="@+id/trackerProgressContainer"
+                layout="@layout/tracker_progress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp" />
 
             <LinearLayout
                 android:id="@+id/trackerCardsContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="-120dp"
                 android:orientation="vertical"
-                android:padding="20dp"
-                android:paddingBottom="40dp" />
+                android:layout_marginStart="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginEnd="20dp"/>
         </LinearLayout>
     </ScrollView>
     <include layout="@menu/bottom_nav" />

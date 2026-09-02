@@ -135,6 +135,46 @@ public class MealRepository {
     }
 
     /**
+     * Returns the meal counts (correct, warning, wrong) per meal type per day
+     * within the given time range.
+     * The map keys are the start-of-day timestamps (local timezone).
+     * The inner map keys are meal types (Breakfast, Lunch, Tea, Dinner).
+     */
+    public Map<Long, Map<String, int[]>> getDailyMealCountsByType(long start, long end) {
+        Map<Long, Map<String, int[]>> dailyCounts = new HashMap<>();
+
+        String query = "SELECT " + Constants.COLUMN_NAME_TIMESTAMP + ", " +
+                Constants.COLUMN_NAME_MEAL + ", " +
+                Constants.COLUMN_NAME_MEAL_STATUS +
+                " FROM " + Constants.TABLE_NAME_MEAL +
+                " WHERE " + Constants.COLUMN_NAME_TIMESTAMP + " >= ? AND " +
+                Constants.COLUMN_NAME_TIMESTAMP + " <= ?";
+
+        try (Cursor cursor = mSqliteDatabase.rawQuery(query, new String[]{String.valueOf(start), String.valueOf(end)})) {
+            while (cursor.moveToNext()) {
+                long timestamp = cursor.getLong(0);
+                String meal = cursor.getString(1);
+                String status = cursor.getString(2);
+                long dayStart = Common.getStartOfDayInMillis(timestamp);
+
+                Map<String, int[]> byType = dailyCounts.computeIfAbsent(dayStart, k -> new HashMap<>());
+                int[] counts = byType.computeIfAbsent(meal, k -> new int[3]);
+                if (Constants.CORRECT_MEAL.equals(status)) {
+                    counts[0]++;
+                } else if (Constants.WARNING_MEAL.equals(status)) {
+                    counts[1]++;
+                } else if (Constants.WRONG_MEAL.equals(status)) {
+                    counts[2]++;
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting daily meal counts by type: " + e.getMessage());
+        }
+
+        return dailyCounts;
+    }
+
+    /**
      * Returns the set of day-start timestamps that have any meal records
      * within the given time range.
      */

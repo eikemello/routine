@@ -6,6 +6,7 @@ import com.android.nls.routine.model.DayStatus;
 import com.android.nls.routine.model.DayStatusInfo;
 import com.android.nls.routine.model.ExpenseRecord;
 import com.android.nls.routine.model.MealRecord;
+import com.android.nls.routine.model.Tracker;
 import com.android.nls.routine.model.TrackerRecord;
 import com.android.nls.routine.model.TrackerType;
 import com.android.nls.routine.model.WaterRecord;
@@ -15,11 +16,12 @@ import com.android.nls.routine.repository.ExpenseRepository;
 import com.android.nls.routine.repository.MealRepository;
 import com.android.nls.routine.repository.TrackerRepository;
 import com.android.nls.routine.repository.WaterRepository;
+import com.android.nls.routine.service.score.DayScore;
 import com.android.nls.routine.utils.Common;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -102,8 +104,17 @@ public class HistoryService {
     public Map<Long, DayStatusInfo> getDayStatusesForRange(long start, long end) {
         double dailyGoal = mConfigRepository.getDailyWaterGoal();
 
+        // Enabled tracker cards (excluding EXPENSES, which is not part of the score)
+        Set<TrackerType> enabledTrackers = new LinkedHashSet<>();
+        for (Tracker tracker : mTrackerRepository.getEnabledTrackers()) {
+            if (tracker.type() != TrackerType.EXPENSES) {
+                enabledTrackers.add(tracker.type());
+            }
+        }
+
         Map<Long, Integer> dailyWaterSums = mWaterRepository.getDailyWaterSums(start, end);
-        Map<Long, int[]> dailyMealCounts = mMealRepository.getDailyMealCounts(start, end);
+        Map<Long, Map<String, int[]>> dailyMealCountsByType = mMealRepository.getDailyMealCountsByType(start, end);
+        Map<Long, Map<TrackerType, Boolean>> dailyTrackerCompletions = mTrackerRepository.getDailyTrackerCompletions(start, end);
         Set<Long> daysWithWater = mWaterRepository.getDaysWithWaterData(start, end);
         Set<Long> daysWithMeals = mMealRepository.getDaysWithMealData(start, end);
         Set<Long> daysWithExpenses = mExpenseRepository.getDaysWithExpenseData(start, end);
@@ -117,76 +128,22 @@ public class HistoryService {
             long dayStart = calendar.getTimeInMillis();
 
             int waterSum = dailyWaterSums.getOrDefault(dayStart, 0);
-            int[] mealCounts = dailyMealCounts.getOrDefault(dayStart, new int[3]);
-            int correctMeals = mealCounts[0];
-            int warningMeals = mealCounts[1];
-            int wrongMeals = mealCounts[2];
+            Map<String, int[]> mealCountsByType = dailyMealCountsByType.get(dayStart);
+            Map<TrackerType, Boolean> trackerCompletions = dailyTrackerCompletions.get(dayStart);
 
             boolean hasData = daysWithWater.contains(dayStart)
                     || daysWithMeals.contains(dayStart)
                     || daysWithExpenses.contains(dayStart)
                     || daysWithTrackers.contains(dayStart);
 
-            DayStatus status = computeDayStatus(waterSum, correctMeals, warningMeals, wrongMeals, dailyGoal);
-            result.put(dayStart, new DayStatusInfo(status, hasData));
+            DayStatus status = DayScore.compute(waterSum, dailyGoal, mealCountsByType, trackerCompletions, enabledTrackers);
+            String breakdown = DayScore.getBreakdown(waterSum, dailyGoal, mealCountsByType, trackerCompletions, enabledTrackers);
+            result.put(dayStart, new DayStatusInfo(status, hasData, breakdown));
 
             calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
 
         return result;
-    }
-
-    /**
-     * Computes the DayStatus from the given water sum and meal counts.
-     * Shared by the single-day and batch-range paths so the logic stays in one place.
-     */
-    private DayStatus computeDayStatus(int waterSum, int correctMeals, int warningMeals, int wrongMeals, double dailyGoal) {
-        boolean waterAchieved = waterSum >= dailyGoal;
-
-        // If there's no data at all (no water, no meals), don't color the day
-        if (waterSum == 0 && correctMeals == 0 && warningMeals == 0 && wrongMeals == 0) {
-            return DayStatus.NONE;
-        }
-
-        // User's priority rules (preserved):
-        //   RED: 2+ wrong meals
-        //   YELLOW: 2+ warning meals OR 1 wrong meal
-        if (wrongMeals >= 2) {
-            return DayStatus.RED;
-        }
-        if (warningMeals >= 2 || wrongMeals >= 1) {
-            return DayStatus.YELLOW;
-        }
-
-        // Scoring model for remaining cases:
-        //   Achieved water goal  -> +2 points
-        //   Each correct meal    -> +1 point
-        //   Each warning meal    -> -0.5 points
-        //   Each wrong meal      -> -1 point
-        double score = 0;
-        if (waterAchieved) {
-            score += 2;
-        }
-        score += correctMeals;
-        score -= warningMeals * 0.5;
-        score -= wrongMeals;
-
-        // GREEN: score >= 3
-        if (score >= 3) {
-            return DayStatus.GREEN;
-        }
-
-        // YELLOW: score between 0 and 2 (inclusive)
-        if (score >= 0) {
-            return DayStatus.YELLOW;
-        }
-
-        // Has data but doesn't meet green/yellow/red criteria
-        if (waterSum > 0 || correctMeals > 0 || warningMeals > 0) {
-            return DayStatus.NONE;
-        }
-
-        return DayStatus.NONE;
     }
 
     private int countWaterDaysAchieved(long startOfWeek, long endOfWeek) {

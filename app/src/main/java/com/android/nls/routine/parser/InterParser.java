@@ -31,7 +31,8 @@ public class InterParser implements Parser {
 
     private String extractDescription(String text) {
         String[] lines = text.split("\n");
-        // A descrição geralmente é a última linha após o valor
+
+        // Description is possible in the last line after the value
         for (int i = lines.length - 1; i >= 0; i--) {
             String line = lines[i].trim();
             if (!line.isEmpty() && !line.startsWith("R$") && !line.toLowerCase().contains(PURCHASE_KEYWORD)) {

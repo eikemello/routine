@@ -14,22 +14,27 @@ import com.android.nls.routine.model.Tracker;
 import com.android.nls.routine.model.TrackerRecord;
 import com.android.nls.routine.model.TrackerType;
 import com.android.nls.routine.model.WaterRecord;
+import com.android.nls.routine.repository.MealRepository;
+import com.android.nls.routine.repository.TrackerRepository;
 import com.android.nls.routine.service.HomeCardExpenseService;
 import com.android.nls.routine.service.HomeCardMealService;
 import com.android.nls.routine.service.HomeCardWaterService;
-import com.android.nls.routine.repository.TrackerRepository;
+import com.android.nls.routine.service.HomeService;
 import com.android.nls.routine.utils.BottomNavHelper;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import java.util.List;
+import java.util.Set;
 
 public class HomeActivity extends AppCompatActivity {
+    private HomeService mHomeService;
     private HomeCardWaterService mHomeCardWaterService;
     private HomeCardExpenseService mHomeCardExpenseService;
     private HomeCardMealService mHomeCardMealService;
     private TrackerRepository mTrackerRepository;
+    private MealRepository mMealRepository;
 
     // Header views
     private TextView txtCurrentGreeting;
@@ -37,6 +42,7 @@ public class HomeActivity extends AppCompatActivity {
 
     // Dynamic tracker cards container
     private LinearLayout mTrackerCardsContainer;
+    private View[] mProgressSegments;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +59,8 @@ public class HomeActivity extends AppCompatActivity {
         mHomeCardExpenseService = new HomeCardExpenseService(this);
         mHomeCardMealService = new HomeCardMealService(this);
         mTrackerRepository = new TrackerRepository(this);
+        mMealRepository = new MealRepository(this);
+        mHomeService = new HomeService(this);
 
         startUIComponents();
         BottomNavHelper.setup(this, R.id.nav_home);
@@ -62,6 +70,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         initFields();
+        renderTrackerProgress();
         renderTrackerCards();
     }
 
@@ -69,6 +78,15 @@ public class HomeActivity extends AppCompatActivity {
         txtCurrentDate = findViewById(R.id.txtCurrentDate);
         txtCurrentGreeting = findViewById(R.id.txtCurrentGreeting);
         mTrackerCardsContainer = findViewById(R.id.trackerCardsContainer);
+
+        mProgressSegments = new View[]{
+                findViewById(R.id.viewSegment1),
+                findViewById(R.id.viewSegment2),
+                findViewById(R.id.viewSegment3),
+                findViewById(R.id.viewSegment4),
+                findViewById(R.id.viewSegment5),
+                findViewById(R.id.viewSegment6)
+        };
     }
 
     private void initFields() {
@@ -129,9 +147,20 @@ public class HomeActivity extends AppCompatActivity {
         mHomeCardWaterService.updateWaterProgress(progressWater, dailyWaterSum, dailyWaterGoal);
         mHomeCardWaterService.setDailyWaterDrank(txtDailyWaterDrank, dailyWaterSum, dailyWaterGoal);
 
-        btnAddWater1.setOnClickListener(v -> mHomeCardWaterService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, btnAddWater1.getText().toString()));
-        btnAddWater2.setOnClickListener(v -> mHomeCardWaterService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, btnAddWater2.getText().toString()));
-        btnAddWater3.setOnClickListener(v -> mHomeCardWaterService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, btnAddWater3.getText().toString()));
+        btnAddWater1.setOnClickListener(v -> {
+            mHomeCardWaterService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, btnAddWater1.getText().toString());
+            renderTrackerProgress();
+        });
+
+        btnAddWater2.setOnClickListener(v -> {
+            mHomeCardWaterService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, btnAddWater2.getText().toString());
+            renderTrackerProgress();
+        });
+
+        btnAddWater3.setOnClickListener(v -> {
+            mHomeCardWaterService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, btnAddWater3.getText().toString());
+            renderTrackerProgress();
+        });
 
         return card;
     }
@@ -143,9 +172,14 @@ public class HomeActivity extends AppCompatActivity {
         MaterialButton btnWarningMeal = card.findViewById(R.id.btnWarningMeal);
         MaterialButton btnWrongMeal = card.findViewById(R.id.btnWrongMeal);
 
-        btnCorrectMeal.setOnClickListener(v -> mHomeCardMealService.showAlertDialog(Constants.CORRECT_MEAL));
-        btnWarningMeal.setOnClickListener(v -> mHomeCardMealService.showAlertDialog(Constants.WARNING_MEAL));
-        btnWrongMeal.setOnClickListener(v -> mHomeCardMealService.showAlertDialog(Constants.WRONG_MEAL));
+        btnCorrectMeal.setOnClickListener(v ->
+                mHomeCardMealService.showAlertDialog(Constants.CORRECT_MEAL, this::renderTrackerProgress));
+
+        btnWarningMeal.setOnClickListener(v ->
+                mHomeCardMealService.showAlertDialog(Constants.WARNING_MEAL, this::renderTrackerProgress));
+
+        btnWrongMeal.setOnClickListener(v ->
+                mHomeCardMealService.showAlertDialog(Constants.WRONG_MEAL, this::renderTrackerProgress));
 
         return card;
     }
@@ -187,6 +221,7 @@ public class HomeActivity extends AppCompatActivity {
             mTrackerRepository.saveTrackerRecord(TrackerType.WORKOUT, true, null);
             TrackerRecord updatedRecord = mTrackerRepository.getTrackerRecordForDay(TrackerType.WORKOUT, System.currentTimeMillis());
             updateStatusCard(txtWorkoutStatus, btnCompleteWorkout, updatedRecord);
+            renderTrackerProgress();
         });
 
         return card;
@@ -213,6 +248,7 @@ public class HomeActivity extends AppCompatActivity {
             mTrackerRepository.saveTrackerRecord(TrackerType.MEDICATION, true, null);
             TrackerRecord updatedRecord = mTrackerRepository.getTrackerRecordForDay(TrackerType.MEDICATION, System.currentTimeMillis());
             updateStatusCard(txtMedicationStatus, btnMarkMedicationTaken, updatedRecord);
+            renderTrackerProgress();
         });
 
         return card;
@@ -247,6 +283,7 @@ public class HomeActivity extends AppCompatActivity {
             mTrackerRepository.saveTrackerRecord(TrackerType.SUPPLEMENT, true, null);
             TrackerRecord updatedRecord = mTrackerRepository.getTrackerRecordForDay(TrackerType.SUPPLEMENT, System.currentTimeMillis());
             updateStatusCard(txtSupplementStatus, btnMarkSupplementTaken, updatedRecord);
+            renderTrackerProgress();
         });
 
         return card;
@@ -269,12 +306,52 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    private void renderTrackerProgress() {
+        List<Tracker> enabledTrackers = mTrackerRepository.getEnabledTrackers();
+        Set<TrackerType> completedTrackers = mHomeService.getCompletedTrackersToday();
+
+        int segmentCount = 0;
+        for (Tracker tracker : enabledTrackers) {
+            if (tracker.type() != TrackerType.EXPENSES) {
+                segmentCount++;
+            }
+        }
+
+        int completedCount = 0;
+        for (Tracker tracker : enabledTrackers) {
+            if (tracker.type() == TrackerType.EXPENSES) {
+                continue;
+            }
+            if (tracker.type() == TrackerType.MEALS) {
+                // Check if all 4 meals (Breakfast, Lunch, Tea, Dinner) were logged today
+                if (mHomeService.areAllMealsLogged()) {
+                    completedCount++;
+                }
+            } else if (completedTrackers.contains(tracker.type())) {
+                completedCount++;
+            }
+        }
+
+        for (int i = 0; i < mProgressSegments.length; i++) {
+            View segment = mProgressSegments[i];
+            if (i < segmentCount) {
+                segment.setVisibility(View.VISIBLE);
+                segment.setBackgroundResource(i < completedCount
+                        ? R.drawable.calendar_day_green
+                        : R.drawable.calendar_day_red);
+            } else {
+                segment.setVisibility(View.GONE);
+            }
+        }
+    }
+
     @Override
     protected void onDestroy() {
         mHomeCardWaterService.closeDb();
         mHomeCardExpenseService.closeDb();
         mHomeCardMealService.closeDb();
         mTrackerRepository.closeDb();
+        mMealRepository.closeDb();
         super.onDestroy();
     }
 }

@@ -44,7 +44,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toStartOf="@+id/textView"
-                    android:layout_marginEnd="5dp"
                     android:includeFontPadding="false"
                     android:text="@string/water_default_value_init" />
 
@@ -54,7 +53,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
-                    android:layout_marginEnd="5dp"
                     android:layout_toStartOf="@+id/txtDailyWater"
                     android:includeFontPadding="false"
                     android:text="@string/trace"

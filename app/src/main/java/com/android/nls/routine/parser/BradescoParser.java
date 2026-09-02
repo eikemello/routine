@@ -15,12 +15,14 @@ public class BradescoParser implements Parser {
     public Expense parse(StatusBarNotification sbn) {
         String text = NotificationTextExtractor.extractText(sbn);
         if (!text.toLowerCase().contains(PURCHASE_KEYWORD)) {
-            return new Expense(0, sbn.getOpPkg() + ", !text", BANK_NAME, sbn.getPostTime());
+//            return new Expense(0, sbn.getOpPkg() + ", !text", BANK_NAME, sbn.getPostTime());
+            return null;
         }
 
         Matcher matcher = AMOUNT_PATTERN.matcher(text);
         if (!matcher.find()) {
-            return new Expense(0, sbn.getOpPkg() + ", !matcher", BANK_NAME, sbn.getPostTime());
+//            return new Expense(0, sbn.getOpPkg() + ", !matcher", BANK_NAME, sbn.getPostTime());
+            return null;
         }
 
         double amount = parseAmount(Objects.requireNonNull(matcher.group(1)));

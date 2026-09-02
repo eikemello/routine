@@ -4,5 +4,9 @@ package com.android.nls.routine.model;
  * Holds the computed status and data-presence flag for a single day.
  * Used by batch calendar rendering to avoid per-day database queries.
  */
-public record DayStatusInfo(DayStatus status, boolean hasData) {
+public record DayStatusInfo(DayStatus status, boolean hasData, String scoreBreakdown) {
+
+    public DayStatusInfo(DayStatus status, boolean hasData) {
+        this(status, hasData, null);
+    }
 }

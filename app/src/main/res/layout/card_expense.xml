@@ -11,6 +11,8 @@
         android:padding="10dp">
 
         <RelativeLayout
+            android:id="@+id/btnExpenseHistory"
+            android:clickable="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
@@ -53,7 +55,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toStartOf="@+id/txtTrace"
-                    android:layout_marginEnd="5dp"
                     android:text="@string/total_expense_value_init"
                     android:textAlignment="textEnd" />
 
@@ -63,7 +64,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toStartOf="@+id/txtTotalValue"
-                    android:layout_marginEnd="5dp"
                     android:text="@string/trace"
                     android:textAlignment="textEnd" />
 

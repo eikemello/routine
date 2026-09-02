@@ -13,8 +13,10 @@ import com.android.nls.routine.service.database.DatabaseHelper;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class TrackerRepository {
@@ -178,6 +180,47 @@ public class TrackerRepository {
         }
 
         return records;
+    }
+
+    /**
+     * Returns the tracker completion status per day within the given time range.
+     * The map keys are the start-of-day timestamps (local timezone).
+     * The inner map keys are tracker types, values are whether they were completed.
+     */
+    public Map<Long, Map<TrackerType, Boolean>> getDailyTrackerCompletions(long start, long end) {
+        Map<Long, Map<TrackerType, Boolean>> dailyCompletions = new HashMap<>();
+
+        String query = "SELECT " + Constants.COLUMN_NAME_TRACKER_RECORD_TYPE + ", " +
+                Constants.COLUMN_NAME_TRACKER_RECORD_COMPLETED + ", " +
+                Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP +
+                " FROM " + Constants.TABLE_NAME_TRACKER_RECORDS +
+                " WHERE " + Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " >= ? AND " +
+                Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " <= ?";
+
+        try (Cursor cursor = mSqliteDatabase.rawQuery(query,
+                new String[]{String.valueOf(start), String.valueOf(end)})) {
+            while (cursor.moveToNext()) {
+                String typeStr = cursor.getString(0);
+                boolean completed = cursor.getInt(1) == 1;
+                long timestamp = cursor.getLong(2);
+                long dayStart = Common.getStartOfDayInMillis(timestamp);
+
+                TrackerType trackerType;
+                try {
+                    trackerType = TrackerType.valueOf(typeStr);
+                } catch (IllegalArgumentException e) {
+                    Log.e(TAG, "Unknown tracker type: " + typeStr);
+                    continue;
+                }
+
+                dailyCompletions.computeIfAbsent(dayStart, k -> new HashMap<>())
+                        .put(trackerType, completed);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting daily tracker completions: " + e.getMessage());
+        }
+
+        return dailyCompletions;
     }
 
     /**
