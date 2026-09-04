@@ -81,6 +81,13 @@ public class HistoryService {
         );
     }
 
+    /**
+     * Returns the enabled trackers in the standard order.
+     */
+    public List<Tracker> getEnabledTrackers() {
+        return mTrackerRepository.getEnabledTrackers();
+    }
+
     public DayDetails getDayDetails(long timestamp) {
         long startOfDay = Common.getStartOfDayInMillis(timestamp);
         long endOfDay = Common.getEndOfDayInMillis(timestamp);

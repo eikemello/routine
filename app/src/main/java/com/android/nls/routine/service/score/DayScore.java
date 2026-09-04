@@ -98,6 +98,57 @@ public class DayScore {
     }
 
     /**
+     * Computes the final weighted percentage (0-100) for a day.
+     * Returns -1 if there are no enabled trackers or no data at all.
+     */
+    public static double computePercentage(int waterSum, double dailyGoal,
+                                           Map<String, int[]> mealCountsByType,
+                                           Map<TrackerType, Boolean> trackerCompletions,
+                                           java.util.Set<TrackerType> enabledTrackers) {
+        if (enabledTrackers == null || enabledTrackers.isEmpty()) {
+            return -1;
+        }
+
+        boolean hasAnyData = waterSum > 0
+                || (mealCountsByType != null && !mealCountsByType.isEmpty())
+                || (trackerCompletions != null && !trackerCompletions.isEmpty());
+
+        if (!hasAnyData) {
+            return -1;
+        }
+
+        double cardWeight = 1.0 / enabledTrackers.size();
+        double totalScore = 0.0;
+
+        for (TrackerType type : enabledTrackers) {
+            switch (type) {
+                case WATER:
+                    double waterScore = dailyGoal > 0 ? Math.min(waterSum / dailyGoal, 1.0) : 0.0;
+                    totalScore += waterScore * cardWeight;
+                    break;
+
+                case MEALS:
+                    totalScore += computeMealsScore(mealCountsByType) * cardWeight;
+                    break;
+
+                case WORKOUT:
+                case MEDICATION:
+                case SUPPLEMENT:
+                    boolean completed = trackerCompletions != null
+                            && Boolean.TRUE.equals(trackerCompletions.get(type));
+                    totalScore += (completed ? 1.0 : 0.0) * cardWeight;
+                    break;
+
+                case EXPENSES:
+                    // Not included in the score calculation
+                    break;
+            }
+        }
+
+        return totalScore * 100.0;
+    }
+
+    /**
      * Builds a human-readable breakdown of the score calculation for a day,
      * including the final weighted average total.
      */
