@@ -15,17 +15,17 @@ import com.android.nls.routine.model.DayStatusInfo;
 import com.android.nls.routine.model.WeeklySummary;
 import com.android.nls.routine.repository.ConfigRepository;
 import com.android.nls.routine.service.HistoryService;
-import com.android.nls.routine.service.score.DayScore;
+import com.android.nls.routine.service.calendar.DayScore;
+import com.android.nls.routine.service.calendar.DayDetailsRenderer;
+import com.android.nls.routine.service.calendar.DayScoreData;
+import com.android.nls.routine.service.calendar.HistoryCalendarRenderer;
+import com.android.nls.routine.service.calendar.HistoryContext;
 import com.android.nls.routine.utils.BottomNavHelper;
 import com.android.nls.routine.utils.Common;
-import com.android.nls.routine.service.score.DayDetailsRenderer;
-import com.android.nls.routine.service.score.DayScoreData;
-import com.android.nls.routine.service.score.HistoryCalendarRenderer;
 import com.google.android.material.button.MaterialButton;
 
 public class HistoryActivity extends AppCompatActivity {
-    private HistoryService mHistoryService;
-    private ConfigRepository mConfigRepository;
+    private HistoryContext mHistoryContext;
 
     // Weekly summary views
     private TextView txtSummaryTitle;
@@ -56,8 +56,8 @@ public class HistoryActivity extends AppCompatActivity {
         WindowInsetsControllerCompat windowInsetsController = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
         windowInsetsController.setAppearanceLightStatusBars(false);
 
-        mHistoryService = new HistoryService(this);
-        mConfigRepository = new ConfigRepository(this);
+        // Build the shared context once; it caches trackers and water goal
+        mHistoryContext = new HistoryContext(new HistoryService(this), new ConfigRepository(this));
 
         startUIComponents();
         setupButtonListeners();
@@ -87,8 +87,8 @@ public class HistoryActivity extends AppCompatActivity {
         viewScoreStatus = findViewById(R.id.viewScoreStatus);
 
         mCalendarRenderer = new HistoryCalendarRenderer(this, calendarGrid, txtMonthYear, btnToggleView,
-                mHistoryService, this::showDayDetails);
-        mDayDetailsRenderer = new DayDetailsRenderer(this, dayDetailsGrid, mHistoryService, mConfigRepository);
+                mHistoryContext.getHistoryService(), this::showDayDetails);
+        mDayDetailsRenderer = new DayDetailsRenderer(this, dayDetailsGrid, mHistoryContext);
     }
 
     private void setupButtonListeners() {
@@ -112,10 +112,10 @@ public class HistoryActivity extends AppCompatActivity {
         WeeklySummary summary;
         if (mCalendarRenderer.isWeekView()) {
             txtSummaryTitle.setText(getString(R.string.weekly_summary));
-            summary = mHistoryService.getWeeklySummary();
+            summary = mHistoryContext.getHistoryService().getWeeklySummary();
         } else {
             txtSummaryTitle.setText(getString(R.string.monthly_summary));
-            summary = mHistoryService.getMonthlySummary(mCalendarRenderer.getCurrentMonth());
+            summary = mHistoryContext.getHistoryService().getMonthlySummary(mCalendarRenderer.getCurrentMonth());
         }
 
         txtWeeklyWater.setText(getString(R.string.weekly_water_achieved, summary.waterDaysAchieved(), summary.totalDays()));
@@ -156,7 +156,7 @@ public class HistoryActivity extends AppCompatActivity {
             viewScoreStatus.setVisibility(View.GONE);
         }
 
-        DayDetails details = mHistoryService.getDayDetails(timestamp);
+        DayDetails details = mHistoryContext.getHistoryService().getDayDetails(timestamp);
 
         boolean hasAnyData = !details.waterRecords().isEmpty()
                 || !details.mealRecords().isEmpty()
@@ -167,26 +167,25 @@ public class HistoryActivity extends AppCompatActivity {
 
         txtNoData.setVisibility(hasAnyData ? View.GONE : View.VISIBLE);
 
+        // Compute day score data once and share it between the grid and the score button
+        DayScoreData scoreData = new DayScoreData(details);
+
         // Render the day details grid with icon cells for each enabled tracker
-        mDayDetailsRenderer.render(details);
+        mDayDetailsRenderer.render(details, scoreData);
 
         // Update the principal day score button with the weighted percentage and status color
-        updatePrincipalDayScore(dayInfo, details);
+        updatePrincipalDayScore(dayInfo, scoreData);
     }
 
-    private void updatePrincipalDayScore(DayStatusInfo dayInfo, DayDetails details) {
+    private void updatePrincipalDayScore(DayStatusInfo dayInfo, DayScoreData scoreData) {
         if (dayInfo == null || dayInfo.status() == DayStatus.NONE) {
             txtPrincipalDayScore.setText("");
             txtPrincipalDayScore.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(R.color.calendar_day_background_default)));
             return;
         }
 
-        // Compute the weighted percentage using the same logic as the calendar
-        double dailyGoal = mConfigRepository.getDailyWaterGoal();
-        DayScoreData scoreData = new DayScoreData(details, mHistoryService);
-
-        double percentage = DayScore.computePercentage(scoreData.getWaterSum(), dailyGoal,
-                scoreData.getMealCountsByType(), scoreData.getTrackerCompletions(), scoreData.getEnabledTrackers());
+        double percentage = DayScore.computePercentage(scoreData.getWaterSum(), mHistoryContext.getDailyWaterGoal(),
+                scoreData.getMealCountsByType(), scoreData.getTrackerCompletions(), mHistoryContext.getScoreTrackerTypes());
         if (percentage < 0) {
             txtPrincipalDayScore.setText("");
             txtPrincipalDayScore.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(R.color.calendar_day_background_default)));
@@ -220,8 +219,7 @@ public class HistoryActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        mHistoryService.closeDb();
-        mConfigRepository.closeDb();
+        mHistoryContext.closeDb();
         super.onDestroy();
     }
 }

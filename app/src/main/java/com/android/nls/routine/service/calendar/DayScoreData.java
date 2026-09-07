@@ -1,35 +1,31 @@
-package com.android.nls.routine.service.score;
+package com.android.nls.routine.service.calendar;
 
 import com.android.nls.routine.model.DayDetails;
 import com.android.nls.routine.model.MealRecord;
-import com.android.nls.routine.model.Tracker;
 import com.android.nls.routine.model.TrackerRecord;
 import com.android.nls.routine.model.TrackerType;
 import com.android.nls.routine.model.WaterRecord;
-import com.android.nls.routine.service.HistoryService;
 import com.android.nls.routine.utils.Constants;
-
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Extracts the score computation inputs (water sum, meal counts,
- * tracker completions, enabled trackers) from a DayDetails object.
+ * tracker completions) from a DayDetails object.
+ * <p>
+ * This is the single source of truth for computed day values,
+ * shared by both the day details grid and the score calculation.
  */
 public class DayScoreData {
 
     private final int waterSum;
     private final Map<String, int[]> mealCountsByType;
     private final Map<TrackerType, Boolean> trackerCompletions;
-    private final Set<TrackerType> enabledTrackers;
 
-    public DayScoreData(DayDetails details, HistoryService historyService) {
+    public DayScoreData(DayDetails details) {
         this.waterSum = computeWaterSum(details);
         this.mealCountsByType = buildMealCounts(details);
         this.trackerCompletions = buildTrackerCompletions(details);
-        this.enabledTrackers = buildEnabledTrackers(historyService);
     }
 
     public int getWaterSum() {
@@ -42,10 +38,6 @@ public class DayScoreData {
 
     public Map<TrackerType, Boolean> getTrackerCompletions() {
         return trackerCompletions;
-    }
-
-    public Set<TrackerType> getEnabledTrackers() {
-        return enabledTrackers;
     }
 
     private int computeWaterSum(DayDetails details) {
@@ -83,16 +75,5 @@ public class DayScoreData {
             trackerCompletions.put(TrackerType.SUPPLEMENT, record.completed());
         }
         return trackerCompletions;
-    }
-
-    private Set<TrackerType> buildEnabledTrackers(HistoryService historyService) {
-        // Enabled trackers excluding EXPENSES
-        Set<TrackerType> enabledTrackers = new LinkedHashSet<>();
-        for (Tracker tracker : historyService.getEnabledTrackers()) {
-            if (tracker.type() != TrackerType.EXPENSES) {
-                enabledTrackers.add(tracker.type());
-            }
-        }
-        return enabledTrackers;
     }
 }

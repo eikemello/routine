@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import com.android.nls.routine.model.MealRecord;
-import com.android.nls.routine.service.database.DatabaseHelper;
+import com.android.nls.routine.database.DatabaseHelper;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 import java.util.ArrayList;
@@ -68,40 +68,6 @@ public class MealRepository {
         }
 
         return new int[]{correct, warning, wrong};
-    }
-
-    /**
-     * Returns the meal counts (correct, warning, wrong) per day within the given time range.
-     * The map keys are the start-of-day timestamps (local timezone).
-     */
-    public Map<Long, int[]> getDailyMealCounts(long start, long end) {
-        Map<Long, int[]> dailyCounts = new HashMap<>();
-
-        String query = "SELECT " + Constants.COLUMN_NAME_TIMESTAMP + ", " + Constants.COLUMN_NAME_MEAL_STATUS +
-                " FROM " + Constants.TABLE_NAME_MEAL +
-                " WHERE " + Constants.COLUMN_NAME_TIMESTAMP + " >= ? AND " +
-                Constants.COLUMN_NAME_TIMESTAMP + " <= ?";
-
-        try (Cursor cursor = mSqliteDatabase.rawQuery(query, new String[]{String.valueOf(start), String.valueOf(end)})) {
-            while (cursor.moveToNext()) {
-                long timestamp = cursor.getLong(0);
-                String status = cursor.getString(1);
-                long dayStart = Common.getStartOfDayInMillis(timestamp);
-
-                int[] counts = dailyCounts.computeIfAbsent(dayStart, k -> new int[3]);
-                if (Constants.CORRECT_MEAL.equals(status)) {
-                    counts[0]++;
-                } else if (Constants.WARNING_MEAL.equals(status)) {
-                    counts[1]++;
-                } else if (Constants.WRONG_MEAL.equals(status)) {
-                    counts[2]++;
-                }
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error getting daily meal counts: " + e.getMessage());
-        }
-
-        return dailyCounts;
     }
 
     /**

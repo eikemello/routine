@@ -1,4 +1,4 @@
-package com.android.nls.routine.service.score;
+package com.android.nls.routine.service.calendar;
 
 import android.content.Context;
 import android.view.Gravity;
@@ -126,14 +126,10 @@ public class HistoryCalendarRenderer {
             long weekEnd = Common.getStartOfDayInMillis(weekEndCal.getTimeInMillis());
 
             if (todayStart >= weekStart && todayStart <= weekEnd) {
-                for (int i = 0; i < mCalendarGrid.getChildCount(); i++) {
-                    View child = mCalendarGrid.getChildAt(i);
-                    if (child instanceof TextView tv && child.getVisibility() == View.VISIBLE) {
-                        if (tv.getText().toString().equals(String.valueOf(todayDay))) {
-                            mDaySelectedListener.onDaySelected(todayTimestamp, tv);
-                            return;
-                        }
-                    }
+                TextView todayCell = findCellByDayNumber(todayDay);
+                if (todayCell != null) {
+                    mDaySelectedListener.onDaySelected(todayTimestamp, todayCell);
+                    return;
                 }
             }
         } else {
@@ -141,14 +137,10 @@ public class HistoryCalendarRenderer {
             int month = mCurrentMonth.get(Calendar.MONTH);
 
             if (today.get(Calendar.YEAR) == year && today.get(Calendar.MONTH) == month) {
-                for (int i = 0; i < mCalendarGrid.getChildCount(); i++) {
-                    View child = mCalendarGrid.getChildAt(i);
-                    if (child instanceof TextView tv && child.getVisibility() == View.VISIBLE) {
-                        if (tv.getText().toString().equals(String.valueOf(todayDay))) {
-                            mDaySelectedListener.onDaySelected(todayTimestamp, tv);
-                            return;
-                        }
-                    }
+                TextView todayCell = findCellByDayNumber(todayDay);
+                if (todayCell != null) {
+                    mDaySelectedListener.onDaySelected(todayTimestamp, todayCell);
+                    return;
                 }
             }
         }
@@ -186,6 +178,12 @@ public class HistoryCalendarRenderer {
     }
 
     public long getTimestampFromCell(TextView cell) {
+        Object tag = cell.getTag();
+        if (tag instanceof Long) {
+            return (Long) tag;
+        }
+
+        // Fallback: resolve from day number (for cells created before tags were set)
         String text = cell.getText().toString();
         int day = Integer.parseInt(text);
 
@@ -204,6 +202,18 @@ public class HistoryCalendarRenderer {
             Calendar cal = new GregorianCalendar(year, month, day);
             return cal.getTimeInMillis();
         }
+    }
+
+    private TextView findCellByDayNumber(int dayNumber) {
+        for (int i = 0; i < mCalendarGrid.getChildCount(); i++) {
+            View child = mCalendarGrid.getChildAt(i);
+            if (child instanceof TextView tv && child.getVisibility() == View.VISIBLE) {
+                if (tv.getText().toString().equals(String.valueOf(dayNumber))) {
+                    return tv;
+                }
+            }
+        }
+        return null;
     }
 
     private void renderWeekView() {
@@ -230,7 +240,7 @@ public class HistoryCalendarRenderer {
             long dayTimestamp = dayCal.getTimeInMillis();
             boolean isFutureDay = dayTimestamp > todayStart;
 
-            TextView dayCell = createDayCell(String.valueOf(dayCal.get(Calendar.DAY_OF_MONTH)));
+            TextView dayCell = createDayCell(String.valueOf(dayCal.get(Calendar.DAY_OF_MONTH)), dayTimestamp);
             if (isFutureDay) {
                 dayCell.setBackgroundResource(R.drawable.calendar_day_background);
             } else {
@@ -273,7 +283,7 @@ public class HistoryCalendarRenderer {
             long dayTimestamp = dayCal.getTimeInMillis();
             boolean isFutureDay = dayTimestamp > todayStart;
 
-            TextView dayCell = createDayCell(String.valueOf(day));
+            TextView dayCell = createDayCell(String.valueOf(day), dayTimestamp);
             if (isFutureDay) {
                 dayCell.setBackgroundResource(R.drawable.calendar_day_background);
             } else {
@@ -292,13 +302,14 @@ public class HistoryCalendarRenderer {
         }
     }
 
-    private TextView createDayCell(String dayText) {
+    private TextView createDayCell(String dayText, long timestamp) {
         TextView dayCell = new TextView(mContext);
         dayCell.setText(dayText);
         dayCell.setGravity(Gravity.CENTER);
         dayCell.setTextSize(16);
         dayCell.setTextColor(mContext.getColor(R.color.white));
         dayCell.setLayoutParams(createCellParams());
+        dayCell.setTag(timestamp);
         return dayCell;
     }
 

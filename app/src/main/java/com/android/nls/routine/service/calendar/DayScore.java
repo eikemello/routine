@@ -1,9 +1,10 @@
-package com.android.nls.routine.service.score;
+package com.android.nls.routine.service.calendar;
 
 import com.android.nls.routine.model.DayStatus;
 import com.android.nls.routine.model.TrackerType;
 import com.android.nls.routine.utils.Constants;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Computes the daily score based on the user's enabled tracker cards.
@@ -11,17 +12,17 @@ import java.util.Map;
  * The total 100% is divided equally among the enabled cards (excluding EXPENSES).
  * For each card:
  *   - WATER:      score = consumed / goal (proportion, e.g. 80% of goal -> 80%)
- *   - MEALS:      the card's share is divided among the 4 meals
- *                 (Breakfast, Lunch, Tea, Dinner). Each meal:
+ *   - MEALS:      each meal (Breakfast, Lunch, Tea, Dinner) is scored
+ *                 independently as its own 100% unit:
  *                 correct = 100%, warning = 50%, wrong = 0%
  *   - WORKOUT:    completed = 100%, not completed = 0%
  *   - MEDICATION: completed = 100%, not completed = 0%
  *   - SUPPLEMENT: completed = 100%, not completed = 0%
  * <p>
  * Color thresholds:
- *   GREEN  (Good)           -> 80-100%
- *   YELLOW (Warning) -> 50-79%
- *   RED    (Bad)          -> 0-49%
+ *   GREEN  (Good)           -> 86-100%
+ *   YELLOW (Warning) -> 55-85%
+ *   RED    (Bad)          -> 0-54%
  */
 public class DayScore {
     private static final String[] MEAL_TYPES = {
@@ -44,7 +45,7 @@ public class DayScore {
     public static DayStatus compute(int waterSum, double dailyGoal,
                                     Map<String, int[]> mealCountsByType,
                                     Map<TrackerType, Boolean> trackerCompletions,
-                                    java.util.Set<TrackerType> enabledTrackers) {
+                                    Set<TrackerType> enabledTrackers) {
         if (enabledTrackers == null || enabledTrackers.isEmpty()) {
             return DayStatus.NONE;
         }
@@ -58,7 +59,7 @@ public class DayScore {
             return DayStatus.NONE;
         }
 
-        double cardWeight = 1.0 / enabledTrackers.size();
+        double cardWeight = 1.0 / getScoringUnitCount(enabledTrackers);
         double totalScore = 0.0;
 
         for (TrackerType type : enabledTrackers) {
@@ -88,9 +89,9 @@ public class DayScore {
 
         double percentage = totalScore * 100.0;
 
-        if (percentage >= 80.0) {
+        if (percentage >= 85.0) {
             return DayStatus.GREEN;
-        } else if (percentage >= 50.0) {
+        } else if (percentage >= 55.0) {
             return DayStatus.YELLOW;
         } else {
             return DayStatus.RED;
@@ -104,7 +105,7 @@ public class DayScore {
     public static double computePercentage(int waterSum, double dailyGoal,
                                            Map<String, int[]> mealCountsByType,
                                            Map<TrackerType, Boolean> trackerCompletions,
-                                           java.util.Set<TrackerType> enabledTrackers) {
+                                           Set<TrackerType> enabledTrackers) {
         if (enabledTrackers == null || enabledTrackers.isEmpty()) {
             return -1;
         }
@@ -117,7 +118,7 @@ public class DayScore {
             return -1;
         }
 
-        double cardWeight = 1.0 / enabledTrackers.size();
+        double cardWeight = 1.0 / getScoringUnitCount(enabledTrackers);
         double totalScore = 0.0;
 
         for (TrackerType type : enabledTrackers) {
@@ -155,13 +156,13 @@ public class DayScore {
     public static String getBreakdown(int waterSum, double dailyGoal,
                                       Map<String, int[]> mealCountsByType,
                                       Map<TrackerType, Boolean> trackerCompletions,
-                                      java.util.Set<TrackerType> enabledTrackers) {
+                                      Set<TrackerType> enabledTrackers) {
         if (enabledTrackers == null || enabledTrackers.isEmpty()) {
             return "";
         }
 
         StringBuilder sb = new StringBuilder();
-        double cardWeight = 1.0 / enabledTrackers.size();
+        double cardWeight = 1.0 / getScoringUnitCount(enabledTrackers);
         double totalScore = 0.0;
 
         for (TrackerType type : enabledTrackers) {
@@ -219,10 +220,10 @@ public class DayScore {
 
     /**
      * Appends the meals breakdown to the given StringBuilder.
-     * Example -> "Meals 40% (Breakfast 10%, Lunch 10%, Tea 10%, Dinner 10%)"
+     * Example -> "Meals 67% (Breakfast 17%, Lunch 17%, Tea 17%, Dinner 17%)"
      */
     private static String appendMealsBreakdown(Map<String, int[]> mealCountsByType, double cardWeight) {
-        double mealsPct = computeMealsScore(mealCountsByType) * 100.0;
+        double mealsPct = computeMealsScore(mealCountsByType) * cardWeight * 100.0;
         double mealWeightPct = mealWeightPercentage(cardWeight);
 
         StringBuilder sb = new StringBuilder();
@@ -246,7 +247,15 @@ public class DayScore {
                     if (!first) {
                         sb.append(", ");
                     }
-                    sb.append(mealType).append(" ").append(Math.round(mealWeightPct)).append("%");
+                    double mealScore;
+                    if (counts[0] > 0) {
+                        mealScore = 1.0;
+                    } else if (counts[1] > 0) {
+                        mealScore = 0.5;
+                    } else {
+                        mealScore = 0.0;
+                    }
+                    sb.append(mealType).append(" ").append(Math.round(mealScore * mealWeightPct)).append("%");
                     first = false;
                 }
             }
@@ -258,15 +267,32 @@ public class DayScore {
 
     /**
      * Converts a card weight into the percentage each meal contributes to the total score.
-     * E.g. card weight 0.333 -> each of 4 meals = 8.33%
+     * Each meal is scored as its own 100% unit.
+     * E.g. card weight 0.167 -> each meal = 16.7%
      */
     private static double mealWeightPercentage(double cardWeight) {
-        return cardWeight / MEAL_TYPES.length * 100.0;
+        return cardWeight * 100.0;
     }
 
     /**
-     * Computes the meals sub-score (0.0 to 1.0).
-     * The 4 meals (Breakfast, Lunch, Tea, Dinner) each contribute 25% of the meals score.
+     * Returns the total number of scoring units, where the MEALS card counts as
+     * one unit per meal (Breakfast, Lunch, Tea, Dinner).
+     */
+    private static int getScoringUnitCount(Set<TrackerType> enabledTrackers) {
+        int count = 0;
+        for (TrackerType type : enabledTrackers) {
+            if (type == TrackerType.MEALS) {
+                count += MEAL_TYPES.length;
+            } else {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Computes the meals sub-score (0.0 to 4.0).
+     * Each meal (Breakfast, Lunch, Tea, Dinner) is scored independently as its own 100% unit.
      * A meal is scored by its best status: correct = 1.0, warning = 0.5, wrong = 0.0.
      */
     private static double computeMealsScore(Map<String, int[]> mealCountsByType) {
@@ -274,7 +300,6 @@ public class DayScore {
             return 0.0;
         }
 
-        double mealWeight = 1.0 / MEAL_TYPES.length;
         double mealsScore = 0.0;
 
         for (String mealType : MEAL_TYPES) {
@@ -290,7 +315,7 @@ public class DayScore {
             } else {
                 mealScore = 0.0;   // wrong meal
             }
-            mealsScore += mealScore * mealWeight;
+            mealsScore += mealScore;
         }
         return mealsScore;
     }

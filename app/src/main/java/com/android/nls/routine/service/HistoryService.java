@@ -16,22 +16,37 @@ import com.android.nls.routine.repository.ExpenseRepository;
 import com.android.nls.routine.repository.MealRepository;
 import com.android.nls.routine.repository.TrackerRepository;
 import com.android.nls.routine.repository.WaterRepository;
-import com.android.nls.routine.service.score.DayScore;
+import com.android.nls.routine.service.calendar.DayScore;
 import com.android.nls.routine.utils.Common;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class HistoryService {
+    private static final int DAY_DETAILS_CACHE_SIZE = 5;
+
     private final WaterRepository mWaterRepository;
     private final MealRepository mMealRepository;
     private final ExpenseRepository mExpenseRepository;
     private final TrackerRepository mTrackerRepository;
     private final ConfigRepository mConfigRepository;
+
+    /**
+     * LRU cache for day details to avoid re-querying the database
+     * when the user rapidly taps between days.
+     */
+    private final Map<Long, DayDetails> mDayDetailsCache =
+            new LinkedHashMap<>(DAY_DETAILS_CACHE_SIZE, 0.75f, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<Long, DayDetails> eldest) {
+                    return size() > DAY_DETAILS_CACHE_SIZE;
+                }
+            };
 
     public HistoryService(Context context) {
         mWaterRepository = new WaterRepository(context);
@@ -90,6 +105,13 @@ public class HistoryService {
 
     public DayDetails getDayDetails(long timestamp) {
         long startOfDay = Common.getStartOfDayInMillis(timestamp);
+
+        // Check the LRU cache first
+        DayDetails cached = mDayDetailsCache.get(startOfDay);
+        if (cached != null) {
+            return cached;
+        }
+
         long endOfDay = Common.getEndOfDayInMillis(timestamp);
 
         List<WaterRecord> waterRecords = mWaterRepository.getWaterRecords(startOfDay, endOfDay);
@@ -99,7 +121,9 @@ public class HistoryService {
         List<TrackerRecord> medicationRecords = mTrackerRepository.getTrackerRecords(TrackerType.MEDICATION, startOfDay, endOfDay);
         List<TrackerRecord> supplementRecords = mTrackerRepository.getTrackerRecords(TrackerType.SUPPLEMENT, startOfDay, endOfDay);
 
-        return new DayDetails(waterRecords, mealRecords, expenseRecords, workoutRecords, medicationRecords, supplementRecords);
+        DayDetails details = new DayDetails(waterRecords, mealRecords, expenseRecords, workoutRecords, medicationRecords, supplementRecords);
+        mDayDetailsCache.put(startOfDay, details);
+        return details;
     }
 
     /**

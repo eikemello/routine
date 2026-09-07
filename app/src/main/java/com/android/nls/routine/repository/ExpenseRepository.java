@@ -8,7 +8,7 @@ import android.provider.BaseColumns;
 import android.util.Log;
 import com.android.nls.routine.model.Expense;
 import com.android.nls.routine.model.ExpenseRecord;
-import com.android.nls.routine.service.database.DatabaseHelper;
+import com.android.nls.routine.database.DatabaseHelper;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 import java.util.ArrayList;

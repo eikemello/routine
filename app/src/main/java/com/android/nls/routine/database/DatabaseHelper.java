@@ -1,4 +1,4 @@
-package com.android.nls.routine.service.database;
+package com.android.nls.routine.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -34,7 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public synchronized void acquire() {
         sReferenceCount++;
-        Log.d(TAG, "DatabaseHelper acquired. References: " + sReferenceCount);
+//        Log.d(TAG, "DatabaseHelper acquired. References: " + sReferenceCount);
     }
 
     public synchronized void release() {
@@ -45,7 +45,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             close();
             sInstance = null;
         } else {
-            Log.d(TAG, "DatabaseHelper released. References: " + sReferenceCount);
+//            Log.d(TAG, "DatabaseHelper released. References: " + sReferenceCount);
         }
     }
 

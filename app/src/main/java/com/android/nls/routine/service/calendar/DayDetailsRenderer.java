@@ -1,4 +1,4 @@
-package com.android.nls.routine.service.score;
+package com.android.nls.routine.service.calendar;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -13,11 +13,7 @@ import com.android.nls.routine.model.MealRecord;
 import com.android.nls.routine.model.Tracker;
 import com.android.nls.routine.model.TrackerRecord;
 import com.android.nls.routine.model.TrackerType;
-import com.android.nls.routine.model.WaterRecord;
-import com.android.nls.routine.repository.ConfigRepository;
-import com.android.nls.routine.service.HistoryService;
 import com.android.nls.routine.utils.Constants;
-
 import java.util.List;
 
 /**
@@ -28,17 +24,14 @@ public class DayDetailsRenderer {
 
     private final Context mContext;
     private final GridLayout mDayDetailsGrid;
-    private final HistoryService mHistoryService;
-    private final ConfigRepository mConfigRepository;
+    private final HistoryContext mHistoryContext;
 
     public DayDetailsRenderer(Context context,
                               GridLayout dayDetailsGrid,
-                              HistoryService historyService,
-                              ConfigRepository configRepository) {
+                              HistoryContext historyContext) {
         mContext = context;
         mDayDetailsGrid = dayDetailsGrid;
-        mHistoryService = historyService;
-        mConfigRepository = configRepository;
+        mHistoryContext = historyContext;
     }
 
     /**
@@ -46,10 +39,10 @@ public class DayDetailsRenderer {
      * Each square shows the tracker icon, a title, and the value.
      * Only enabled trackers are shown.
      */
-    public void render(DayDetails details) {
+    public void render(DayDetails details, DayScoreData scoreData) {
         mDayDetailsGrid.removeAllViews();
 
-        List<Tracker> enabledTrackers = mHistoryService.getEnabledTrackers();
+        List<Tracker> enabledTrackers = mHistoryContext.getEnabledTrackers();
         if (enabledTrackers.isEmpty()) {
             return;
         }
@@ -65,8 +58,8 @@ public class DayDetailsRenderer {
 
             imgIcon.setImageResource(getIconForTracker(tracker.type()));
             txtTitle.setText(getTrackerTitle(tracker));
-            txtValue.setText(getTrackerValue(tracker.type(), details));
-            txtValue.setTextColor(getValueColor(tracker.type(), details));
+            txtValue.setText(getTrackerValue(tracker.type(), details, scoreData));
+            txtValue.setTextColor(getValueColor(tracker.type(), details, scoreData));
 
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
             params.width = 0;
@@ -115,14 +108,10 @@ public class DayDetailsRenderer {
     /**
      * Returns the value text to display for a tracker on the given day.
      */
-    private String getTrackerValue(TrackerType type, DayDetails details) {
+    private String getTrackerValue(TrackerType type, DayDetails details, DayScoreData scoreData) {
         switch (type) {
             case WATER:
-                int waterSum = 0;
-                for (WaterRecord record : details.waterRecords()) {
-                    waterSum += record.amount();
-                }
-                return waterSum + " ml";
+                return scoreData.getWaterSum() + " ml";
 
             case MEALS:
                 if (details.mealRecords().isEmpty()) {
@@ -165,15 +154,11 @@ public class DayDetailsRenderer {
         return mContext.getString(R.string.not_completed);
     }
 
-    private int getValueColor(TrackerType type, DayDetails details) {
+    private int getValueColor(TrackerType type, DayDetails details, DayScoreData scoreData) {
         switch (type) {
             case WATER:
-                int waterSum = 0;
-                for (WaterRecord record : details.waterRecords()) {
-                    waterSum += record.amount();
-                }
-                double dailyGoal = mConfigRepository.getDailyWaterGoal();
-                if (waterSum >= dailyGoal) {
+                int waterSum = scoreData.getWaterSum();
+                if (waterSum >= mHistoryContext.getDailyWaterGoal()) {
                     return mContext.getColor(R.color.calendar_green);
                 } else if (waterSum > 0) {
                     return mContext.getColor(R.color.calendar_yellow);

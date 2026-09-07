@@ -9,7 +9,7 @@ import android.util.Log;
 import com.android.nls.routine.model.Tracker;
 import com.android.nls.routine.model.TrackerRecord;
 import com.android.nls.routine.model.TrackerType;
-import com.android.nls.routine.service.database.DatabaseHelper;
+import com.android.nls.routine.database.DatabaseHelper;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 import java.util.ArrayList;
