@@ -1,6 +1,6 @@
 # Routine — one app to track your water, meals, and spending
 
-**Routine** is an Android app for tracking daily water intake, meal quality, and expenses. It listens to bank notifications (Nubank, Itaú, Bradesco, XP, Inter) to automatically record expenses, lets you log each meal with a quality status, and helps you hit your daily hydration goal with quick-add buttons and a circular progress indicator.
+**ROTTA** is an Android app for tracking daily water intake, meal quality, and expenses. It listens to bank notifications (Nubank, Itaú, Bradesco, XP, Inter) to automatically record expenses, lets you log each meal with a quality status, and helps you hit your daily hydration goal with quick-add buttons and a circular progress indicator.
 
 ## Features
 

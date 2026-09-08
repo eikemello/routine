@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Routine</string>
+    <string name="app_name">Rotta</string>
     <string name="home">Home</string>
     <string name="water">Water</string>
     <string name="daily_water_ml">%1$.0f ml</string>
@@ -95,4 +95,10 @@
     <string name="no">no</string>
     <string name="other">Other</string>
     <string name="add_an_observation">you can add an observation</string>
+    <string name="score_percentage_good">%1$d%% Good</string>
+    <string name="score_percentage_warning">%1$d%% Warning</string>
+    <string name="score_percentage_bad">%1$d%% Bad</string>
+    <string name="meal_correct_short">Correct</string>
+    <string name="meal_warning_short">Warning</string>
+    <string name="meal_wrong_short">Wrong</string>
 </resources>

@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import com.android.nls.routine.model.MealRecord;
-import com.android.nls.routine.service.database.DatabaseHelper;
+import com.android.nls.routine.database.DatabaseHelper;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 import java.util.ArrayList;
@@ -71,40 +71,6 @@ public class MealRepository {
     }
 
     /**
-     * Returns the meal counts (correct, warning, wrong) per day within the given time range.
-     * The map keys are the start-of-day timestamps (local timezone).
-     */
-    public Map<Long, int[]> getDailyMealCounts(long start, long end) {
-        Map<Long, int[]> dailyCounts = new HashMap<>();
-
-        String query = "SELECT " + Constants.COLUMN_NAME_TIMESTAMP + ", " + Constants.COLUMN_NAME_MEAL_STATUS +
-                " FROM " + Constants.TABLE_NAME_MEAL +
-                " WHERE " + Constants.COLUMN_NAME_TIMESTAMP + " >= ? AND " +
-                Constants.COLUMN_NAME_TIMESTAMP + " <= ?";
-
-        try (Cursor cursor = mSqliteDatabase.rawQuery(query, new String[]{String.valueOf(start), String.valueOf(end)})) {
-            while (cursor.moveToNext()) {
-                long timestamp = cursor.getLong(0);
-                String status = cursor.getString(1);
-                long dayStart = Common.getStartOfDayInMillis(timestamp);
-
-                int[] counts = dailyCounts.computeIfAbsent(dayStart, k -> new int[3]);
-                if (Constants.CORRECT_MEAL.equals(status)) {
-                    counts[0]++;
-                } else if (Constants.WARNING_MEAL.equals(status)) {
-                    counts[1]++;
-                } else if (Constants.WRONG_MEAL.equals(status)) {
-                    counts[2]++;
-                }
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error getting daily meal counts: " + e.getMessage());
-        }
-
-        return dailyCounts;
-    }
-
-    /**
      * Returns all meal records within the given time range, ordered by timestamp ascending.
      */
     public List<MealRecord> getMealRecords(long start, long end) {
@@ -135,13 +101,12 @@ public class MealRepository {
     }
 
     /**
-     * Returns the meal counts (correct, warning, wrong) per meal type per day
-     * within the given time range.
+     * Returns the meal status per meal type per day within the given time range.
      * The map keys are the start-of-day timestamps (local timezone).
      * The inner map keys are meal types (Breakfast, Lunch, Tea, Dinner).
      */
-    public Map<Long, Map<String, int[]>> getDailyMealCountsByType(long start, long end) {
-        Map<Long, Map<String, int[]>> dailyCounts = new HashMap<>();
+    public Map<Long, Map<String, String>> getDailyMealStatusesByType(long start, long end) {
+        Map<Long, Map<String, String>> dailyStatuses = new HashMap<>();
 
         String query = "SELECT " + Constants.COLUMN_NAME_TIMESTAMP + ", " +
                 Constants.COLUMN_NAME_MEAL + ", " +
@@ -157,21 +122,14 @@ public class MealRepository {
                 String status = cursor.getString(2);
                 long dayStart = Common.getStartOfDayInMillis(timestamp);
 
-                Map<String, int[]> byType = dailyCounts.computeIfAbsent(dayStart, k -> new HashMap<>());
-                int[] counts = byType.computeIfAbsent(meal, k -> new int[3]);
-                if (Constants.CORRECT_MEAL.equals(status)) {
-                    counts[0]++;
-                } else if (Constants.WARNING_MEAL.equals(status)) {
-                    counts[1]++;
-                } else if (Constants.WRONG_MEAL.equals(status)) {
-                    counts[2]++;
-                }
+                Map<String, String> byType = dailyStatuses.computeIfAbsent(dayStart, k -> new HashMap<>());
+                byType.put(meal, status);
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error getting daily meal counts by type: " + e.getMessage());
+            Log.e(TAG, "Error getting daily meal statuses by type: " + e.getMessage());
         }
 
-        return dailyCounts;
+        return dailyStatuses;
     }
 
     /**
