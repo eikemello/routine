@@ -144,7 +144,7 @@ public class HistoryService {
         }
 
         Map<Long, Integer> dailyWaterSums = mWaterRepository.getDailyWaterSums(start, end);
-        Map<Long, Map<String, int[]>> dailyMealCountsByType = mMealRepository.getDailyMealCountsByType(start, end);
+        Map<Long, Map<String, String>> dailyMealStatusesByType = mMealRepository.getDailyMealStatusesByType(start, end);
         Map<Long, Map<TrackerType, Boolean>> dailyTrackerCompletions = mTrackerRepository.getDailyTrackerCompletions(start, end);
         Set<Long> daysWithWater = mWaterRepository.getDaysWithWaterData(start, end);
         Set<Long> daysWithMeals = mMealRepository.getDaysWithMealData(start, end);
@@ -159,7 +159,7 @@ public class HistoryService {
             long dayStart = calendar.getTimeInMillis();
 
             int waterSum = dailyWaterSums.getOrDefault(dayStart, 0);
-            Map<String, int[]> mealCountsByType = dailyMealCountsByType.get(dayStart);
+            Map<String, String> mealStatusesByType = dailyMealStatusesByType.get(dayStart);
             Map<TrackerType, Boolean> trackerCompletions = dailyTrackerCompletions.get(dayStart);
 
             boolean hasData = daysWithWater.contains(dayStart)
@@ -167,8 +167,8 @@ public class HistoryService {
                     || daysWithExpenses.contains(dayStart)
                     || daysWithTrackers.contains(dayStart);
 
-            DayStatus status = DayScore.compute(waterSum, dailyGoal, mealCountsByType, trackerCompletions, enabledTrackers);
-            String breakdown = DayScore.getBreakdown(waterSum, dailyGoal, mealCountsByType, trackerCompletions, enabledTrackers);
+            DayStatus status = DayScore.compute(waterSum, dailyGoal, mealStatusesByType, trackerCompletions, enabledTrackers);
+            String breakdown = DayScore.getBreakdown(waterSum, dailyGoal, mealStatusesByType, trackerCompletions, enabledTrackers);
             result.put(dayStart, new DayStatusInfo(status, hasData, breakdown));
 
             calendar.add(Calendar.DAY_OF_MONTH, 1);

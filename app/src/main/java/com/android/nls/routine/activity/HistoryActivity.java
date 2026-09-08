@@ -1,5 +1,6 @@
 package com.android.nls.routine.activity;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.GridLayout;
@@ -180,15 +181,15 @@ public class HistoryActivity extends AppCompatActivity {
     private void updatePrincipalDayScore(DayStatusInfo dayInfo, DayScoreData scoreData) {
         if (dayInfo == null || dayInfo.status() == DayStatus.NONE) {
             txtPrincipalDayScore.setText("");
-            txtPrincipalDayScore.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(R.color.calendar_day_background_default)));
+            txtPrincipalDayScore.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.calendar_day_background_default)));
             return;
         }
 
         double percentage = DayScore.computePercentage(scoreData.getWaterSum(), mHistoryContext.getDailyWaterGoal(),
-                scoreData.getMealCountsByType(), scoreData.getTrackerCompletions(), mHistoryContext.getScoreTrackerTypes());
+                scoreData.getMealStatusesByType(), scoreData.getTrackerCompletions(), mHistoryContext.getScoreTrackerTypes());
         if (percentage < 0) {
             txtPrincipalDayScore.setText("");
-            txtPrincipalDayScore.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(R.color.calendar_day_background_default)));
+            txtPrincipalDayScore.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.calendar_day_background_default)));
             return;
         }
 
@@ -214,7 +215,7 @@ public class HistoryActivity extends AppCompatActivity {
         };
 
         txtPrincipalDayScore.setText(scoreText);
-        txtPrincipalDayScore.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(scoreColor)));
+        txtPrincipalDayScore.setBackgroundTintList(ColorStateList.valueOf(getColor(scoreColor)));
     }
 
     @Override

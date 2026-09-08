@@ -37,13 +37,13 @@ public class DayScore {
      *
      * @param waterSum           total ml of water consumed that day
      * @param dailyGoal          configured daily water goal in ml
-     * @param mealCountsByType   map of meal type -> [correct, warning, wrong] counts
+     * @param mealStatusesByType map of meal type -> status (CORRECT_MEAL, WARNING_MEAL, WRONG_MEAL)
      * @param trackerCompletions map of tracker type -> completed flag
      * @param enabledTrackers    set of enabled tracker types (excluding EXPENSES)
      * @return the DayStatus for the day
      */
     public static DayStatus compute(int waterSum, double dailyGoal,
-                                    Map<String, int[]> mealCountsByType,
+                                    Map<String, String> mealStatusesByType,
                                     Map<TrackerType, Boolean> trackerCompletions,
                                     Set<TrackerType> enabledTrackers) {
         if (enabledTrackers == null || enabledTrackers.isEmpty()) {
@@ -51,7 +51,7 @@ public class DayScore {
         }
 
         boolean hasAnyData = waterSum > 0
-                || (mealCountsByType != null && !mealCountsByType.isEmpty())
+                || (mealStatusesByType != null && !mealStatusesByType.isEmpty())
                 || (trackerCompletions != null && !trackerCompletions.isEmpty());
 
         // No data at all -> don't color the day
@@ -70,7 +70,7 @@ public class DayScore {
                     break;
 
                 case MEALS:
-                    totalScore += computeMealsScore(mealCountsByType) * cardWeight;
+                    totalScore += computeMealsScore(mealStatusesByType) * cardWeight;
                     break;
 
                 case WORKOUT:
@@ -103,7 +103,7 @@ public class DayScore {
      * Returns -1 if there are no enabled trackers or no data at all.
      */
     public static double computePercentage(int waterSum, double dailyGoal,
-                                           Map<String, int[]> mealCountsByType,
+                                           Map<String, String> mealStatusesByType,
                                            Map<TrackerType, Boolean> trackerCompletions,
                                            Set<TrackerType> enabledTrackers) {
         if (enabledTrackers == null || enabledTrackers.isEmpty()) {
@@ -111,7 +111,7 @@ public class DayScore {
         }
 
         boolean hasAnyData = waterSum > 0
-                || (mealCountsByType != null && !mealCountsByType.isEmpty())
+                || (mealStatusesByType != null && !mealStatusesByType.isEmpty())
                 || (trackerCompletions != null && !trackerCompletions.isEmpty());
 
         if (!hasAnyData) {
@@ -129,7 +129,7 @@ public class DayScore {
                     break;
 
                 case MEALS:
-                    totalScore += computeMealsScore(mealCountsByType) * cardWeight;
+                    totalScore += computeMealsScore(mealStatusesByType) * cardWeight;
                     break;
 
                 case WORKOUT:
@@ -154,7 +154,7 @@ public class DayScore {
      * including the final weighted average total.
      */
     public static String getBreakdown(int waterSum, double dailyGoal,
-                                      Map<String, int[]> mealCountsByType,
+                                      Map<String, String> mealStatusesByType,
                                       Map<TrackerType, Boolean> trackerCompletions,
                                       Set<TrackerType> enabledTrackers) {
         if (enabledTrackers == null || enabledTrackers.isEmpty()) {
@@ -180,8 +180,8 @@ public class DayScore {
                     break;
 
                 case MEALS:
-                    double mealsPct = computeMealsScore(mealCountsByType) * 100.0;
-                    sb.append(appendMealsBreakdown(mealCountsByType, cardWeight));
+                    double mealsPct = computeMealsScore(mealStatusesByType) * 100.0;
+                    sb.append(appendMealsBreakdown(mealStatusesByType, cardWeight));
                     totalScore += (mealsPct / 100.0) * cardWeight;
                     break;
 
@@ -222,8 +222,8 @@ public class DayScore {
      * Appends the meals breakdown to the given StringBuilder.
      * Example -> "Meals 67% (Breakfast 17%, Lunch 17%, Tea 17%, Dinner 17%)"
      */
-    private static String appendMealsBreakdown(Map<String, int[]> mealCountsByType, double cardWeight) {
-        double mealsPct = computeMealsScore(mealCountsByType) * cardWeight * 100.0;
+    private static String appendMealsBreakdown(Map<String, String> mealStatusesByType, double cardWeight) {
+        double mealsPct = computeMealsScore(mealStatusesByType) * cardWeight * 100.0;
         double mealWeightPct = mealWeightPercentage(cardWeight);
 
         StringBuilder sb = new StringBuilder();
@@ -231,8 +231,7 @@ public class DayScore {
 
         boolean hasAnyMeal = false;
         for (String mealType : MEAL_TYPES) {
-            int[] counts = mealCountsByType != null ? mealCountsByType.get(mealType) : null;
-            if (counts != null) {
+            if (mealStatusesByType != null && mealStatusesByType.containsKey(mealType)) {
                 hasAnyMeal = true;
                 break;
             }
@@ -242,19 +241,12 @@ public class DayScore {
             sb.append(" (");
             boolean first = true;
             for (String mealType : MEAL_TYPES) {
-                int[] counts = mealCountsByType.get(mealType);
-                if (counts != null) {
+                String status = mealStatusesByType.get(mealType);
+                if (status != null) {
                     if (!first) {
                         sb.append(", ");
                     }
-                    double mealScore;
-                    if (counts[0] > 0) {
-                        mealScore = 1.0;
-                    } else if (counts[1] > 0) {
-                        mealScore = 0.5;
-                    } else {
-                        mealScore = 0.0;
-                    }
+                    double mealScore = getMealScore(status);
                     sb.append(mealType).append(" ").append(Math.round(mealScore * mealWeightPct)).append("%");
                     first = false;
                 }
@@ -275,8 +267,7 @@ public class DayScore {
     }
 
     /**
-     * Returns the total number of scoring units, where the MEALS card counts as
-     * one unit per meal (Breakfast, Lunch, Tea, Dinner).
+     * Returns the total number of scoring units
      */
     private static int getScoringUnitCount(Set<TrackerType> enabledTrackers) {
         int count = 0;
@@ -293,30 +284,35 @@ public class DayScore {
     /**
      * Computes the meals sub-score (0.0 to 4.0).
      * Each meal (Breakfast, Lunch, Tea, Dinner) is scored independently as its own 100% unit.
-     * A meal is scored by its best status: correct = 1.0, warning = 0.5, wrong = 0.0.
+     * correct = 1.0, warning = 0.5, wrong = 0.0.
      */
-    private static double computeMealsScore(Map<String, int[]> mealCountsByType) {
-        if (mealCountsByType == null || mealCountsByType.isEmpty()) {
+    private static double computeMealsScore(Map<String, String> mealStatusesByType) {
+        if (mealStatusesByType == null || mealStatusesByType.isEmpty()) {
             return 0.0;
         }
 
         double mealsScore = 0.0;
 
         for (String mealType : MEAL_TYPES) {
-            int[] counts = mealCountsByType.get(mealType);
-            if (counts == null) {
+            String status = mealStatusesByType.get(mealType);
+            if (status == null) {
                 continue; // meal not logged -> no contribution
             }
-            double mealScore;
-            if (counts[0] > 0) {
-                mealScore = 1.0;   // correct meal
-            } else if (counts[1] > 0) {
-                mealScore = 0.5;   // warning meal
-            } else {
-                mealScore = 0.0;   // wrong meal
-            }
-            mealsScore += mealScore;
+            mealsScore += getMealScore(status);
         }
         return mealsScore;
+    }
+
+    /**
+     * Maps a meal status to its score.
+     * correct = 1.0, warning = 0.5, wrong = 0.0.
+     */
+    private static double getMealScore(String status) {
+        if (Constants.CORRECT_MEAL.equals(status)) {
+            return 1.0;
+        } else if (Constants.WARNING_MEAL.equals(status)) {
+            return 0.5;
+        }
+        return 0.0;
     }
 }

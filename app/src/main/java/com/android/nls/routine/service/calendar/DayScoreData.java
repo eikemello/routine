@@ -5,12 +5,11 @@ import com.android.nls.routine.model.MealRecord;
 import com.android.nls.routine.model.TrackerRecord;
 import com.android.nls.routine.model.TrackerType;
 import com.android.nls.routine.model.WaterRecord;
-import com.android.nls.routine.utils.Constants;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Extracts the score computation inputs (water sum, meal counts,
+ * Extracts the score computation inputs (water sum, meal statuses,
  * tracker completions) from a DayDetails object.
  * <p>
  * This is the single source of truth for computed day values,
@@ -19,12 +18,12 @@ import java.util.Map;
 public class DayScoreData {
 
     private final int waterSum;
-    private final Map<String, int[]> mealCountsByType;
+    private final Map<String, String> mealStatusesByType;
     private final Map<TrackerType, Boolean> trackerCompletions;
 
     public DayScoreData(DayDetails details) {
         this.waterSum = computeWaterSum(details);
-        this.mealCountsByType = buildMealCounts(details);
+        this.mealStatusesByType = buildMealStatuses(details);
         this.trackerCompletions = buildTrackerCompletions(details);
     }
 
@@ -32,8 +31,8 @@ public class DayScoreData {
         return waterSum;
     }
 
-    public Map<String, int[]> getMealCountsByType() {
-        return mealCountsByType;
+    public Map<String, String> getMealStatusesByType() {
+        return mealStatusesByType;
     }
 
     public Map<TrackerType, Boolean> getTrackerCompletions() {
@@ -48,19 +47,12 @@ public class DayScoreData {
         return sum;
     }
 
-    private Map<String, int[]> buildMealCounts(DayDetails details) {
-        Map<String, int[]> mealCountsByType = new HashMap<>();
+    private Map<String, String> buildMealStatuses(DayDetails details) {
+        Map<String, String> mealStatusesByType = new HashMap<>();
         for (MealRecord record : details.mealRecords()) {
-            int[] counts = mealCountsByType.computeIfAbsent(record.meal(), k -> new int[3]);
-            if (Constants.CORRECT_MEAL.equals(record.status())) {
-                counts[0]++;
-            } else if (Constants.WARNING_MEAL.equals(record.status())) {
-                counts[1]++;
-            } else if (Constants.WRONG_MEAL.equals(record.status())) {
-                counts[2]++;
-            }
+            mealStatusesByType.put(record.meal(), record.status());
         }
-        return mealCountsByType;
+        return mealStatusesByType;
     }
 
     private Map<TrackerType, Boolean> buildTrackerCompletions(DayDetails details) {
