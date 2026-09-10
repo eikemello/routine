@@ -71,8 +71,33 @@ public class HomeCardMealService {
                 .show();
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            RadioGroup rgMeal = view.findViewById(R.id.rgMeal);
+            int checkedId = rgMeal.getCheckedRadioButtonId();
             Editable value = etValue.getText();
-            if (value != null) {
+            
+            if (checkedId == -1) {
+                // No radio button selected - show confirmation dialog for OTHER_MEAL
+                new MaterialAlertDialogBuilder(mContext)
+                        .setTitle(R.string.other_meal_confirm_title)
+                        .setMessage(R.string.other_meal_confirm_message)
+                        .setPositiveButton(R.string.continue_label, (innerDialog, which) -> {
+                            innerDialog.dismiss();
+                            if (value != null && !value.toString().trim().isEmpty()) {
+                                saveMealValue(Constants.OTHER_MEAL, mSelectedMeal, value.toString().trim());
+                                dialog.dismiss();
+                                if (onSaved != null) {
+                                    onSaved.run();
+                                }
+                            } else {
+                                txtInputError.setError(Constants.OTHER_MEAL_INVALID_TEXT);
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel_label, (innerDialog, which) -> {
+                            innerDialog.dismiss();
+                        })
+                        .setCancelable(true)
+                        .show();
+            } else if (value != null) {
                 saveAction.accept(value.toString().trim());
                 dialog.dismiss();
 
@@ -140,8 +165,33 @@ public class HomeCardMealService {
                 mSelectedMeal = Constants.TEA;
             } else if (checkedId == R.id.rbDinner) {
                 mSelectedMeal = Constants.DINNER;
+            } else if (checkedId == -1) {
+                // No radio button selected - user deselected all
+                // mSelectedMeal keeps its last value until confirmed as OTHER_MEAL
             }
             Log.d(TAG, "Selected meal changed to: " + mSelectedMeal);
+        });
+
+        // Set click listeners to allow toggling selection off
+        rbBreakfast.setOnClickListener(v -> {
+            if (rbBreakfast.isChecked()) {
+                rgMeal.clearCheck();
+            }
+        });
+        rbLunch.setOnClickListener(v -> {
+            if (rbLunch.isChecked()) {
+                rgMeal.clearCheck();
+            }
+        });
+        rbTea.setOnClickListener(v -> {
+            if (rbTea.isChecked()) {
+                rgMeal.clearCheck();
+            }
+        });
+        rbDinner.setOnClickListener(v -> {
+            if (rbDinner.isChecked()) {
+                rgMeal.clearCheck();
+            }
         });
     }
 

@@ -101,4 +101,8 @@
     <string name="meal_correct_short">Correct</string>
     <string name="meal_warning_short">Warning</string>
     <string name="meal_wrong_short">Wrong</string>
+    <string name="other_meal_confirm_title">Save irregular meal</string>
+    <string name="other_meal_confirm_message">You are saving a meal outside the regular ones. Continue?</string>
+    <string name="continue_label">Continue</string>
+    <string name="cancel_label">Cancel</string>
 </resources>

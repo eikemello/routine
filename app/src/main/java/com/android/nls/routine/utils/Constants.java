@@ -9,6 +9,7 @@ public class Constants {
     //HomeActivity
     public static final String WATER_INVALID_NUMBER = "Please enter a valid number!";
     public static final String MEAL_INVALID_TEXT = "Please enter a valid text!";
+    public static final String OTHER_MEAL_INVALID_TEXT = "For an irregular meal, you need to add some details!";
     public static final List<String> GREETINGS = Arrays.asList("Good morning", "Good afternoon", "Good night");
     public static final double DEFAULT_DAILY_WATER = 2500;
 
@@ -50,6 +51,7 @@ public class Constants {
     public static final String CORRECT_MEAL = "CORRECT_MEAL";
     public static final String WARNING_MEAL = "WARNING_MEAL";
     public static final String WRONG_MEAL = "WRONG_MEAL";
+    public static final String OTHER_MEAL = "OTHER_MEAL";
     public static final String BREAKFAST = "Breakfast";
     public static final String LUNCH = "Lunch";
     public static final String TEA = "Tea";
