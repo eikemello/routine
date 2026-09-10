@@ -160,4 +160,98 @@ public class MealRepository {
     public void closeDb() {
         mDatabaseHelper.release();
     }
+
+    /**
+     * Checks if a meal of the given type already exists for today (excluding OTHER_MEAL).
+     * Used for regular meals (Breakfast, Lunch, Tea, Dinner).
+     * @param mealType The meal type to check (e.g., Constants.BREAKFAST, Constants.LUNCH, etc.)
+     * @return true if a meal of this type exists for today (excluding OTHER_MEAL), false otherwise
+     */
+    public boolean hasMealForToday(String mealType) {
+        return getMealIdForTodayExcludingOtherMeal(mealType) != -1;
+    }
+
+    public long getMealIdForToday(String mealType) {
+        return getMealIdForTodayExcludingOtherMeal(mealType);
+    }
+
+    /**
+     * Gets the ID of the existing meal for a given meal type today (excluding OTHER_MEAL).
+     * Used for regular meals (Breakfast, Lunch, Tea, Dinner).
+     * @param mealType The meal type to look for (e.g., Constants.BREAKFAST, Constants.LUNCH, etc.)
+     * @return The row ID of the existing meal, or -1 if no meal exists
+     */
+    public long getMealIdForTodayExcludingOtherMeal(String mealType) {
+        long startOfDay = Common.getStartOfDayInMillis();
+        long endOfDay = Common.getEndOfDayInMillis();
+        
+        String query = "SELECT " + Constants._ID + " FROM " + Constants.TABLE_NAME_MEAL +
+                " WHERE " + Constants.COLUMN_NAME_MEAL + " = ? AND " +
+                Constants.COLUMN_NAME_MEAL_STATUS + " != ? AND " +
+                Constants.COLUMN_NAME_TIMESTAMP + " >= ? AND " +
+                Constants.COLUMN_NAME_TIMESTAMP + " <= ?";
+        
+        try (Cursor cursor = mSqliteDatabase.rawQuery(query, 
+                new String[]{mealType, Constants.OTHER_MEAL, String.valueOf(startOfDay), String.valueOf(endOfDay)})) {
+            if (cursor.moveToFirst()) {
+                return cursor.getLong(0);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting meal ID: " + e.getMessage());
+        }
+        return -1;
+    }
+
+    /**
+     * Gets the ID of the existing OTHER_MEAL for a given meal type today.
+     * Used when saving irregular meals (when no radio button is selected).
+     * @param mealType The meal type to look for (e.g., Constants.BREAKFAST, Constants.LUNCH, etc.)
+     * @return The row ID of the existing OTHER_MEAL, or -1 if no meal exists
+     */
+    public long getOtherMealIdForToday(String mealType) {
+        long startOfDay = Common.getStartOfDayInMillis();
+        long endOfDay = Common.getEndOfDayInMillis();
+        
+        String query = "SELECT " + Constants._ID + " FROM " + Constants.TABLE_NAME_MEAL +
+                " WHERE " + Constants.COLUMN_NAME_MEAL + " = ? AND " +
+                Constants.COLUMN_NAME_MEAL_STATUS + " = ? AND " +
+                Constants.COLUMN_NAME_TIMESTAMP + " >= ? AND " +
+                Constants.COLUMN_NAME_TIMESTAMP + " <= ?";
+        
+        try (Cursor cursor = mSqliteDatabase.rawQuery(query, 
+                new String[]{mealType, Constants.OTHER_MEAL, String.valueOf(startOfDay), String.valueOf(endOfDay)})) {
+            if (cursor.moveToFirst()) {
+                return cursor.getLong(0);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting OTHER_MEAL ID: " + e.getMessage());
+        }
+        return -1;
+    }
+
+    /**
+     * Updates an existing meal record.
+     * @param rowId The ID of the meal record to update
+     * @param status The new meal status
+     * @param observation The new observation
+     * @param timestamp The new timestamp
+     * @return The number of rows updated (should be 1 on success), or -1 on failure
+     */
+    public int updateMeal(long rowId, String status, String observation, long timestamp) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Constants.COLUMN_NAME_MEAL_STATUS, status);
+        contentValues.put(Constants.COLUMN_NAME_MEAL_OBS, observation);
+        contentValues.put(Constants.COLUMN_NAME_TIMESTAMP, timestamp);
+
+        String whereClause = Constants._ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(rowId)};
+
+        int rowsUpdated = mSqliteDatabase.update(Constants.TABLE_NAME_MEAL, contentValues, whereClause, whereArgs);
+        Log.d(TAG, "Updated meal row ID: " + rowId + ", rows updated: " + rowsUpdated);
+
+        if (rowsUpdated == 0) {
+            Log.e(TAG, "Failed to update meal with ID: " + rowId);
+        }
+        return rowsUpdated;
+    }
 }

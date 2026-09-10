@@ -41,20 +41,61 @@ public class HomeCardMealService {
         switch (buttonClicked) {
             case Constants.CORRECT_MEAL:
                 title = mContext.getString(R.string.correct_meal);
-                saveAction = value -> saveCorrectMeal(mSelectedMeal, value);
+                saveAction = value -> saveMealWithCheck(Constants.CORRECT_MEAL, mSelectedMeal, value, onSaved);
                 break;
             case Constants.WARNING_MEAL:
                 title = mContext.getString(R.string.warning_meal);
-                saveAction = value -> saveWarningMeal(mSelectedMeal, value);
+                saveAction = value -> saveMealWithCheck(Constants.WARNING_MEAL, mSelectedMeal, value, onSaved);
                 break;
             case Constants.WRONG_MEAL:
                 title = mContext.getString(R.string.wrong_meal);
-                saveAction = value -> saveWrongMeal(mSelectedMeal, value);
+                saveAction = value -> saveMealWithCheck(Constants.WRONG_MEAL, mSelectedMeal, value, onSaved);
                 break;
             default:
                 return;
         }
         showSaveDialog(title, view, etValue, saveAction, onSaved);
+    }
+
+    private void saveMealWithCheck(String mealStatus, String currentMeal, String value, Runnable onSaved) {
+        if (mMealRepository.hasMealForToday(currentMeal)) {
+            // Meal already exists for today - get the existing meal ID and show confirmation dialog
+            long existingMealId = mMealRepository.getMealIdForToday(currentMeal);
+            if (existingMealId != -1) {
+                new MaterialAlertDialogBuilder(mContext)
+                        .setTitle(R.string.meal_exists_title)
+                        .setMessage(getString(R.string.meal_exists_message, currentMeal))
+                        .setPositiveButton(R.string.update_label, (dialog, which) -> {
+                            dialog.dismiss();
+                            // Update the existing meal instead of inserting a new one
+                            saveMealValue(mealStatus, currentMeal, value, existingMealId);
+                            if (onSaved != null) {
+                                onSaved.run();
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel_label, (dialog, which) -> {
+                            dialog.dismiss();
+                        })
+                        .setCancelable(true)
+                        .show();
+            } else {
+                // Should not happen, but if ID not found, insert as new
+                saveMealValue(mealStatus, currentMeal, value, -1);
+                if (onSaved != null) {
+                    onSaved.run();
+                }
+            }
+        } else {
+            // No existing meal - save directly as new
+            saveMealValue(mealStatus, currentMeal, value, -1);
+            if (onSaved != null) {
+                onSaved.run();
+            }
+        }
+    }
+
+    private String getString(int resId, Object... formatArgs) {
+        return mContext.getString(resId, formatArgs);
     }
 
 
@@ -71,8 +112,41 @@ public class HomeCardMealService {
                 .show();
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            RadioGroup rgMeal = view.findViewById(R.id.rgMeal);
+            int checkedId = rgMeal.getCheckedRadioButtonId();
             Editable value = etValue.getText();
-            if (value != null) {
+            
+            if (checkedId == -1) {
+                // No radio button selected - show confirmation dialog for OTHER_MEAL
+                new MaterialAlertDialogBuilder(mContext)
+                        .setTitle(R.string.other_meal_confirm_title)
+                        .setMessage(R.string.other_meal_confirm_message)
+                        .setPositiveButton(R.string.continue_label, (innerDialog, which) -> {
+                            innerDialog.dismiss();
+                            if (value != null && !value.toString().trim().isEmpty()) {
+                                // Check if there's already an OTHER_MEAL for this meal type today
+                                long existingOtherMealId = mMealRepository.getOtherMealIdForToday(mSelectedMeal);
+                                if (existingOtherMealId != -1) {
+                                    // Update existing OTHER_MEAL
+                                    saveMealValue(Constants.OTHER_MEAL, mSelectedMeal, value.toString().trim(), existingOtherMealId);
+                                } else {
+                                    // Insert new OTHER_MEAL
+                                    saveMealValue(Constants.OTHER_MEAL, mSelectedMeal, value.toString().trim(), -1);
+                                }
+                                dialog.dismiss();
+                                if (onSaved != null) {
+                                    onSaved.run();
+                                }
+                            } else {
+                                txtInputError.setError(Constants.OTHER_MEAL_INVALID_TEXT);
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel_label, (innerDialog, which) -> {
+                            innerDialog.dismiss();
+                        })
+                        .setCancelable(true)
+                        .show();
+            } else if (value != null) {
                 saveAction.accept(value.toString().trim());
                 dialog.dismiss();
 
@@ -85,25 +159,25 @@ public class HomeCardMealService {
         });
     }
 
-    private void saveCorrectMeal(String currentMeal, String value) {
-        saveMealValue(Constants.CORRECT_MEAL, currentMeal, value);
-    }
-
-    private void saveWarningMeal(String currentMeal, String value) {
-        saveMealValue(Constants.WARNING_MEAL, currentMeal, value);
-    }
-
-    private void saveWrongMeal(String currentMeal, String value) {
-        saveMealValue(Constants.WRONG_MEAL, currentMeal, value);
-    }
-
-    private void saveMealValue(String mealStatus, String currentMeal, String value) {
+    private void saveMealValue(String mealStatus, String currentMeal, String value, long existingMealId) {
         Log.d(TAG, "saveMealValue: " + mealStatus + " = " + value);
-        long result = mMealRepository.insertMeal(currentMeal, mealStatus, value, System.currentTimeMillis());
-        Log.d(TAG, "Inserted row ID: " + result);
-
-        if (result == -1) {
-            Log.e(TAG, "Failed to save meal " + mealStatus);
+        
+        if (existingMealId != -1) {
+            // Update existing meal
+            int rowsUpdated = mMealRepository.updateMeal(existingMealId, mealStatus, value, System.currentTimeMillis());
+            Log.d(TAG, "Updated meal row ID: " + existingMealId + ", rows updated: " + rowsUpdated);
+            
+            if (rowsUpdated == 0) {
+                Log.e(TAG, "Failed to update meal with ID: " + existingMealId);
+            }
+        } else {
+            // Insert new meal
+            long result = mMealRepository.insertMeal(currentMeal, mealStatus, value, System.currentTimeMillis());
+            Log.d(TAG, "Inserted row ID: " + result);
+            
+            if (result == -1) {
+                Log.e(TAG, "Failed to save meal " + mealStatus);
+            }
         }
     }
 
@@ -140,8 +214,33 @@ public class HomeCardMealService {
                 mSelectedMeal = Constants.TEA;
             } else if (checkedId == R.id.rbDinner) {
                 mSelectedMeal = Constants.DINNER;
+            } else if (checkedId == -1) {
+                // No radio button selected - user deselected all
+                // mSelectedMeal keeps its last value until confirmed as OTHER_MEAL
             }
             Log.d(TAG, "Selected meal changed to: " + mSelectedMeal);
+        });
+
+        // Set click listeners to allow toggling selection off
+        rbBreakfast.setOnClickListener(v -> {
+            if (rbBreakfast.isChecked()) {
+                rgMeal.clearCheck();
+            }
+        });
+        rbLunch.setOnClickListener(v -> {
+            if (rbLunch.isChecked()) {
+                rgMeal.clearCheck();
+            }
+        });
+        rbTea.setOnClickListener(v -> {
+            if (rbTea.isChecked()) {
+                rgMeal.clearCheck();
+            }
+        });
+        rbDinner.setOnClickListener(v -> {
+            if (rbDinner.isChecked()) {
+                rgMeal.clearCheck();
+            }
         });
     }
 
