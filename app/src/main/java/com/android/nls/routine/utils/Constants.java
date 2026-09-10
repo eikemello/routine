@@ -9,7 +9,7 @@ public class Constants {
     //HomeActivity
     public static final String WATER_INVALID_NUMBER = "Please enter a valid number!";
     public static final String MEAL_INVALID_TEXT = "Please enter a valid text!";
-    public static final String OTHER_MEAL_INVALID_TEXT = "For an irregular meal, you need to add some details!";
+    public static final String OTHER_MEAL_INVALID_TEXT = "Please enter an valid observation for irregular meals!";
     public static final List<String> GREETINGS = Arrays.asList("Good morning", "Good afternoon", "Good night");
     public static final double DEFAULT_DAILY_WATER = 2500;
 
@@ -30,6 +30,7 @@ public class Constants {
     public static final String TABLE_NAME_WATER = "WATER";
     public static final String COLUMN_NAME_WATER_DRANK = "WATER_DRANK";
     public static final String COLUMN_NAME_TIMESTAMP = "TIMESTAMP";
+    public static final String _ID = "_id";
 
     public static final String TABLE_NAME_USER_CONFIG = "USER_CONFIG";
     public static final String COLUMN_NAME_DAILY_WATER = "DAILY_WATER";

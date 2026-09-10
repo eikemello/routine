@@ -105,4 +105,7 @@
     <string name="other_meal_confirm_message">You are saving a meal outside the regular ones. Continue?</string>
     <string name="continue_label">Continue</string>
     <string name="cancel_label">Cancel</string>
+    <string name="meal_exists_title">Meal already exists</string>
+    <string name="meal_exists_message">You already added %1$s meal. Do you want to update?</string>
+    <string name="update_label">Update</string>
 </resources>
