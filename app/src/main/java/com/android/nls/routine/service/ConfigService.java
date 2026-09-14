@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.content.res.AppCompatResources;
 import com.android.nls.routine.R;
 import com.android.nls.routine.activity.ConfigActivity;
 import com.android.nls.routine.repository.ConfigRepository;
@@ -104,6 +105,10 @@ public class ConfigService {
                 .setNegativeButton("Cancel", null)
                 .setCancelable(true)
                 .show();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(AppCompatResources.getDrawable(mContext, R.drawable.dialog_background));
+        }
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
             Editable value = etValue.getText();

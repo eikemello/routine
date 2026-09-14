@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -8,7 +8,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="85dp"
         android:clipToPadding="false"
         android:fillViewport="true"
         android:scrollbars="none">
@@ -17,27 +17,31 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp"
+            android:padding="16dp"
             android:paddingBottom="20dp">
 
             <TextView
                 style="@style/titleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginStart="4dp"
                 android:text="@string/history" />
 
+            <!-- Weekly Summary Card -->
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardWeeklySummary"
                 style="@style/MaterialCardView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="visible">
 
                 <LinearLayout
                     android:id="@+id/llWeeklySummary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="10dp">
+                    android:padding="16dp">
 
                     <TextView
                         android:id="@+id/txtSummaryTitle"
@@ -51,7 +55,7 @@
                         style="@style/subTitleTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="12dp"
                         android:text="@string/weekly_water_default" />
 
                     <TextView
@@ -59,7 +63,7 @@
                         style="@style/subTitleTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="6dp"
                         android:text="@string/weekly_spent_default" />
 
                     <TextView
@@ -67,11 +71,59 @@
                         style="@style/subTitleTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="6dp"
                         android:text="@string/weekly_meals_default" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Monthly Summary Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardMonthlySummary"
+                style="@style/MaterialCardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/llMonthlySummary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/txtMonthlyTitle"
+                        style="@style/titleTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/monthly_summary" />
+
+                    <TextView
+                        android:id="@+id/txtMonthlyWater"
+                        style="@style/subTitleTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/weekly_water_default" />
+
+                    <TextView
+                        android:id="@+id/txtMonthlySpent"
+                        style="@style/subTitleTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="@string/weekly_spent_default" />
+
+                    <TextView
+                        android:id="@+id/txtMonthlyMeals"
+                        style="@style/subTitleTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="@string/weekly_meals_default" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+            <!-- Calendar Card -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/MaterialCardView"
                 android:layout_width="match_parent"
@@ -81,206 +133,93 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="10dp">
+                    android:padding="16dp">
 
-                    <LinearLayout
+                    <!-- Calendar Header with Navigation -->
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="horizontal">
+                        android:layout_marginBottom="12dp">
 
-                        <ImageButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnPrevMonth"
+                            style="@style/buttonTextStyle"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:contentDescription="@string/previous_month"
-                            android:rotation="180"
-                            android:scaleType="centerInside"
-                            android:src="@drawable/ic_chevron_right" />
+                            android:layout_alignParentStart="true"
+                            android:gravity="center"
+                            android:insetLeft="0dp"
+                            android:insetRight="0dp"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:padding="0dp"
+                            android:text="&lt;"
+                            android:textSize="20sp"
+                            app:cornerRadius="12dp" />
 
                         <TextView
                             android:id="@+id/txtMonthYear"
                             style="@style/titleTextView"
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:textSize="18sp" />
-
-                        <ImageButton
-                            android:id="@+id/btnNextMonth"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:contentDescription="@string/next_month"
-                            android:scaleType="centerInside"
-                            android:src="@drawable/ic_chevron_right" />
+                            android:layout_centerInParent="true"
+                            android:textSize="16sp" />
 
                         <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnToggleView"
+                            android:id="@+id/btnNextMonth"
                             style="@style/buttonTextStyle"
-                            android:layout_width="wrap_content"
+                            android:layout_width="40dp"
                             android:layout_height="40dp"
-                            android:layout_marginStart="10dp"
-                            android:text="@string/week_view" />
-                    </LinearLayout>
+                            android:layout_alignParentEnd="true"
+                            android:gravity="center"
+                            android:insetLeft="0dp"
+                            android:insetRight="0dp"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:padding="0dp"
+                            android:text="&gt;"
+                            android:textSize="20sp"
+                            app:cornerRadius="12dp" />
+                    </RelativeLayout>
 
+                    <!-- Day Headers -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:orientation="horizontal">
+                        android:layout_marginBottom="4dp"
+                        android:orientation="horizontal"
+                        android:weightSum="7">
 
-                        <TextView
-                            style="@style/calendarDayHeader"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/mon" />
-
-                        <TextView
-                            style="@style/calendarDayHeader"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/tue" />
-
-                        <TextView
-                            style="@style/calendarDayHeader"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/wed" />
-
-                        <TextView
-                            style="@style/calendarDayHeader"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/thu" />
-
-                        <TextView
-                            style="@style/calendarDayHeader"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/fri" />
-
-                        <TextView
-                            style="@style/calendarDayHeader"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/sat" />
-
-                        <TextView
-                            style="@style/calendarDayHeader"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/sun" />
+                        <TextView style="@style/calendarDayHeader" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/sun" />
+                        <TextView style="@style/calendarDayHeader" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/mon" />
+                        <TextView style="@style/calendarDayHeader" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/tue" />
+                        <TextView style="@style/calendarDayHeader" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/wed" />
+                        <TextView style="@style/calendarDayHeader" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/thu" />
+                        <TextView style="@style/calendarDayHeader" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/fri" />
+                        <TextView style="@style/calendarDayHeader" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/sat" />
                     </LinearLayout>
 
+                    <!-- Calendar Grid -->
                     <GridLayout
                         android:id="@+id/calendarGrid"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:columnCount="7" />
+                        android:columnCount="7"
+                        android:useDefaultMargins="false" />
 
-                    <LinearLayout
+                    <!-- Toggle View Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnToggleView"
+                        style="@style/buttonTextStyle"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
-                        android:orientation="horizontal"
-                        android:weightSum="4">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <View
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:background="@drawable/calendar_day_green" />
-
-                            <TextView
-                                style="@style/calendarDayHeader"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="@string/legend_good" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <View
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:background="@drawable/calendar_day_yellow" />
-
-                            <TextView
-                                style="@style/calendarDayHeader"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="@string/legend_warning" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <View
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:background="@drawable/calendar_day_red" />
-
-                            <TextView
-                                style="@style/calendarDayHeader"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="@string/legend_bad" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <View
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:background="@drawable/calendar_day_has_data" />
-
-                            <TextView
-                                style="@style/calendarDayHeader"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="@string/legend_data" />
-                        </LinearLayout>
-                    </LinearLayout>
+                        android:layout_height="40dp"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/month_view"
+                        android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-
+            <!-- Day Details Card -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardDayInfo"
                 style="@style/MaterialCardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -289,13 +228,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="10dp">
+                    android:padding="16dp">
 
                     <RelativeLayout
-                        android:id="@+id/rlHeaderDay"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:layout_height="wrap_content">
 
                         <TextView
                             android:id="@+id/txtSelectedDate"
@@ -303,28 +240,32 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentStart="true"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="7dp"
-                            android:layout_marginEnd="5dp"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginEnd="4dp"
                             android:layout_toStartOf="@+id/txtPrincipalDayScore"
-                            android:textSize="18sp" />
+                            android:textSize="16sp" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/txtPrincipalDayScore"
+                            style="@style/buttonTextStyle"
                             android:layout_width="wrap_content"
-                            android:layout_height="40dp"
+                            android:layout_height="36dp"
                             android:layout_alignParentEnd="true"
-                            android:backgroundTint="#2E7C32"
-                            android:layout_marginEnd="5dp"
-                            android:textColor="@color/white" />
+                            android:layout_marginEnd="4dp"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:minWidth="60dp"
+                            android:textSize="12sp"
+                            app:cornerRadius="10dp" />
                     </RelativeLayout>
 
                     <TextView
                         android:id="@+id/txtNoData"
-                        style="@style/subTitleTextView"
+                        style="@style/subTitleTextView.Muted"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="12dp"
                         android:text="@string/no_data_for_day"
                         android:visibility="gone" />
 
@@ -332,12 +273,13 @@
                         android:id="@+id/dayDetailsGrid"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="12dp"
                         android:columnCount="2"
                         android:useDefaultMargins="true" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Score Breakdown Card -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/MaterialCardView"
                 android:layout_width="match_parent"
@@ -348,13 +290,13 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:padding="16dp">
 
                     <View
                         android:id="@+id/viewScoreStatus"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_marginEnd="8dp"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_marginEnd="10dp"
                         android:background="@drawable/calendar_day_background"
                         android:visibility="gone" />
 
@@ -362,9 +304,8 @@
                         android:id="@+id/txtScoreBreakdown"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
-                        android:textSize="14sp" />
-
+                        android:textColor="@color/text_secondary"
+                        android:textSize="13sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>

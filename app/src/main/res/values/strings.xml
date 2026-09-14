@@ -95,6 +95,8 @@
     <string name="no">no</string>
     <string name="other">Other</string>
     <string name="add_an_observation">you can add an observation</string>
+    <string name="add_different_meal">Add different meal</string>
+    <string name="different_meal_name">meal name</string>
     <string name="score_percentage_good">%1$d%% Good</string>
     <string name="score_percentage_warning">%1$d%% Warning</string>
     <string name="score_percentage_bad">%1$d%% Bad</string>

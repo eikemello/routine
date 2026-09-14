@@ -6,60 +6,109 @@
     android:layout_gravity="center"
     android:orientation="vertical">
 
-    <RadioGroup
-        android:id="@+id/rgMeal"
+    <!-- 2x2 meal selection. A GridLayout is used instead of a RadioGroup
+         (a RadioGroup is a LinearLayout, so it cannot place its buttons in two
+         rows), which means the mutual exclusivity is handled by the service. -->
+    <GridLayout
+        android:id="@+id/gridMeal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:weightSum="4">
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="28dp"
+        android:columnCount="2"
+        android:rowCount="2">
 
         <RadioButton
             android:id="@+id/rbBreakfast"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/breakfast" />
+            android:layout_columnWeight="1"
+            android:text="@string/breakfast"
+            android:textColor="@color/text_primary" />
 
         <RadioButton
             android:id="@+id/rbLunch"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/lunch" />
+            android:layout_columnWeight="1"
+            android:text="@string/lunch"
+            android:textColor="@color/text_primary" />
 
         <RadioButton
             android:id="@+id/rbTea"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/tea" />
+            android:layout_columnWeight="1"
+            android:text="@string/tea"
+            android:textColor="@color/text_primary" />
 
         <RadioButton
             android:id="@+id/rbDinner"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/dinner" />
-    </RadioGroup>
+            android:layout_columnWeight="1"
+            android:text="@string/dinner"
+            android:textColor="@color/text_primary" />
+    </GridLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAddDifferentMeal"
+        style="@style/buttonTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="28dp"
+        android:text="@string/add_different_meal" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/txtInputDifferentMeal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="28dp"
+        android:visibility="gone"
+        app:boxBackgroundColor="@color/surface_input"
+        app:boxCornerRadiusBottomEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusTopStart="12dp"
+        app:boxStrokeColor="@color/white_30"
+        app:boxStrokeErrorColor="@color/red"
+        app:errorEnabled="true">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etDifferentMealName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/different_meal_name"
+            android:inputType="textCapSentences"
+            android:maxLines="1"
+            android:textColor="@color/text_primary" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:cardBackgroundColor="@color/surface_dark"
+        app:cardCornerRadius="12dp"
         app:strokeWidth="0dp">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/txtInputError"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:layout_margin="20dp"
-            app:boxStrokeErrorColor="@color/design_default_color_error"
-            app:errorEnabled="true"
-            app:startIconTint="@color/design_default_color_error">
-
+            android:layout_margin="28dp"
+            app:boxBackgroundColor="@color/surface_input"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxStrokeColor="@color/white_30"
+            app:boxStrokeErrorColor="@color/red"
+            app:errorEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etMealObservation"
@@ -70,8 +119,8 @@
                 android:inputType="textMultiLine"
                 android:maxLines="5"
                 android:minLines="3"
-                android:scrollbars="vertical" />
+                android:scrollbars="vertical"
+                android:textColor="@color/text_primary" />
         </com.google.android.material.textfield.TextInputLayout>
     </com.google.android.material.card.MaterialCardView>
 </LinearLayout>
-

@@ -7,23 +7,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.content.res.AppCompatResources;
 import com.android.nls.routine.R;
 import com.android.nls.routine.repository.MealRepository;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import java.util.Calendar;
-import java.util.function.Consumer;
 
 public class HomeCardMealService {
     private static final String TAG = Common.generateTag(HomeCardMealService.class);
     private final Context mContext;
     private final MealRepository mMealRepository;
-    private String mSelectedMeal;
 
     public HomeCardMealService(Context context) {
         mContext = context;
@@ -32,29 +31,25 @@ public class HomeCardMealService {
 
     public void showAlertDialog(String buttonClicked, Runnable onSaved) {
         String title;
-        Consumer<String> saveAction;
-        View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_meal, new FrameLayout(mContext), false);
-        enableCurrentRbMeal(view);
-
-        TextInputEditText etValue = view.findViewById(R.id.etMealObservation);
-
         switch (buttonClicked) {
             case Constants.CORRECT_MEAL:
                 title = mContext.getString(R.string.correct_meal);
-                saveAction = value -> saveMealWithCheck(Constants.CORRECT_MEAL, mSelectedMeal, value, onSaved);
                 break;
             case Constants.WARNING_MEAL:
                 title = mContext.getString(R.string.warning_meal);
-                saveAction = value -> saveMealWithCheck(Constants.WARNING_MEAL, mSelectedMeal, value, onSaved);
                 break;
             case Constants.WRONG_MEAL:
                 title = mContext.getString(R.string.wrong_meal);
-                saveAction = value -> saveMealWithCheck(Constants.WRONG_MEAL, mSelectedMeal, value, onSaved);
                 break;
             default:
                 return;
         }
-        showSaveDialog(title, view, etValue, saveAction, onSaved);
+
+        View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_meal, new FrameLayout(mContext), false);
+        setupMealSelection(view);
+        setupDifferentMealInput(view);
+
+        showSaveDialog(title, view, buttonClicked, onSaved);
     }
 
     private void saveMealWithCheck(String mealStatus, String currentMeal, String value, Runnable onSaved) {
@@ -77,7 +72,8 @@ public class HomeCardMealService {
                             dialog.dismiss();
                         })
                         .setCancelable(true)
-                        .show();
+                        .show()
+                        .getWindow().setBackgroundDrawable(AppCompatResources.getDrawable(mContext, R.drawable.dialog_background));
             } else {
                 // Should not happen, but if ID not found, insert as new
                 saveMealValue(mealStatus, currentMeal, value, -1);
@@ -99,9 +95,14 @@ public class HomeCardMealService {
     }
 
 
-    private void showSaveDialog(String title, View view, TextInputEditText etValue, Consumer<String> saveAction, Runnable onSaved) {
+    private void showSaveDialog(String title, View view, String mealStatus, Runnable onSaved) {
         TextInputLayout txtInputError = view.findViewById(R.id.txtInputError);
+        TextInputEditText etValue = view.findViewById(R.id.etMealObservation);
+        TextInputLayout txtInputDifferentMeal = view.findViewById(R.id.txtInputDifferentMeal);
+        TextInputEditText etDifferentMealName = view.findViewById(R.id.etDifferentMealName);
+
         txtInputError.setError(null);
+        txtInputDifferentMeal.setError(null);
 
         AlertDialog dialog = new MaterialAlertDialogBuilder(mContext)
                 .setTitle(title)
@@ -111,50 +112,47 @@ public class HomeCardMealService {
                 .setCancelable(true)
                 .show();
 
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(AppCompatResources.getDrawable(mContext, R.drawable.dialog_background));
+        }
+
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-            RadioGroup rgMeal = view.findViewById(R.id.rgMeal);
-            int checkedId = rgMeal.getCheckedRadioButtonId();
             Editable value = etValue.getText();
             
-            if (checkedId == -1) {
-                // No radio button selected - show confirmation dialog for OTHER_MEAL
-                new MaterialAlertDialogBuilder(mContext)
-                        .setTitle(R.string.other_meal_confirm_title)
-                        .setMessage(R.string.other_meal_confirm_message)
-                        .setPositiveButton(R.string.continue_label, (innerDialog, which) -> {
-                            innerDialog.dismiss();
-                            if (value != null && !value.toString().trim().isEmpty()) {
-                                // Check if there's already an OTHER_MEAL for this meal type today
-                                long existingOtherMealId = mMealRepository.getOtherMealIdForToday(mSelectedMeal);
-                                if (existingOtherMealId != -1) {
-                                    // Update existing OTHER_MEAL
-                                    saveMealValue(Constants.OTHER_MEAL, mSelectedMeal, value.toString().trim(), existingOtherMealId);
-                                } else {
-                                    // Insert new OTHER_MEAL
-                                    saveMealValue(Constants.OTHER_MEAL, mSelectedMeal, value.toString().trim(), -1);
-                                }
-                                dialog.dismiss();
-                                if (onSaved != null) {
-                                    onSaved.run();
-                                }
-                            } else {
-                                txtInputError.setError(Constants.OTHER_MEAL_INVALID_TEXT);
-                            }
-                        })
-                        .setNegativeButton(R.string.cancel_label, (innerDialog, which) -> {
-                            innerDialog.dismiss();
-                        })
-                        .setCancelable(true)
-                        .show();
-            } else if (value != null) {
-                saveAction.accept(value.toString().trim());
-                dialog.dismiss();
+            String observation = value != null ? value.toString().trim() : "";
 
-                if (onSaved != null) {
-                    onSaved.run();
+            if (isDifferentMealVisible(view)) {
+                // Different meal - the typed name is stored as the meal and the
+                // clicked button (correct/warning/wrong) as its status. Both the
+                // name and the observation are required for irregular meals.
+                Editable differentMealName = etDifferentMealName.getText();
+                String mealName = differentMealName != null ? differentMealName.toString().trim() : "";
+
+                if (mealName.isEmpty()) {
+                    txtInputError.setError(null);
+                    txtInputDifferentMeal.setError(Constants.CUSTOM_MEAL_INVALID_TEXT);
+                    return;
                 }
+                if (observation.isEmpty()) {
+                    txtInputDifferentMeal.setError(null);
+                    txtInputError.setError(Constants.CUSTOM_MEAL_OBSERVATION_REQUIRED);
+                    return;
+                }
+                saveMealWithCheck(mealStatus, mealName, observation, onSaved);
             } else {
-                txtInputError.setError(Constants.MEAL_INVALID_TEXT);
+                String selectedMeal = getSelectedMeal(view);
+                if (selectedMeal == null) {
+                    // No meal selected - an option must be chosen to save
+                    txtInputError.setError(Constants.MEAL_SELECTION_REQUIRED);
+                    return;
+                }
+                saveMealWithCheck(mealStatus, selectedMeal, observation, onSaved);
+            }
+
+            dialog.dismiss();
+
+            if (onSaved != null) {
+                onSaved.run();
             }
         });
     }
@@ -181,67 +179,110 @@ public class HomeCardMealService {
         }
     }
 
-    private void enableCurrentRbMeal(View view) {
+    /**
+     * Sets up the 2x2 meal selection. The buttons live in a GridLayout instead
+     * of a RadioGroup (a RadioGroup is a LinearLayout, so it cannot place its
+     * buttons in two rows), which means the mutual exclusivity is enforced
+     * here. The meal matching the current time of day is selected by default.
+     */
+    private void setupMealSelection(View view) {
         RadioButton rbBreakfast = view.findViewById(R.id.rbBreakfast);
         RadioButton rbLunch = view.findViewById(R.id.rbLunch);
         RadioButton rbTea = view.findViewById(R.id.rbTea);
         RadioButton rbDinner = view.findViewById(R.id.rbDinner);
-        RadioGroup rgMeal = view.findViewById(R.id.rgMeal);
+        RadioButton[] mealButtons = {rbBreakfast, rbLunch, rbTea, rbDinner};
 
-        Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        getDefaultMealButton(rbBreakfast, rbLunch, rbTea, rbDinner).setChecked(true);
+
+        for (RadioButton button : mealButtons) {
+            // Listeners are attached after the default selection is applied so
+            // they only react to user interaction. Checked state changes are
+            // used instead of click listeners because CompoundButton toggles
+            // the button BEFORE invoking an OnClickListener.
+            button.setOnCheckedChangeListener((checkedButton, isChecked) -> {
+                if (!isChecked) {
+                    return;
+                }
+                for (RadioButton other : mealButtons) {
+                    if (other != checkedButton) {
+                        other.setChecked(false);
+                    }
+                }
+                // A regular meal was picked - the different meal input is not needed
+                setDifferentMealVisible(view, false);
+            });
+        }
+    }
+
+    /**
+     * Returns the meal button matching the current time of day:
+     * Breakfast (5h-10h), Lunch (11h-15h), Tea (16h-19h), Dinner otherwise.
+     */
+    private RadioButton getDefaultMealButton(RadioButton rbBreakfast, RadioButton rbLunch,
+                                             RadioButton rbTea, RadioButton rbDinner) {
+        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
 
         if (hour >= 5 && hour <= 10) {
-            rbBreakfast.setChecked(true);
-            mSelectedMeal = Constants.BREAKFAST;
+            return rbBreakfast;
         } else if (hour >= 11 && hour <= 15) {
-            rbLunch.setChecked(true);
-            mSelectedMeal = Constants.LUNCH;
+            return rbLunch;
         } else if (hour >= 16 && hour < 20) {
-            rbTea.setChecked(true);
-            mSelectedMeal = Constants.TEA;
-        } else {
-            rbDinner.setChecked(true);
-            mSelectedMeal = Constants.DINNER;
+            return rbTea;
         }
+        return rbDinner;
+    }
 
-        rgMeal.setOnCheckedChangeListener((group, checkedId) -> {
-            if (checkedId == R.id.rbBreakfast) {
-                mSelectedMeal = Constants.BREAKFAST;
-            } else if (checkedId == R.id.rbLunch) {
-                mSelectedMeal = Constants.LUNCH;
-            } else if (checkedId == R.id.rbTea) {
-                mSelectedMeal = Constants.TEA;
-            } else if (checkedId == R.id.rbDinner) {
-                mSelectedMeal = Constants.DINNER;
-            } else if (checkedId == -1) {
-                // No radio button selected - user deselected all
-                // mSelectedMeal keeps its last value until confirmed as OTHER_MEAL
-            }
-            Log.d(TAG, "Selected meal changed to: " + mSelectedMeal);
-        });
+    /**
+     * Sets up the "different meal" button. Pressing it clears the regular meal
+     * selection and reveals a text input where the user can name a meal that is
+     * not one of the four regular ones. Pressing it again closes the input.
+     */
+    private void setupDifferentMealInput(View view) {
+        MaterialButton btnAddDifferentMeal = view.findViewById(R.id.btnAddDifferentMeal);
 
-        // Set click listeners to allow toggling selection off
-        rbBreakfast.setOnClickListener(v -> {
-            if (rbBreakfast.isChecked()) {
-                rgMeal.clearCheck();
+        btnAddDifferentMeal.setOnClickListener(v -> {
+            boolean showInput = !isDifferentMealVisible(view);
+            if (showInput) {
+                clearMealSelection(view);
             }
+            setDifferentMealVisible(view, showInput);
         });
-        rbLunch.setOnClickListener(v -> {
-            if (rbLunch.isChecked()) {
-                rgMeal.clearCheck();
-            }
-        });
-        rbTea.setOnClickListener(v -> {
-            if (rbTea.isChecked()) {
-                rgMeal.clearCheck();
-            }
-        });
-        rbDinner.setOnClickListener(v -> {
-            if (rbDinner.isChecked()) {
-                rgMeal.clearCheck();
-            }
-        });
+    }
+
+    private boolean isDifferentMealVisible(View view) {
+        return view.findViewById(R.id.txtInputDifferentMeal).getVisibility() == View.VISIBLE;
+    }
+
+    private void setDifferentMealVisible(View view, boolean visible) {
+        TextInputLayout txtInputDifferentMeal = view.findViewById(R.id.txtInputDifferentMeal);
+        txtInputDifferentMeal.setError(null);
+        txtInputDifferentMeal.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
+    private void clearMealSelection(View view) {
+        ((RadioButton) view.findViewById(R.id.rbBreakfast)).setChecked(false);
+        ((RadioButton) view.findViewById(R.id.rbLunch)).setChecked(false);
+        ((RadioButton) view.findViewById(R.id.rbTea)).setChecked(false);
+        ((RadioButton) view.findViewById(R.id.rbDinner)).setChecked(false);
+    }
+
+    /**
+     * Returns the meal type of the checked meal button, or null when none is selected.
+     */
+    private String getSelectedMeal(View view) {
+        if (((RadioButton) view.findViewById(R.id.rbBreakfast)).isChecked()) {
+            return Constants.BREAKFAST;
+        }
+        if (((RadioButton) view.findViewById(R.id.rbLunch)).isChecked()) {
+            return Constants.LUNCH;
+        }
+        if (((RadioButton) view.findViewById(R.id.rbTea)).isChecked()) {
+            return Constants.TEA;
+        }
+        if (((RadioButton) view.findViewById(R.id.rbDinner)).isChecked()) {
+            return Constants.DINNER;
+        }
+        return null;
     }
 
     public void closeDb() {

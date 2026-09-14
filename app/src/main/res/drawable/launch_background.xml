@@ -10,28 +10,16 @@
                 android:endColor="@color/gradient_end" />
         </shape>
     </item>
-    <item android:gravity="top|end">
+    <item android:gravity="center">
         <shape android:shape="oval">
             <gradient
                 android:type="radial"
-                android:gradientRadius="400dp"
-                android:startColor="@color/neon_blue_08"
+                android:gradientRadius="200dp"
+                android:startColor="@color/neon_blue_20"
                 android:endColor="@android:color/transparent" />
             <size
-                android:width="500dp"
-                android:height="500dp" />
-        </shape>
-    </item>
-    <item android:gravity="bottom|start">
-        <shape android:shape="oval">
-            <gradient
-                android:type="radial"
-                android:gradientRadius="350dp"
-                android:startColor="@color/neon_purple_06"
-                android:endColor="@android:color/transparent" />
-            <size
-                android:width="450dp"
-                android:height="450dp" />
+                android:width="300dp"
+                android:height="300dp" />
         </shape>
     </item>
 </layer-list>
