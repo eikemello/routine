@@ -22,8 +22,8 @@
                 style="@style/titleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
                 android:layout_marginStart="4dp"
+                android:layout_marginTop="24dp"
                 android:text="@string/config" />
 
             <!-- Daily Water Goal -->
@@ -94,88 +94,91 @@
                         android:text="@string/quick_buttons"
                         android:textSize="18sp" />
 
+                    <!-- Quick buttons values, side by side -->
                     <LinearLayout
-                        android:id="@+id/btnDefaultValue1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:background="?attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical"
+                        android:baselineAligned="false"
                         android:orientation="horizontal"
-                        android:padding="8dp">
+                        android:weightSum="3">
 
-                        <TextView
-                            android:id="@+id/txtDefaultBtn1"
-                            style="@style/textViewCardInfo"
+                        <LinearLayout
+                            android:id="@+id/btnDefaultValue1"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="@string/water_default_value_50" />
+                            android:background="?attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="6dp">
 
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:contentDescription="@string/edit_default_value"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="@color/text_tertiary" />
-                    </LinearLayout>
+                            <TextView
+                                android:id="@+id/txtDefaultBtn1"
+                                style="@style/textViewCardInfo"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:maxLines="1"
+                                android:text="@string/water_default_value_50"
+                                android:textSize="16sp" />
 
-                    <LinearLayout
-                        android:id="@+id/btnDefaultValue2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:background="?attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:padding="8dp">
+                        </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/txtDefaultBtn2"
-                            style="@style/textViewCardInfo"
+                        <LinearLayout
+                            android:id="@+id/btnDefaultValue2"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
                             android:layout_weight="1"
-                            android:text="@string/water_default_value_100" />
+                            android:background="?attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="6dp">
 
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:contentDescription="@string/edit_default_value"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="@color/text_tertiary" />
-                    </LinearLayout>
+                            <TextView
+                                android:id="@+id/txtDefaultBtn2"
+                                style="@style/textViewCardInfo"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:maxLines="1"
+                                android:text="@string/water_default_value_100"
+                                android:textSize="16sp" />
 
-                    <LinearLayout
-                        android:id="@+id/btnDefaultValue3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:background="?attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:padding="8dp">
+                        </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/txtDefaultBtn3"
-                            style="@style/textViewCardInfo"
+                        <LinearLayout
+                            android:id="@+id/btnDefaultValue3"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
                             android:layout_weight="1"
-                            android:text="@string/water_default_value_250" />
+                            android:background="?attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="6dp">
 
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:contentDescription="@string/edit_default_value"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="@color/text_tertiary" />
+                            <TextView
+                                android:id="@+id/txtDefaultBtn3"
+                                style="@style/textViewCardInfo"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:maxLines="1"
+                                android:text="@string/water_default_value_250"
+                                android:textSize="16sp" />
+
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -243,8 +246,7 @@
                     </LinearLayout>
 
                     <!-- Divider -->
-                    <View
-                        style="@style/divider" />
+                    <View style="@style/divider" />
 
                     <!-- Sub-section: Card Statement Closing -->
                     <LinearLayout
@@ -290,8 +292,7 @@
                     </LinearLayout>
 
                     <!-- Divider -->
-                    <View
-                        style="@style/divider" />
+                    <View style="@style/divider" />
 
                     <!-- Sub-section: Notify Access -->
                     <LinearLayout
