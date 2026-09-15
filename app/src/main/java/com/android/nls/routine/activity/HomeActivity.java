@@ -400,6 +400,10 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        // mHomeService owns its own repositories (they are separate instances
+        // from the ones above), so its references must be released too,
+        // otherwise the database is never closed.
+        mHomeService.closeDb();
         mHomeCardWaterService.closeDb();
         mHomeCardExpenseService.closeDb();
         mHomeCardMealService.closeDb();

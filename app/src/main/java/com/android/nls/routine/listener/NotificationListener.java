@@ -28,4 +28,13 @@ public class NotificationListener extends NotificationListenerService {
             mHomeCardExpenseService.saveExpenseTest(expense);
         }
     }
+
+    @Override
+    public void onDestroy() {
+        // Releases the repositories created in onCreate(), otherwise their
+        // references keep the database open for the whole process lifetime.
+        mHomeCardExpenseService.closeDb();
+        mHomeCardExpenseService = null;
+        super.onDestroy();
+    }
 }
