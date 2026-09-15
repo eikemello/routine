@@ -123,7 +123,7 @@ public class ConfigService {
     private void saveConfigValue(String columnName, String value, TextView textView, int stringResId) {
         Log.d(TAG, "saveConfigValue: " + columnName + " = " + value);
         mConfigRepository.saveConfigValue(columnName, value);
-        textView.setText(mContext.getString(stringResId, value));
+        textView.setText(mContext.getString(stringResId, Double.parseDouble(value)));
     }
 
     public double getDailyWaterGoal() {

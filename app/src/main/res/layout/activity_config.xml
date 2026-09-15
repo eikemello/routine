@@ -45,32 +45,47 @@
                         android:text="@string/daily_water"
                         android:textSize="18sp" />
 
+                    <!-- Sub-section: Goal -->
                     <LinearLayout
-                        android:id="@+id/btnDailyWater"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:background="?attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:padding="8dp">
+                        android:layout_marginTop="12dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/btnDailyWater"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="?attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="8dp">
+
+                            <TextView
+                                style="@style/subTitleTextView.Muted"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/goal"
+                                android:textSize="12sp" />
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:contentDescription="@string/goal"
+                                android:src="@drawable/ic_chevron_right"
+                                app:tint="@color/text_tertiary" />
+                        </LinearLayout>
 
                         <TextView
                             android:id="@+id/txtDailyWaterGoal"
                             style="@style/textViewCardInfo"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
+                            android:layout_marginStart="8dp"
                             android:text="@string/water_default_value_init" />
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:contentDescription="@string/edit_default_value"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="@color/text_tertiary" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -209,18 +224,10 @@
                         android:layout_marginTop="12dp"
                         android:orientation="vertical">
 
-                        <TextView
-                            style="@style/subTitleTextView.Muted"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/limit"
-                            android:textSize="12sp" />
-
                         <LinearLayout
                             android:id="@+id/btnMonthlyLimit"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
                             android:background="?attr/selectableItemBackground"
                             android:clickable="true"
                             android:focusable="true"
@@ -229,20 +236,28 @@
                             android:padding="8dp">
 
                             <TextView
-                                android:id="@+id/txtMonthlyLimit"
-                                style="@style/textViewCardInfo.Warning"
+                                style="@style/subTitleTextView.Muted"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="@string/total_expense_value_init" />
+                                android:text="@string/limit"
+                                android:textSize="12sp" />
 
                             <ImageView
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:contentDescription="@string/edit_default_value"
+                                android:contentDescription="@string/limit"
                                 android:src="@drawable/ic_chevron_right"
                                 app:tint="@color/text_tertiary" />
                         </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/txtMonthlyLimit"
+                            style="@style/textViewCardInfo.Warning"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="@string/total_expense_value_init" />
                     </LinearLayout>
 
                     <!-- Divider -->
@@ -308,18 +323,10 @@
                         android:layout_marginTop="8dp"
                         android:orientation="vertical">
 
-                        <TextView
-                            style="@style/subTitleTextView.Muted"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/notify"
-                            android:textSize="12sp" />
-
                         <LinearLayout
                             android:id="@+id/btnAllowNotifyAccess"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
                             android:background="?attr/selectableItemBackground"
                             android:clickable="true"
                             android:focusable="true"
@@ -328,12 +335,12 @@
                             android:padding="8dp">
 
                             <TextView
-                                android:id="@+id/txtNotifyAccess"
-                                style="@style/subTitleTextView"
+                                style="@style/subTitleTextView.Muted"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="@string/no" />
+                                android:text="@string/notify"
+                                android:textSize="12sp" />
 
                             <ImageView
                                 android:layout_width="20dp"
@@ -342,6 +349,15 @@
                                 android:src="@drawable/ic_chevron_right"
                                 app:tint="@color/text_tertiary" />
                         </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/txtNotifyAccess"
+                            style="@style/subTitleTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/no" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

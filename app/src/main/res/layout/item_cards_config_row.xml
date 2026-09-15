@@ -13,9 +13,8 @@
     <TextView
         android:id="@+id/txtCardBank"
         style="@style/textViewCardInfo"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:maxLines="1"
         android:textSize="15sp" />
 
@@ -31,13 +30,6 @@
         style="@style/subTitleTextView.Muted"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp" />
+        android:layout_marginStart="8dp" />
 
-    <ImageView
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginStart="8dp"
-        android:contentDescription="@string/card_statement_closing"
-        android:src="@drawable/ic_chevron_right"
-        app:tint="@color/text_tertiary" />
 </LinearLayout>

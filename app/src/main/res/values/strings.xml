@@ -22,6 +22,7 @@
     <string name="total_expense_value_init">%1$.2f</string>
     <string name="daily_water">Daily water</string>
     <string name="daily_goal">Daily goal</string>
+    <string name="goal">Goal</string>
     <string name="default_buttons">Default buttons</string>
     <string name="button_1">Button 1</string>
     <string name="button_2">Button 2</string>
@@ -97,7 +98,7 @@
     <string name="card_number">Card %1$d</string>
     <string name="no_cards_added">tap to add your cards</string>
     <string name="card_closing_day_value">%1$02d</string>
-    <string name="card_progress_label">%1$s %2$s</string>
+    <string name="card_progress_label">%1$s - %2$s</string>
     <string name="save_label">Save</string>
     <string name="last_expense">Last expense was %1$.2f from %2$s bank</string>
     <string name="notify_access_allowed">Allowed notify access</string>
