@@ -22,7 +22,7 @@
                 android:background="@drawable/icon_background_green"
                 android:contentDescription="@string/meal"
                 android:src="@drawable/ic_meal"
-                app:tint="@color/green" />
+                app:tint="@color/green_dark" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -51,9 +51,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="8dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
+            android:layout_marginTop="4dp"
             android:baselineAligned="false"
             android:gravity="center"
             android:orientation="horizontal"
@@ -61,12 +59,12 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCorrectMeal"
-                style="@style/buttonTextStyle.Success"
+                style="@style/buttonTextStyle.Correct"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
                 android:text="@string/correct_meal"
-                android:textColor="@color/green" />
+                android:textColor="@color/green_dark" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnWarningMeal"
@@ -76,17 +74,17 @@
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
                 android:text="@string/warning_meal"
-                android:textColor="@color/yellow" />
+                android:textColor="@color/yellow_dark" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnWrongMeal"
-                style="@style/buttonTextStyle.Danger"
+                style="@style/buttonTextStyle.Wrong"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
                 android:text="@string/wrong_meal"
-                android:textColor="@color/red" />
+                android:textColor="@color/red_dark" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

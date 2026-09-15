@@ -67,7 +67,7 @@
             style="@style/buttonTextStyle"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="4dp"
             android:text="@string/mark_as_taken" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

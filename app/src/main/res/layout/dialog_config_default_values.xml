@@ -25,8 +25,9 @@
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusTopStart="12dp"
             app:boxStrokeColor="@color/white_30"
-            app:boxStrokeErrorColor="@color/red"
-            app:errorEnabled="true">
+            app:boxStrokeErrorColor="@color/red_dark"
+            app:errorEnabled="true"
+            android:hint="@string/edit_default_value">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etValue"

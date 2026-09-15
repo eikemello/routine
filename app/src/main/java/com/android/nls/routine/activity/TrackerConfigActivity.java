@@ -18,6 +18,7 @@ import com.android.nls.routine.model.Tracker;
 import com.android.nls.routine.model.TrackerType;
 import com.android.nls.routine.repository.TrackerRepository;
 import com.android.nls.routine.utils.BottomNavHelper;
+import com.android.nls.routine.utils.Common;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
@@ -68,10 +69,10 @@ public class TrackerConfigActivity extends AppCompatActivity {
 
     private View createTrackerRow(Tracker tracker) {
         LinearLayout row = new LinearLayout(this);
-        row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(56)));
+        row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Common.dpToPx(this, 56)));
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(android.view.Gravity.CENTER_VERTICAL);
-        row.setPadding(dpToPx(16), 0, dpToPx(16), 0);
+        row.setPadding(Common.dpToPx(this, 16), 0, Common.dpToPx(this,16), 0);
         row.setClickable(true);
         row.setFocusable(true);
 
@@ -83,14 +84,14 @@ public class TrackerConfigActivity extends AppCompatActivity {
 
         // Tracker icon
         ImageView icon = new ImageView(this);
-        icon.setLayoutParams(new LinearLayout.LayoutParams(dpToPx(24), dpToPx(24)));
+        icon.setLayoutParams(new LinearLayout.LayoutParams(Common.dpToPx(this, 24), Common.dpToPx(this,24)));
         icon.setContentDescription(tracker.name());
         icon.setImageResource(getTrackerIconRes(tracker.type()));
 
         // Tracker name
         TextView name = new TextView(this);
         name.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-        name.setPadding(dpToPx(12), 0, dpToPx(12), 0);
+        name.setPadding(Common.dpToPx(this, 12), 0, Common.dpToPx(this,12), 0);
         name.setText(tracker.name());
         name.setTextSize(15);
         name.setTextColor(getColor(R.color.white));
@@ -181,10 +182,6 @@ public class TrackerConfigActivity extends AppCompatActivity {
             case MEDICATION -> R.drawable.ic_medication;
             case SUPPLEMENT -> R.drawable.ic_supplement;
         };
-    }
-
-    private int dpToPx(int dp) {
-        return Math.round(dp * getResources().getDisplayMetrics().density);
     }
 
     @Override

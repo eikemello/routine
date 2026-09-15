@@ -22,6 +22,8 @@ import com.android.nls.routine.service.HomeCardExpenseService;
 import com.android.nls.routine.service.HomeCardMealService;
 import com.android.nls.routine.service.HomeCardWaterService;
 import com.android.nls.routine.service.HomeService;
+import com.android.nls.routine.service.HistoryService;
+import com.android.nls.routine.service.calendar.WeekPreviewRenderer;
 import com.android.nls.routine.utils.BottomNavHelper;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
@@ -37,6 +39,8 @@ public class HomeActivity extends AppCompatActivity {
     private HomeCardMealService mHomeCardMealService;
     private TrackerRepository mTrackerRepository;
     private MealRepository mMealRepository;
+    private HistoryService mHistoryService;
+    private WeekPreviewRenderer mWeekPreviewRenderer;
 
     // Header views
     private TextView txtCurrentGreeting;
@@ -63,6 +67,7 @@ public class HomeActivity extends AppCompatActivity {
         mTrackerRepository = new TrackerRepository(this);
         mMealRepository = new MealRepository(this);
         mHomeService = new HomeService(this);
+        mHistoryService = new HistoryService(this);
 
         startUIComponents();
         BottomNavHelper.setup(this, R.id.nav_home);
@@ -80,6 +85,7 @@ public class HomeActivity extends AppCompatActivity {
         txtCurrentDate = findViewById(R.id.txtCurrentDate);
         txtCurrentGreeting = findViewById(R.id.txtCurrentGreeting);
         mTrackerCardsContainer = findViewById(R.id.trackerCardsContainer);
+        mWeekPreviewRenderer = new WeekPreviewRenderer(this, findViewById(R.id.weekPreviewStrip), mHistoryService);
 
         mProgressSegments = new View[]{
                 findViewById(R.id.viewSegment1),
@@ -209,7 +215,7 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         if (totalSpent > monthlyLimit) {
-            txtTotalSpent.setTextColor(this.getColor(R.color.red));
+            txtTotalSpent.setTextColor(this.getColor(R.color.red_dark));
         }
 
         renderCardProgress(inflater, cardProgressContainer, progressExpense, expenseSummary, monthlyLimit);
@@ -342,7 +348,7 @@ public class HomeActivity extends AppCompatActivity {
     private void updateStatusCard(TextView txtStatus, MaterialButton btnAction, TrackerRecord record) {
         if (record != null && record.completed()) {
             txtStatus.setText(getString(R.string.completed));
-            txtStatus.setTextColor(getColor(R.color.green));
+            txtStatus.setTextColor(getColor(R.color.green_dark));
             btnAction.setVisibility(View.GONE);
         } else {
             txtStatus.setText(getString(R.string.not_completed));
@@ -352,6 +358,8 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void renderTrackerProgress() {
+        mWeekPreviewRenderer.render();
+
         List<Tracker> enabledTrackers = mTrackerRepository.getEnabledTrackers();
         Set<TrackerType> completedTrackers = mHomeService.getCompletedTrackersToday();
 
@@ -392,11 +400,16 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        // mHomeService owns its own repositories (they are separate instances
+        // from the ones above), so its references must be released too,
+        // otherwise the database is never closed.
+        mHomeService.closeDb();
         mHomeCardWaterService.closeDb();
         mHomeCardExpenseService.closeDb();
         mHomeCardMealService.closeDb();
         mTrackerRepository.closeDb();
         mMealRepository.closeDb();
+        mHistoryService.closeDb();
         super.onDestroy();
     }
 }

@@ -9,9 +9,9 @@
         android:id="@+id/mainScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="85dp"
         android:fillViewport="true"
         android:scrollbars="none"
-        android:layout_marginBottom="85dp"
         tools:context=".MainActivity">
 
         <LinearLayout
@@ -48,6 +48,15 @@
                     android:textSize="16sp" />
             </RelativeLayout>
 
+            <LinearLayout
+                android:id="@+id/weekPreviewStrip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="20dp"
+                android:orientation="horizontal" />
+
             <include
                 android:id="@+id/trackerProgressContainer"
                 layout="@layout/tracker_progress"
@@ -59,11 +68,11 @@
                 android:id="@+id/trackerCardsContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"/>
+                android:layout_marginEnd="16dp"
+                android:orientation="vertical" />
         </LinearLayout>
     </ScrollView>
 
-    <include layout="@menu/bottom_nav" />
+    <include layout="@layout/bottom_nav" />
 </FrameLayout>

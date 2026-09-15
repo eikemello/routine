@@ -12,6 +12,14 @@ public class BankDetector {
     public Expense detect(StatusBarNotification sbn) {
         String pkg = sbn.getOpPkg();
 
+        // Some notifications are posted with a null package (system sources,
+        // group summaries). getOpPkg() must be null-checked, otherwise the
+        // NullPointerException kills the whole app process in the background.
+        if (pkg == null) {
+            Log.w(TAG, "Notification with null package ignored");
+            return null;
+        }
+
         if (pkg.contains(Constants.BANK_NUBANK)) {
             Log.d(TAG, "nubank pkg detect for > " + pkg);
             return new NubankParser().parse(sbn);

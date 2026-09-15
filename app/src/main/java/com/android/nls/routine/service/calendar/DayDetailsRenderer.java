@@ -6,9 +6,7 @@ import android.view.View;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
-
 import com.android.nls.routine.R;
 import com.android.nls.routine.model.DayDetails;
 import com.android.nls.routine.model.ExpenseRecord;
@@ -16,6 +14,7 @@ import com.android.nls.routine.model.MealRecord;
 import com.android.nls.routine.model.Tracker;
 import com.android.nls.routine.model.TrackerRecord;
 import com.android.nls.routine.model.TrackerType;
+import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 import java.util.HashSet;
 import java.util.List;
@@ -71,7 +70,7 @@ public class DayDetailsRenderer {
             params.height = GridLayout.LayoutParams.WRAP_CONTENT;
             params.columnSpec = GridLayout.spec(column, 1f);
             params.rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
-            params.setMargins(dpToPx(4), dpToPx(4), dpToPx(4), dpToPx(4));
+            params.setMargins(Common.dpToPx(mContext, 4), Common.dpToPx(mContext, 4), Common.dpToPx(mContext,4), Common.dpToPx(mContext,4));
             cell.setLayoutParams(params);
 
             mDayDetailsGrid.addView(cell);
@@ -185,9 +184,9 @@ public class DayDetailsRenderer {
             case WATER:
                 int waterSum = scoreData.getWaterSum();
                 if (waterSum >= mHistoryContext.getDailyWaterGoal()) {
-                    return mContext.getColor(R.color.green);
+                    return mContext.getColor(R.color.green_dark);
                 } else if (waterSum > 0) {
-                    return mContext.getColor(R.color.yellow);
+                    return mContext.getColor(R.color.yellow_dark);
                 }
                 return mContext.getColor(R.color.white);
 
@@ -200,13 +199,13 @@ public class DayDetailsRenderer {
                     if (Constants.WARNING_MEAL.equals(record.status())) {
                         hasWarning = true;
                     } else if (Constants.WRONG_MEAL.equals(record.status())) {
-                        return mContext.getColor(R.color.red);
+                        return mContext.getColor(R.color.red_dark);
                     }
                 }
                 if (hasWarning) {
-                    return mContext.getColor(R.color.yellow);
+                    return mContext.getColor(R.color.yellow_dark);
                 }
-                return mContext.getColor(R.color.green);
+                return mContext.getColor(R.color.green_dark);
 
             case EXPENSES:
                 return mContext.getColor(R.color.white);
@@ -231,13 +230,9 @@ public class DayDetailsRenderer {
         }
         for (TrackerRecord record : records) {
             if (record.completed()) {
-                return mContext.getColor(R.color.green);
+                return mContext.getColor(R.color.green_dark);
             }
         }
         return mContext.getColor(R.color.white);
-    }
-
-    private int dpToPx(int dp) {
-        return Math.round(dp * mContext.getResources().getDisplayMetrics().density);
     }
 }

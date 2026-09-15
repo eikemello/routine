@@ -198,7 +198,6 @@ public class HistoryActivity extends AppCompatActivity {
         if (dayInfo == null || dayInfo.status() == DayStatus.NONE) {
             txtPrincipalDayScore.setText("");
             txtPrincipalDayScore.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.calendar_day_background_default)));
-            txtPrincipalDayScore.setTextColor(getColor(R.color.black));
             return;
         }
 
@@ -207,7 +206,6 @@ public class HistoryActivity extends AppCompatActivity {
         if (percentage < 0) {
             txtPrincipalDayScore.setText("");
             txtPrincipalDayScore.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.calendar_day_background_default)));
-            txtPrincipalDayScore.setTextColor(getColor(R.color.black));
             return;
         }
 
@@ -216,15 +214,15 @@ public class HistoryActivity extends AppCompatActivity {
         int scoreColor = switch (dayInfo.status()) {
             case GREEN -> {
                 scoreText = getString(R.string.score_percentage_good, rounded);
-                yield R.color.green;
+                yield R.color.green_dark;
             }
             case YELLOW -> {
                 scoreText = getString(R.string.score_percentage_warning, rounded);
-                yield R.color.yellow;
+                yield R.color.yellow_dark;
             }
             case RED -> {
                 scoreText = getString(R.string.score_percentage_bad, rounded);
-                yield R.color.red;
+                yield R.color.red_dark;
             }
             default -> {
                 scoreText = "";
@@ -234,7 +232,7 @@ public class HistoryActivity extends AppCompatActivity {
 
         txtPrincipalDayScore.setText(scoreText);
         txtPrincipalDayScore.setBackgroundTintList(ColorStateList.valueOf(getColor(scoreColor)));
-        txtPrincipalDayScore.setTextColor(getColor(R.color.black));
+        txtPrincipalDayScore.setTextSize(14);
     }
 
     @Override

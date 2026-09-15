@@ -122,4 +122,6 @@
     <string name="meal_exists_title">Meal already exists</string>
     <string name="meal_exists_message">You already added %1$s meal. Do you want to update?</string>
     <string name="update_label">Update</string>
+    <string name="gt"><![CDATA[>]]></string>
+    <string name="gt2"><![CDATA[<]]></string>
 </resources>

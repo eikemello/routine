@@ -1,11 +1,11 @@
 package com.android.nls.routine.service.calendar;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.TextView;
-import androidx.appcompat.content.res.AppCompatResources;
 import com.android.nls.routine.R;
 import com.android.nls.routine.model.DayStatus;
 import com.android.nls.routine.model.DayStatusInfo;
@@ -157,23 +157,22 @@ public class HistoryCalendarRenderer {
         for (int i = 0; i < mCalendarGrid.getChildCount(); i++) {
             View child = mCalendarGrid.getChildAt(i);
             if (child instanceof TextView && child.getVisibility() == View.VISIBLE) {
-                child.setSelected(false);
-                child.setForeground(null);
-                ((TextView) child).setTextColor(mContext.getColor(R.color.white));
                 long cellTimestamp = getTimestampFromCell((TextView) child);
-                if (cellTimestamp > todayStart) {
-                    child.setBackgroundResource(R.drawable.calendar_day_background);
-                    continue;
-                }
-                DayStatusInfo cellInfo = mDayStatusCache.get(Common.getStartOfDayInMillis(cellTimestamp));
+                boolean isFutureDay = cellTimestamp > todayStart;
+                child.setSelected(false);
+                CalendarCellStyler.clearOutline((TextView) child);
+                ((TextView) child).setTextColor(mContext.getColor(R.color.white));
+                DayStatusInfo cellInfo = isFutureDay
+                        ? null
+                        : mDayStatusCache.get(Common.getStartOfDayInMillis(cellTimestamp));
                 DayStatus cellStatus = cellInfo != null ? cellInfo.status() : DayStatus.NONE;
-                child.setBackgroundResource(getCellBackgroundResource(cellStatus, cellInfo));
+                child.setBackgroundResource(CalendarCellStyler.backgroundResourceFor(cellStatus, cellInfo, isFutureDay));
             }
         }
 
         if (clickedCell != null) {
             clickedCell.setSelected(true);
-            clickedCell.setForeground(AppCompatResources.getDrawable(mContext, R.drawable.calendar_day_selected_outline));
+            CalendarCellStyler.drawOutline(mContext, clickedCell);
         }
     }
 
@@ -229,7 +228,8 @@ public class HistoryCalendarRenderer {
                     " - " + Common.getAbbreviatedMonthYearFromTimestamp(weekEnd.getTimeInMillis()));
         }
 
-        mBtnToggleView.setText(mContext.getString(R.string.month_view));
+        // The toggle reflects the view currently shown (the calendar opens in week view).
+        mBtnToggleView.setText(mContext.getString(R.string.week_view));
 
         Calendar today = Calendar.getInstance();
         long todayStart = Common.getStartOfDayInMillis(today.getTimeInMillis());
@@ -241,13 +241,10 @@ public class HistoryCalendarRenderer {
             boolean isFutureDay = dayTimestamp > todayStart;
 
             TextView dayCell = createDayCell(String.valueOf(dayCal.get(Calendar.DAY_OF_MONTH)), dayTimestamp);
-            if (isFutureDay) {
-                dayCell.setBackgroundResource(R.drawable.calendar_day_background);
-            } else {
-                DayStatusInfo info = mDayStatusCache.get(Common.getStartOfDayInMillis(dayTimestamp));
-                DayStatus dayStatus = info != null ? info.status() : DayStatus.NONE;
-                dayCell.setBackgroundResource(getCellBackgroundResource(dayStatus, info));
-            }
+            DayStatusInfo info = isFutureDay ? null
+                    : mDayStatusCache.get(Common.getStartOfDayInMillis(dayTimestamp));
+            DayStatus dayStatus = info != null ? info.status() : DayStatus.NONE;
+            dayCell.setBackgroundResource(CalendarCellStyler.backgroundResourceFor(dayStatus, info, isFutureDay));
 
             dayCell.setClickable(true);
             dayCell.setFocusable(true);
@@ -261,7 +258,8 @@ public class HistoryCalendarRenderer {
 
     private void renderMonthView() {
         mTxtMonthYear.setText(Common.getMonthYearFromTimestamp(mCurrentMonth.getTimeInMillis()));
-        mBtnToggleView.setText(mContext.getString(R.string.week_view));
+        // The toggle reflects the view currently shown.
+        mBtnToggleView.setText(mContext.getString(R.string.month_view));
 
         int year = mCurrentMonth.get(Calendar.YEAR);
         int month = mCurrentMonth.get(Calendar.MONTH);
@@ -284,13 +282,10 @@ public class HistoryCalendarRenderer {
             boolean isFutureDay = dayTimestamp > todayStart;
 
             TextView dayCell = createDayCell(String.valueOf(day), dayTimestamp);
-            if (isFutureDay) {
-                dayCell.setBackgroundResource(R.drawable.calendar_day_background);
-            } else {
-                DayStatusInfo info = mDayStatusCache.get(Common.getStartOfDayInMillis(dayTimestamp));
-                DayStatus dayStatus = info != null ? info.status() : DayStatus.NONE;
-                dayCell.setBackgroundResource(getCellBackgroundResource(dayStatus, info));
-            }
+            DayStatusInfo info = isFutureDay ? null
+                    : mDayStatusCache.get(Common.getStartOfDayInMillis(dayTimestamp));
+            DayStatus dayStatus = info != null ? info.status() : DayStatus.NONE;
+            dayCell.setBackgroundResource(CalendarCellStyler.backgroundResourceFor(dayStatus, info, isFutureDay));
 
             dayCell.setClickable(true);
             dayCell.setFocusable(true);
@@ -307,6 +302,7 @@ public class HistoryCalendarRenderer {
         dayCell.setText(dayText);
         dayCell.setGravity(Gravity.CENTER);
         dayCell.setTextSize(16);
+        dayCell.setTypeface(Typeface.DEFAULT_BOLD);
         dayCell.setTextColor(mContext.getColor(R.color.white));
         dayCell.setLayoutParams(createCellParams());
         dayCell.setTag(timestamp);
@@ -316,27 +312,11 @@ public class HistoryCalendarRenderer {
     private GridLayout.LayoutParams createCellParams() {
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;
-        params.height = dpToPx(45);
+        params.height = Common.dpToPx(mContext, 45);
         params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
         params.rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
-        params.setMargins(dpToPx(2), dpToPx(2), dpToPx(2), dpToPx(2));
+        params.setMargins(Common.dpToPx(mContext, 2), Common.dpToPx(mContext, 2), Common.dpToPx(mContext, 2), Common.dpToPx(mContext, 2));
         return params;
-    }
-
-    private int getCellBackgroundResource(DayStatus status, DayStatusInfo info) {
-        switch (status) {
-            case GREEN:
-                return R.drawable.calendar_day_green;
-            case YELLOW:
-                return R.drawable.calendar_day_yellow;
-            case RED:
-                return R.drawable.calendar_day_red;
-            default:
-                if (status == DayStatus.NONE && info != null && info.hasData()) {
-                    return R.drawable.calendar_day_has_data;
-                }
-                return R.drawable.calendar_day_background;
-        }
     }
 
     private int getFirstDayOfWeek(int year, int month) {
@@ -371,9 +351,5 @@ public class HistoryCalendarRenderer {
         int daysFromMonday = (dayOfWeek + 5) % 7; // Sunday=1 -> 6, Monday=2 -> 0, ..., Saturday=7 -> 5
         calendar.add(Calendar.DAY_OF_MONTH, -daysFromMonday);
         return calendar;
-    }
-
-    private int dpToPx(int dp) {
-        return Math.round(dp * mContext.getResources().getDisplayMetrics().density);
     }
 }

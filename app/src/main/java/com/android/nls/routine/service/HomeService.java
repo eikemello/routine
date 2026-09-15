@@ -78,4 +78,10 @@ public class HomeService {
                 && loggedMeals.contains(Constants.TEA)
                 && loggedMeals.contains(Constants.DINNER);
     }
+
+    public void closeDb() {
+        mHomeCardWaterService.closeDb();
+        mMealRepository.closeDb();
+        mTrackerRepository.closeDb();
+    }
 }
