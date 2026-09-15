@@ -201,7 +201,12 @@ public class HomeActivity extends AppCompatActivity {
 
         txtTotalValue.setText(this.getString(R.string.total_expense_value_init, monthlyLimit));
         txtTotalSpent.setText(this.getString(R.string.total_expense_value_init, totalSpent));
-        txtLastExpenseRecord.setText(this.getString(R.string.last_expense, expenseRecord.amount(), expenseRecord.bank()));
+
+        if (expenseRecord != null) {
+            txtLastExpenseRecord.setText(this.getString(R.string.last_expense, expenseRecord.amount(), expenseRecord.bank()));
+        } else {
+            txtLastExpenseRecord.setText(this.getString(R.string.no_expenses_yet));
+        }
 
         if (totalSpent > monthlyLimit) {
             txtTotalSpent.setTextColor(this.getColor(R.color.red));

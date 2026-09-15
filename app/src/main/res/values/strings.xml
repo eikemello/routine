@@ -101,6 +101,7 @@
     <string name="card_progress_label">%1$s - %2$s</string>
     <string name="save_label">Save</string>
     <string name="last_expense">Last expense was %1$.2f from %2$s bank</string>
+    <string name="no_expenses_yet">No expenses recorded yet</string>
     <string name="notify_access_allowed">Allowed notify access</string>
     <string name="yes">yes</string>
     <string name="no">no</string>

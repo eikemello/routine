@@ -64,10 +64,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // The app has not been released yet. Migrations are applied in order,
         // each one guarded by a version check.
-        if (oldVersion < 6) {
-            // Credit cards (bank name, last four digits and statement closing day)
-            db.execSQL(WaterFeedEntry.SQL_CREATE_ENTRIES_CARDS);
-        }
     }
 
     private void createIndexes(SQLiteDatabase db) {
