@@ -70,15 +70,15 @@
     </style>
 
     <style name="textViewCardInfo.Success">
-        <item name="android:textColor">@color/green</item>
+        <item name="android:textColor">@color/green_dark</item>
     </style>
 
     <style name="textViewCardInfo.Warning">
-        <item name="android:textColor">@color/yellow</item>
+        <item name="android:textColor">@color/yellow_dark</item>
     </style>
 
     <style name="textViewCardInfo.Danger">
-        <item name="android:textColor">@color/red</item>
+        <item name="android:textColor">@color/red_dark</item>
     </style>
 
     <style name="expenseTextViewInfo">
@@ -109,21 +109,21 @@
 
     <style name="buttonTextStyle.Success">
         <item name="backgroundTint">@android:color/transparent</item>
-        <item name="strokeColor">@color/green</item>
+        <item name="strokeColor">@color/green_dark</item>
         <item name="strokeWidth">2dp</item>
         <item name="cornerRadius">14dp</item>
     </style>
 
     <style name="buttonTextStyle.Warning">
         <item name="backgroundTint">@android:color/transparent</item>
-        <item name="strokeColor">@color/yellow</item>
+        <item name="strokeColor">@color/yellow_dark</item>
         <item name="strokeWidth">2dp</item>
         <item name="cornerRadius">14dp</item>
     </style>
 
     <style name="buttonTextStyle.Danger">
         <item name="backgroundTint">@android:color/transparent</item>
-        <item name="strokeColor">@color/red</item>
+        <item name="strokeColor">@color/red_dark</item>
         <item name="strokeWidth">2dp</item>
         <item name="cornerRadius">14dp</item>
     </style>

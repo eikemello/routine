@@ -184,9 +184,9 @@ public class DayDetailsRenderer {
             case WATER:
                 int waterSum = scoreData.getWaterSum();
                 if (waterSum >= mHistoryContext.getDailyWaterGoal()) {
-                    return mContext.getColor(R.color.green);
+                    return mContext.getColor(R.color.green_dark);
                 } else if (waterSum > 0) {
-                    return mContext.getColor(R.color.yellow);
+                    return mContext.getColor(R.color.yellow_dark);
                 }
                 return mContext.getColor(R.color.white);
 
@@ -199,13 +199,13 @@ public class DayDetailsRenderer {
                     if (Constants.WARNING_MEAL.equals(record.status())) {
                         hasWarning = true;
                     } else if (Constants.WRONG_MEAL.equals(record.status())) {
-                        return mContext.getColor(R.color.red);
+                        return mContext.getColor(R.color.red_dark);
                     }
                 }
                 if (hasWarning) {
-                    return mContext.getColor(R.color.yellow);
+                    return mContext.getColor(R.color.yellow_dark);
                 }
-                return mContext.getColor(R.color.green);
+                return mContext.getColor(R.color.green_dark);
 
             case EXPENSES:
                 return mContext.getColor(R.color.white);
@@ -230,7 +230,7 @@ public class DayDetailsRenderer {
         }
         for (TrackerRecord record : records) {
             if (record.completed()) {
-                return mContext.getColor(R.color.green);
+                return mContext.getColor(R.color.green_dark);
             }
         }
         return mContext.getColor(R.color.white);

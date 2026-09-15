@@ -32,9 +32,16 @@
          These tokens are used in text, calendar day cells and the principal
          day score pill so they always match. Change them here and everything
          updates everywhere. -->
-    <color name="green">#39FF14</color>
-    <color name="yellow">#FFD700</color>
-    <color name="red">#FF3131</color>
+<!--    <color name="green">#39FF14</color>-->
+<!--    <color name="yellow">#FFD700</color>-->
+<!--    <color name="red">#FF3131</color>-->
+
+    <!-- Slightly darker variants of the status colors, applied to the
+         calendar day cell backgrounds (history + home week preview) so the
+         bold white day numbers stay readable on all three statuses. -->
+    <color name="green_dark">#2FBD0F</color>
+    <color name="yellow_dark">#D4A017</color>
+    <color name="red_dark">#D42424</color>
 
     <!-- ==================== GLASS EFFECT ==================== -->
     <color name="glass_background">#1AFFFFFF</color>

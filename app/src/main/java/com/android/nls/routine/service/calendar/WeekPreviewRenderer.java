@@ -1,10 +1,10 @@
 package com.android.nls.routine.service.calendar;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import androidx.appcompat.content.res.AppCompatResources;
 import com.android.nls.routine.R;
 import com.android.nls.routine.model.DayStatus;
 import com.android.nls.routine.model.DayStatusInfo;
@@ -63,15 +63,16 @@ public class WeekPreviewRenderer {
         cell.setText(String.valueOf(day.get(Calendar.DAY_OF_MONTH)));
         cell.setGravity(Gravity.CENTER);
         cell.setTextSize(12);
+        cell.setTypeface(Typeface.DEFAULT_BOLD);
         cell.setTextColor(mContext.getColor(R.color.white));
         // Spoken label for accessibility (the visible text is just the number).
         cell.setContentDescription(Common.getDateFromTimestamp(day.getTimeInMillis()));
         cell.setLayoutParams(createCellParams());
-        cell.setBackgroundResource(getCellBackgroundResource(status, info, dayStart > todayStart));
+        cell.setBackgroundResource(CalendarCellStyler.backgroundResourceFor(status, info, dayStart > todayStart));
 
         if (dayStart == todayStart) {
             // Today keeps the same outline the history calendar uses for the selected day.
-            cell.setForeground(AppCompatResources.getDrawable(mContext, R.drawable.calendar_day_selected_outline));
+            CalendarCellStyler.drawOutline(mContext, cell);
         }
         return cell;
     }
@@ -80,22 +81,5 @@ public class WeekPreviewRenderer {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, Common.dpToPx(mContext, CELL_HEIGHT_DP), 1f);
         params.setMargins(Common.dpToPx(mContext, CELL_MARGIN_DP), 0, Common.dpToPx(mContext, CELL_MARGIN_DP), 0);
         return params;
-    }
-
-    private int getCellBackgroundResource(DayStatus status, DayStatusInfo info, boolean isFutureDay) {
-        if (isFutureDay) {
-            return R.drawable.calendar_day_background;
-        }
-        return switch (status) {
-            case GREEN -> R.drawable.calendar_day_green;
-            case YELLOW -> R.drawable.calendar_day_yellow;
-            case RED -> R.drawable.calendar_day_red;
-            default -> {
-                if (status == DayStatus.NONE && info != null && info.hasData()) {
-                    yield R.drawable.calendar_day_has_data;
-                }
-                yield R.drawable.calendar_day_background;
-            }
-        };
     }
 }

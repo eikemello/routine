@@ -215,7 +215,7 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         if (totalSpent > monthlyLimit) {
-            txtTotalSpent.setTextColor(this.getColor(R.color.red));
+            txtTotalSpent.setTextColor(this.getColor(R.color.red_dark));
         }
 
         renderCardProgress(inflater, cardProgressContainer, progressExpense, expenseSummary, monthlyLimit);
@@ -348,7 +348,7 @@ public class HomeActivity extends AppCompatActivity {
     private void updateStatusCard(TextView txtStatus, MaterialButton btnAction, TrackerRecord record) {
         if (record != null && record.completed()) {
             txtStatus.setText(getString(R.string.completed));
-            txtStatus.setTextColor(getColor(R.color.green));
+            txtStatus.setTextColor(getColor(R.color.green_dark));
             btnAction.setVisibility(View.GONE);
         } else {
             txtStatus.setText(getString(R.string.not_completed));

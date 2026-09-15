@@ -76,7 +76,7 @@
         app:boxCornerRadiusTopEnd="12dp"
         app:boxCornerRadiusTopStart="12dp"
         app:boxStrokeColor="@color/white_30"
-        app:boxStrokeErrorColor="@color/red"
+        app:boxStrokeErrorColor="@color/red_dark"
         app:errorEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -107,7 +107,7 @@
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusTopStart="12dp"
             app:boxStrokeColor="@color/white_30"
-            app:boxStrokeErrorColor="@color/red"
+            app:boxStrokeErrorColor="@color/red_dark"
             app:errorEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
