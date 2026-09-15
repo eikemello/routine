@@ -24,9 +24,8 @@
             android:id="@+id/btnRemoveCard"
             style="@style/buttonTextStyle"
             android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="12dp"
             android:minWidth="0dp"
             android:text="@string/remove_label"
             android:textSize="12sp" />

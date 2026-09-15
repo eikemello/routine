@@ -24,8 +24,8 @@
                 style="@style/titleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
                 android:layout_marginStart="4dp"
+                android:layout_marginTop="24dp"
                 android:text="@string/history" />
 
             <!-- Weekly Summary Card -->
@@ -144,16 +144,16 @@
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnPrevMonth"
                             style="@style/buttonTextStyle"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:layout_alignParentStart="true"
                             android:gravity="center"
                             android:insetLeft="0dp"
-                            android:insetRight="0dp"
                             android:insetTop="0dp"
+                            android:insetRight="0dp"
                             android:insetBottom="0dp"
                             android:padding="0dp"
-                            android:text="&lt;"
+                            android:text="@string/gt2"
                             android:textSize="20sp"
                             app:cornerRadius="12dp" />
 
@@ -162,22 +162,27 @@
                             style="@style/titleTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerInParent="true"
+                            android:layout_marginStart="1dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="1dp"
+                            android:layout_toStartOf="@+id/btnNextMonth"
+                            android:layout_toEndOf="@+id/btnPrevMonth"
+                            android:textAlignment="center"
                             android:textSize="16sp" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnNextMonth"
                             style="@style/buttonTextStyle"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:layout_alignParentEnd="true"
                             android:gravity="center"
                             android:insetLeft="0dp"
-                            android:insetRight="0dp"
                             android:insetTop="0dp"
+                            android:insetRight="0dp"
                             android:insetBottom="0dp"
                             android:padding="0dp"
-                            android:text="&gt;"
+                            android:text="@string/gt"
                             android:textSize="20sp"
                             app:cornerRadius="12dp" />
                     </RelativeLayout>
@@ -190,13 +195,54 @@
                         android:orientation="horizontal"
                         android:weightSum="7">
 
-                        <TextView style="@style/calendarDayHeader" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/sun" />
-                        <TextView style="@style/calendarDayHeader" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/mon" />
-                        <TextView style="@style/calendarDayHeader" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/tue" />
-                        <TextView style="@style/calendarDayHeader" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/wed" />
-                        <TextView style="@style/calendarDayHeader" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/thu" />
-                        <TextView style="@style/calendarDayHeader" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/fri" />
-                        <TextView style="@style/calendarDayHeader" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/sat" />
+                        <TextView
+                            style="@style/calendarDayHeader"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/sun" />
+
+                        <TextView
+                            style="@style/calendarDayHeader"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/mon" />
+
+                        <TextView
+                            style="@style/calendarDayHeader"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/tue" />
+
+                        <TextView
+                            style="@style/calendarDayHeader"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/wed" />
+
+                        <TextView
+                            style="@style/calendarDayHeader"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/thu" />
+
+                        <TextView
+                            style="@style/calendarDayHeader"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/fri" />
+
+                        <TextView
+                            style="@style/calendarDayHeader"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/sat" />
                     </LinearLayout>
 
                     <!-- Calendar Grid -->
@@ -212,7 +258,7 @@
                         android:id="@+id/btnToggleView"
                         style="@style/buttonTextStyle"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
+                        android:layout_height="48dp"
                         android:layout_marginTop="12dp"
                         android:text="@string/month_view"
                         android:textSize="12sp" />
@@ -241,7 +287,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentStart="true"
                             android:layout_marginStart="4dp"
-                            android:layout_marginTop="4dp"
+                            android:layout_marginTop="12dp"
                             android:layout_marginEnd="4dp"
                             android:layout_toStartOf="@+id/txtPrincipalDayScore"
                             android:textSize="16sp" />
@@ -250,7 +296,7 @@
                             android:id="@+id/txtPrincipalDayScore"
                             style="@style/buttonTextStyle"
                             android:layout_width="wrap_content"
-                            android:layout_height="36dp"
+                            android:layout_height="48dp"
                             android:layout_alignParentEnd="true"
                             android:layout_marginEnd="4dp"
                             android:insetTop="0dp"
@@ -311,5 +357,5 @@
         </LinearLayout>
     </ScrollView>
 
-    <include layout="@menu/bottom_nav" />
+    <include layout="@layout/bottom_nav" />
 </FrameLayout>

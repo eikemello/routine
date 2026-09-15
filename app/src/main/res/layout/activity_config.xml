@@ -49,19 +49,18 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
                         android:orientation="vertical">
 
                         <LinearLayout
                             android:id="@+id/btnDailyWater"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="48dp"
+                            android:layout_marginStart="8dp"
                             android:background="?attr/selectableItemBackground"
                             android:clickable="true"
                             android:focusable="true"
                             android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:padding="8dp">
+                            android:orientation="horizontal">
 
                             <TextView
                                 style="@style/subTitleTextView.Muted"
@@ -121,23 +120,20 @@
                         <LinearLayout
                             android:id="@+id/btnDefaultValue1"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="48dp"
                             android:layout_weight="1"
                             android:background="?attr/selectableItemBackground"
                             android:clickable="true"
                             android:focusable="true"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:padding="6dp">
+                            android:gravity="center"
+                            android:orientation="horizontal">
 
                             <TextView
                                 android:id="@+id/txtDefaultBtn1"
                                 style="@style/textViewCardInfo"
-                                android:layout_width="0dp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
                                 android:gravity="center"
-                                android:maxLines="1"
                                 android:text="@string/water_default_value_50"
                                 android:textSize="16sp" />
 
@@ -146,24 +142,21 @@
                         <LinearLayout
                             android:id="@+id/btnDefaultValue2"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="48dp"
                             android:layout_marginStart="6dp"
                             android:layout_weight="1"
                             android:background="?attr/selectableItemBackground"
                             android:clickable="true"
                             android:focusable="true"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:padding="6dp">
+                            android:gravity="center"
+                            android:orientation="horizontal">
 
                             <TextView
                                 android:id="@+id/txtDefaultBtn2"
                                 style="@style/textViewCardInfo"
-                                android:layout_width="0dp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
                                 android:gravity="center"
-                                android:maxLines="1"
                                 android:text="@string/water_default_value_100"
                                 android:textSize="16sp" />
 
@@ -172,24 +165,21 @@
                         <LinearLayout
                             android:id="@+id/btnDefaultValue3"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="48dp"
                             android:layout_marginStart="6dp"
                             android:layout_weight="1"
                             android:background="?attr/selectableItemBackground"
                             android:clickable="true"
                             android:focusable="true"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:padding="6dp">
+                            android:gravity="center"
+                            android:orientation="horizontal">
 
                             <TextView
                                 android:id="@+id/txtDefaultBtn3"
                                 style="@style/textViewCardInfo"
-                                android:layout_width="0dp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
                                 android:gravity="center"
-                                android:maxLines="1"
                                 android:text="@string/water_default_value_250"
                                 android:textSize="16sp" />
 
@@ -217,23 +207,21 @@
                         android:text="@string/expenses"
                         android:textSize="18sp" />
 
-                    <!-- Sub-section: Monthly Limit -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
                         android:orientation="vertical">
 
                         <LinearLayout
                             android:id="@+id/btnMonthlyLimit"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="48dp"
+                            android:layout_marginStart="8dp"
                             android:background="?attr/selectableItemBackground"
                             android:clickable="true"
                             android:focusable="true"
                             android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:padding="8dp">
+                            android:orientation="horizontal">
 
                             <TextView
                                 style="@style/subTitleTextView.Muted"
@@ -263,24 +251,21 @@
                     <!-- Divider -->
                     <View style="@style/divider" />
 
-                    <!-- Sub-section: Card Statement Closing -->
-                    <!-- Sub-section: Card Statement Closing (one row per card) -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
                         android:orientation="vertical">
 
                         <LinearLayout
                             android:id="@+id/btnCardStatementClosing"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="48dp"
+                            android:layout_marginStart="8dp"
                             android:background="?attr/selectableItemBackground"
                             android:clickable="true"
                             android:focusable="true"
                             android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:padding="8dp">
+                            android:orientation="horizontal">
 
                             <TextView
                                 style="@style/subTitleTextView.Muted"
@@ -316,23 +301,21 @@
                     <!-- Divider -->
                     <View style="@style/divider" />
 
-                    <!-- Sub-section: Notify Access -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
                         android:orientation="vertical">
 
                         <LinearLayout
                             android:id="@+id/btnAllowNotifyAccess"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="48dp"
+                            android:layout_marginStart="8dp"
                             android:background="?attr/selectableItemBackground"
                             android:clickable="true"
                             android:focusable="true"
                             android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:padding="8dp">
+                            android:orientation="horizontal">
 
                             <TextView
                                 style="@style/subTitleTextView.Muted"
@@ -363,5 +346,5 @@
         </LinearLayout>
     </ScrollView>
 
-    <include layout="@menu/bottom_nav" />
+    <include layout="@layout/bottom_nav" />
 </FrameLayout>
