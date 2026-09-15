@@ -1,5 +1,6 @@
 package com.android.nls.routine.utils;
 
+import android.content.Context;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -148,5 +149,9 @@ public class Common {
         } else {
             return Constants.GREETINGS.get(2);
         }
+    }
+
+    public static int dpToPx(Context context, int dp) {
+        return Math.round(dp * context.getResources().getDisplayMetrics().density);
     }
 }

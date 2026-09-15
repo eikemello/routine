@@ -316,27 +316,25 @@ public class HistoryCalendarRenderer {
     private GridLayout.LayoutParams createCellParams() {
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;
-        params.height = dpToPx(45);
+        params.height = Common.dpToPx(mContext, 45);
         params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
         params.rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
-        params.setMargins(dpToPx(2), dpToPx(2), dpToPx(2), dpToPx(2));
+        params.setMargins(Common.dpToPx(mContext, 2), Common.dpToPx(mContext, 2), Common.dpToPx(mContext, 2), Common.dpToPx(mContext, 2));
         return params;
     }
 
     private int getCellBackgroundResource(DayStatus status, DayStatusInfo info) {
-        switch (status) {
-            case GREEN:
-                return R.drawable.calendar_day_green;
-            case YELLOW:
-                return R.drawable.calendar_day_yellow;
-            case RED:
-                return R.drawable.calendar_day_red;
-            default:
+        return switch (status) {
+            case GREEN -> R.drawable.calendar_day_green;
+            case YELLOW -> R.drawable.calendar_day_yellow;
+            case RED -> R.drawable.calendar_day_red;
+            default -> {
                 if (status == DayStatus.NONE && info != null && info.hasData()) {
-                    return R.drawable.calendar_day_has_data;
+                    yield R.drawable.calendar_day_has_data;
                 }
-                return R.drawable.calendar_day_background;
-        }
+                yield R.drawable.calendar_day_background;
+            }
+        };
     }
 
     private int getFirstDayOfWeek(int year, int month) {
@@ -371,9 +369,5 @@ public class HistoryCalendarRenderer {
         int daysFromMonday = (dayOfWeek + 5) % 7; // Sunday=1 -> 6, Monday=2 -> 0, ..., Saturday=7 -> 5
         calendar.add(Calendar.DAY_OF_MONTH, -daysFromMonday);
         return calendar;
-    }
-
-    private int dpToPx(int dp) {
-        return Math.round(dp * mContext.getResources().getDisplayMetrics().density);
     }
 }

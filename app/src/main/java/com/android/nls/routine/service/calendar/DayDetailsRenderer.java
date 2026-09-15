@@ -6,9 +6,7 @@ import android.view.View;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
-
 import com.android.nls.routine.R;
 import com.android.nls.routine.model.DayDetails;
 import com.android.nls.routine.model.ExpenseRecord;
@@ -16,6 +14,7 @@ import com.android.nls.routine.model.MealRecord;
 import com.android.nls.routine.model.Tracker;
 import com.android.nls.routine.model.TrackerRecord;
 import com.android.nls.routine.model.TrackerType;
+import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 import java.util.HashSet;
 import java.util.List;
@@ -71,7 +70,7 @@ public class DayDetailsRenderer {
             params.height = GridLayout.LayoutParams.WRAP_CONTENT;
             params.columnSpec = GridLayout.spec(column, 1f);
             params.rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
-            params.setMargins(dpToPx(4), dpToPx(4), dpToPx(4), dpToPx(4));
+            params.setMargins(Common.dpToPx(mContext, 4), Common.dpToPx(mContext, 4), Common.dpToPx(mContext,4), Common.dpToPx(mContext,4));
             cell.setLayoutParams(params);
 
             mDayDetailsGrid.addView(cell);
@@ -235,9 +234,5 @@ public class DayDetailsRenderer {
             }
         }
         return mContext.getColor(R.color.white);
-    }
-
-    private int dpToPx(int dp) {
-        return Math.round(dp * mContext.getResources().getDisplayMetrics().density);
     }
 }
