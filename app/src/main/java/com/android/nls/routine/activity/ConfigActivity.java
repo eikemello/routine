@@ -81,7 +81,7 @@ public class ConfigActivity extends AppCompatActivity {
         btnCardStatementClosing.setOnClickListener(v -> openCardsDialog());
         btnAllowNotifyAccess.setOnClickListener(v -> {
             mConfigService.setNotifyAccess();
-            txtNotifyAccess.setText(this.getResources().getString(R.string.no));
+            txtNotifyAccess.setText(this.getResources().getString(R.string.not_allowed));
         });
     }
 
@@ -92,8 +92,8 @@ public class ConfigActivity extends AppCompatActivity {
         txtDefaultBtn3.setText(this.getString(R.string.water_default_value_init, mConfigService.getDefaultBtn3Value()));
         txtMonthlyLimit.setText(this.getString(R.string.total_expense_value_init, mConfigService.getMonthlyLimitValue()));
         renderCards();
-        txtNotifyAccess.setText(mConfigService.isNotifyAccessEnabled() ? this.getResources().getString(R.string.yes)
-                : this.getResources().getString(R.string.no));
+        txtNotifyAccess.setText(mConfigService.isNotifyAccessEnabled() ? this.getResources().getString(R.string.allowed)
+                : this.getResources().getString(R.string.not_allowed));
     }
 
     private void openCardsDialog() {

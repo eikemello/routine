@@ -103,8 +103,8 @@
     <string name="last_expense">Last expense was %1$.2f from %2$s bank</string>
     <string name="no_expenses_yet">No expenses recorded yet</string>
     <string name="notify_access_allowed">Allowed notify access</string>
-    <string name="yes">yes</string>
-    <string name="no">no</string>
+    <string name="allowed">Allowed</string>
+    <string name="not_allowed">Not allowed</string>
     <string name="other">Other</string>
     <string name="add_an_observation">you can add an observation</string>
     <string name="add_different_meal">Add different meal</string>
