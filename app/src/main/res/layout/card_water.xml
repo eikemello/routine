@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/MaterialCardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -8,28 +9,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:padding="16dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:orientation="horizontal">
+            android:layout_marginEnd="8dp">
 
             <ImageView
                 android:id="@+id/imgViewWater"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_gravity="top"
+                style="@style/iconContainer"
+                android:background="@drawable/icon_background_blue"
                 android:contentDescription="@string/water"
-                android:src="@drawable/ic_water" />
+                android:src="@drawable/ic_water"
+                app:tint="@color/neon_blue" />
 
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@+id/imgViewWater"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp">
+                android:layout_marginStart="12dp">
 
                 <TextView
                     android:id="@+id/txtWaterTitle"
@@ -43,7 +42,7 @@
                     style="@style/textViewCardInfo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toStartOf="@+id/textView"
+                    android:layout_toStartOf="@id/textView"
                     android:includeFontPadding="false"
                     android:text="@string/water_default_value_init" />
 
@@ -52,8 +51,8 @@
                     style="@style/textViewCardInfo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:layout_toStartOf="@+id/txtDailyWater"
+                    android:layout_marginBottom="4dp"
+                    android:layout_toStartOf="@id/txtDailyWater"
                     android:includeFontPadding="false"
                     android:text="@string/trace"
                     android:textAlignment="textEnd" />
@@ -64,17 +63,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginBottom="4dp"
                     android:includeFontPadding="false"
                     android:text="@string/daily_water_ml"
                     android:textAlignment="textEnd" />
+
                 <TextView
                     android:id="@+id/txtLastWaterAddedTime"
-                    style="@style/subTitleTextView"
+                    style="@style/subTitleTextView.Muted"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/txtWaterTitle"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginBottom="4dp"
                     android:text="@string/last_added_at" />
             </RelativeLayout>
 
@@ -83,13 +83,13 @@
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp">
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="4dp">
 
             <com.google.android.material.progressindicator.LinearProgressIndicator
                 android:id="@+id/progressWater"
-                style="@style/linearProgressBar"
+                style="@style/linearProgressBar.Water"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center" />
@@ -97,10 +97,10 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="5dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="4dp"
             android:gravity="center"
             android:weightSum="3">
 
@@ -108,8 +108,8 @@
                 android:id="@+id/btnAddWater1"
                 style="@style/buttonTextStyle"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_marginEnd="5dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="6dp"
                 android:layout_weight="1"
                 android:text="@string/water_default_value_50" />
 
@@ -117,8 +117,8 @@
                 android:id="@+id/btnAddWater2"
                 style="@style/buttonTextStyle"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_marginEnd="5dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="6dp"
                 android:layout_weight="1"
                 android:text="@string/water_default_value_100" />
 
@@ -126,7 +126,7 @@
                 android:id="@+id/btnAddWater3"
                 style="@style/buttonTextStyle"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
                 android:text="@string/water_default_value_250" />
         </LinearLayout>

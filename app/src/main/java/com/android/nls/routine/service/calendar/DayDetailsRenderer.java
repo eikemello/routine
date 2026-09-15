@@ -6,6 +6,9 @@ import android.view.View;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+
 import com.android.nls.routine.R;
 import com.android.nls.routine.model.DayDetails;
 import com.android.nls.routine.model.ExpenseRecord;
@@ -14,7 +17,9 @@ import com.android.nls.routine.model.Tracker;
 import com.android.nls.routine.model.TrackerRecord;
 import com.android.nls.routine.model.TrackerType;
 import com.android.nls.routine.utils.Constants;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Renders the day details grid with icon cells for each enabled tracker.
@@ -113,12 +118,17 @@ public class DayDetailsRenderer {
             case WATER:
                 return scoreData.getWaterSum() + " ml";
 
-            case MEALS:
+            case MEALS: {
                 if (details.mealRecords().isEmpty()) {
                     return mContext.getString(R.string.not_completed);
                 }
-                // Show the count of logged meals
-                return details.mealRecords().size() + "/4";
+                // Count only the 4 regular meal slots (irregular "Other" meals excluded)
+                Set<String> regularMealTypes = getRegularMealTypes(details);
+                if (regularMealTypes.isEmpty()) {
+                    return mContext.getString(R.string.not_completed);
+                }
+                return regularMealTypes.size() + "/4";
+            }
 
             case EXPENSES:
                 double expenseSum = 0;
@@ -141,6 +151,22 @@ public class DayDetailsRenderer {
         }
     }
 
+    @NonNull
+    private static Set<String> getRegularMealTypes(DayDetails details) {
+        Set<String> regularMealTypes = new HashSet<>();
+        for (MealRecord record : details.mealRecords()) {
+            if (Constants.OTHER_MEAL.equals(record.status())) {
+                continue; // irregular meals don't count toward the regular 4
+            }
+            String meal = record.meal();
+            if (Constants.BREAKFAST.equals(meal) || Constants.LUNCH.equals(meal)
+                    || Constants.TEA.equals(meal) || Constants.DINNER.equals(meal)) {
+                regularMealTypes.add(meal);
+            }
+        }
+        return regularMealTypes;
+    }
+
     private String getTrackerCompletionValue(List<TrackerRecord> records) {
         if (records.isEmpty()) {
             return mContext.getString(R.string.not_completed);
@@ -159,9 +185,9 @@ public class DayDetailsRenderer {
             case WATER:
                 int waterSum = scoreData.getWaterSum();
                 if (waterSum >= mHistoryContext.getDailyWaterGoal()) {
-                    return mContext.getColor(R.color.calendar_green);
+                    return mContext.getColor(R.color.green);
                 } else if (waterSum > 0) {
-                    return mContext.getColor(R.color.calendar_yellow);
+                    return mContext.getColor(R.color.yellow);
                 }
                 return mContext.getColor(R.color.white);
 
@@ -174,13 +200,13 @@ public class DayDetailsRenderer {
                     if (Constants.WARNING_MEAL.equals(record.status())) {
                         hasWarning = true;
                     } else if (Constants.WRONG_MEAL.equals(record.status())) {
-                        return mContext.getColor(R.color.calendar_red);
+                        return mContext.getColor(R.color.red);
                     }
                 }
                 if (hasWarning) {
-                    return mContext.getColor(R.color.calendar_yellow);
+                    return mContext.getColor(R.color.yellow);
                 }
-                return mContext.getColor(R.color.calendar_green);
+                return mContext.getColor(R.color.green);
 
             case EXPENSES:
                 return mContext.getColor(R.color.white);
@@ -205,7 +231,7 @@ public class DayDetailsRenderer {
         }
         for (TrackerRecord record : records) {
             if (record.completed()) {
-                return mContext.getColor(R.color.calendar_green);
+                return mContext.getColor(R.color.green);
             }
         }
         return mContext.getColor(R.color.white);

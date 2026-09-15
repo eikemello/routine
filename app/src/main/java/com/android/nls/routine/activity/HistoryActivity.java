@@ -4,7 +4,6 @@ import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.GridLayout;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,22 +23,28 @@ import com.android.nls.routine.service.calendar.HistoryContext;
 import com.android.nls.routine.utils.BottomNavHelper;
 import com.android.nls.routine.utils.Common;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 
 public class HistoryActivity extends AppCompatActivity {
     private HistoryContext mHistoryContext;
 
-    // Weekly summary views
+    private MaterialCardView cardWeeklySummary;
+    private MaterialCardView cardMonthlySummary;
+
     private TextView txtSummaryTitle;
     private TextView txtWeeklyWater;
     private TextView txtWeeklySpent;
     private TextView txtWeeklyMeals;
 
-    // Calendar views
-    private ImageButton btnPrevMonth;
-    private ImageButton btnNextMonth;
+    private TextView txtMonthlyTitle;
+    private TextView txtMonthlyWater;
+    private TextView txtMonthlySpent;
+    private TextView txtMonthlyMeals;
+
+    private MaterialButton btnPrevMonth;
+    private MaterialButton btnNextMonth;
     private MaterialButton btnToggleView;
 
-    // Day details views
     private TextView txtSelectedDate;
     private TextView txtNoData;
     private MaterialButton txtPrincipalDayScore;
@@ -57,7 +62,6 @@ public class HistoryActivity extends AppCompatActivity {
         WindowInsetsControllerCompat windowInsetsController = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
         windowInsetsController.setAppearanceLightStatusBars(false);
 
-        // Build the shared context once; it caches trackers and water goal
         mHistoryContext = new HistoryContext(new HistoryService(this), new ConfigRepository(this));
 
         startUIComponents();
@@ -69,10 +73,18 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void startUIComponents() {
+        cardWeeklySummary = findViewById(R.id.cardWeeklySummary);
+        cardMonthlySummary = findViewById(R.id.cardMonthlySummary);
+
         txtSummaryTitle = findViewById(R.id.txtSummaryTitle);
         txtWeeklyWater = findViewById(R.id.txtWeeklyWater);
         txtWeeklySpent = findViewById(R.id.txtWeeklySpent);
         txtWeeklyMeals = findViewById(R.id.txtWeeklyMeals);
+
+        txtMonthlyTitle = findViewById(R.id.txtMonthlyTitle);
+        txtMonthlyWater = findViewById(R.id.txtMonthlyWater);
+        txtMonthlySpent = findViewById(R.id.txtMonthlySpent);
+        txtMonthlyMeals = findViewById(R.id.txtMonthlyMeals);
 
         GridLayout calendarGrid = findViewById(R.id.calendarGrid);
         TextView txtMonthYear = findViewById(R.id.txtMonthYear);
@@ -112,16 +124,26 @@ public class HistoryActivity extends AppCompatActivity {
     private void loadSummary() {
         WeeklySummary summary;
         if (mCalendarRenderer.isWeekView()) {
+            cardWeeklySummary.setVisibility(View.VISIBLE);
+            cardMonthlySummary.setVisibility(View.GONE);
+
             txtSummaryTitle.setText(getString(R.string.weekly_summary));
             summary = mHistoryContext.getHistoryService().getWeeklySummary();
-        } else {
-            txtSummaryTitle.setText(getString(R.string.monthly_summary));
-            summary = mHistoryContext.getHistoryService().getMonthlySummary(mCalendarRenderer.getCurrentMonth());
-        }
 
-        txtWeeklyWater.setText(getString(R.string.weekly_water_achieved, summary.waterDaysAchieved(), summary.totalDays()));
-        txtWeeklySpent.setText(getString(R.string.weekly_spent, summary.totalSpent()));
-        txtWeeklyMeals.setText(getString(R.string.weekly_meals, summary.correctMeals(), summary.warningMeals(), summary.wrongMeals()));
+            txtWeeklyWater.setText(getString(R.string.weekly_water_achieved, summary.waterDaysAchieved(), summary.totalDays()));
+            txtWeeklySpent.setText(getString(R.string.weekly_spent, summary.totalSpent()));
+            txtWeeklyMeals.setText(getString(R.string.weekly_meals, summary.correctMeals(), summary.warningMeals(), summary.wrongMeals()));
+        } else {
+            cardWeeklySummary.setVisibility(View.GONE);
+            cardMonthlySummary.setVisibility(View.VISIBLE);
+
+            txtMonthlyTitle.setText(getString(R.string.monthly_summary));
+            summary = mHistoryContext.getHistoryService().getMonthlySummary(mCalendarRenderer.getCurrentMonth());
+
+            txtMonthlyWater.setText(getString(R.string.weekly_water_achieved, summary.waterDaysAchieved(), summary.totalDays()));
+            txtMonthlySpent.setText(getString(R.string.weekly_spent, summary.totalSpent()));
+            txtMonthlyMeals.setText(getString(R.string.weekly_meals, summary.correctMeals(), summary.warningMeals(), summary.wrongMeals()));
+        }
     }
 
     private void showDayDetails(long timestamp, TextView clickedCell) {
@@ -129,7 +151,6 @@ public class HistoryActivity extends AppCompatActivity {
 
         txtSelectedDate.setText(Common.getDateFromTimestamp(timestamp));
 
-        // Show score breakdown for the selected day with status color indicator
         DayStatusInfo dayInfo = mCalendarRenderer.getDayStatus(timestamp);
         if (dayInfo != null && dayInfo.scoreBreakdown() != null && !dayInfo.scoreBreakdown().isEmpty()) {
             txtScoreBreakdown.setText(dayInfo.scoreBreakdown());
@@ -168,13 +189,8 @@ public class HistoryActivity extends AppCompatActivity {
 
         txtNoData.setVisibility(hasAnyData ? View.GONE : View.VISIBLE);
 
-        // Compute day score data once and share it between the grid and the score button
         DayScoreData scoreData = new DayScoreData(details);
-
-        // Render the day details grid with icon cells for each enabled tracker
         mDayDetailsRenderer.render(details, scoreData);
-
-        // Update the principal day score button with the weighted percentage and status color
         updatePrincipalDayScore(dayInfo, scoreData);
     }
 
@@ -182,6 +198,7 @@ public class HistoryActivity extends AppCompatActivity {
         if (dayInfo == null || dayInfo.status() == DayStatus.NONE) {
             txtPrincipalDayScore.setText("");
             txtPrincipalDayScore.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.calendar_day_background_default)));
+            txtPrincipalDayScore.setTextColor(getColor(R.color.black));
             return;
         }
 
@@ -190,6 +207,7 @@ public class HistoryActivity extends AppCompatActivity {
         if (percentage < 0) {
             txtPrincipalDayScore.setText("");
             txtPrincipalDayScore.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.calendar_day_background_default)));
+            txtPrincipalDayScore.setTextColor(getColor(R.color.black));
             return;
         }
 
@@ -198,15 +216,15 @@ public class HistoryActivity extends AppCompatActivity {
         int scoreColor = switch (dayInfo.status()) {
             case GREEN -> {
                 scoreText = getString(R.string.score_percentage_good, rounded);
-                yield R.color.calendar_green;
+                yield R.color.green;
             }
             case YELLOW -> {
                 scoreText = getString(R.string.score_percentage_warning, rounded);
-                yield R.color.calendar_yellow;
+                yield R.color.yellow;
             }
             case RED -> {
                 scoreText = getString(R.string.score_percentage_bad, rounded);
-                yield R.color.calendar_red;
+                yield R.color.red;
             }
             default -> {
                 scoreText = "";
@@ -216,6 +234,7 @@ public class HistoryActivity extends AppCompatActivity {
 
         txtPrincipalDayScore.setText(scoreText);
         txtPrincipalDayScore.setBackgroundTintList(ColorStateList.valueOf(getColor(scoreColor)));
+        txtPrincipalDayScore.setTextColor(getColor(R.color.black));
     }
 
     @Override

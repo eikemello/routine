@@ -9,6 +9,8 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowInsetsControllerCompat;
 import com.android.nls.routine.R;
+import com.android.nls.routine.model.CardSpending;
+import com.android.nls.routine.model.ExpenseCardSummary;
 import com.android.nls.routine.model.ExpenseRecord;
 import com.android.nls.routine.model.Tracker;
 import com.android.nls.routine.model.TrackerRecord;
@@ -187,25 +189,68 @@ public class HomeActivity extends AppCompatActivity {
     private View createExpenseCard(LayoutInflater inflater) {
         View card = inflater.inflate(R.layout.card_expense, mTrackerCardsContainer, false);
         double monthlyLimit = mHomeCardExpenseService.getMonthlyLimitValue();
-        double totalSpent = mHomeCardExpenseService.getTotalSpent();
+        ExpenseCardSummary expenseSummary = mHomeCardExpenseService.getExpenseCardSummary();
+        double totalSpent = expenseSummary.totalSpent();
         ExpenseRecord expenseRecord = mHomeCardExpenseService.getLastExpenseRecord();
 
         TextView txtTotalSpent = card.findViewById(R.id.txtTotalSpent);
         TextView txtTotalValue = card.findViewById(R.id.txtTotalValue);
         TextView txtLastExpenseRecord = card.findViewById(R.id.txtLastExpenseRecord);
         LinearProgressIndicator progressExpense = card.findViewById(R.id.progressExpense);
+        LinearLayout cardProgressContainer = card.findViewById(R.id.cardProgressContainer);
 
         txtTotalValue.setText(this.getString(R.string.total_expense_value_init, monthlyLimit));
         txtTotalSpent.setText(this.getString(R.string.total_expense_value_init, totalSpent));
-        txtLastExpenseRecord.setText(this.getString(R.string.last_expense, expenseRecord.amount(), expenseRecord.bank()));
+
+        if (expenseRecord != null) {
+            txtLastExpenseRecord.setText(this.getString(R.string.last_expense, expenseRecord.amount(), expenseRecord.bank()));
+        } else {
+            txtLastExpenseRecord.setText(this.getString(R.string.no_expenses_yet));
+        }
 
         if (totalSpent > monthlyLimit) {
             txtTotalSpent.setTextColor(this.getColor(R.color.red));
         }
 
-        mHomeCardWaterService.updateExpenseProgress(progressExpense, totalSpent, monthlyLimit);
+        renderCardProgress(inflater, cardProgressContainer, progressExpense, expenseSummary, monthlyLimit);
 
         return card;
+    }
+
+    /**
+     * Shows one progress bar per configured card, each one with the amount spent
+     * in that card's own statement cycle. When no card is configured, the single
+     * progress bar of the whole cycle is shown instead.
+     */
+    private void renderCardProgress(LayoutInflater inflater,
+                                    LinearLayout cardProgressContainer,
+                                    LinearProgressIndicator progressExpense,
+                                    ExpenseCardSummary expenseSummary,
+                                    double monthlyLimit) {
+        cardProgressContainer.removeAllViews();
+
+        List<CardSpending> cardSpendings = expenseSummary.cardSpendings();
+        if (cardSpendings.isEmpty()) {
+            progressExpense.setVisibility(View.VISIBLE);
+            mHomeCardWaterService.updateExpenseProgress(progressExpense, expenseSummary.totalSpent(), monthlyLimit);
+            return;
+        }
+
+        progressExpense.setVisibility(View.GONE);
+
+        for (CardSpending cardSpending : cardSpendings) {
+            View row = inflater.inflate(R.layout.item_card_progress, cardProgressContainer, false);
+            TextView txtCardProgressLabel = row.findViewById(R.id.txtCardProgressLabel);
+            TextView txtCardProgressValue = row.findViewById(R.id.txtCardProgressValue);
+            LinearProgressIndicator progressCard = row.findViewById(R.id.progressCard);
+
+            txtCardProgressLabel.setText(this.getString(R.string.card_progress_label,
+                    cardSpending.bankName(), cardSpending.lastFour()));
+            txtCardProgressValue.setText(this.getString(R.string.total_expense_value_init, cardSpending.spent()));
+            progressCard.setProgress(cardSpending.progress());
+
+            cardProgressContainer.addView(row);
+        }
     }
 
     private View createWorkoutCard(LayoutInflater inflater, Tracker tracker) {

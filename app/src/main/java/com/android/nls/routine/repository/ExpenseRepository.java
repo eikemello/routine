@@ -66,6 +66,34 @@ public class ExpenseRepository {
     }
 
     /**
+     * Returns the sum of the expenses of a single bank within the given time
+     * range. The bank is matched partially and case-insensitively, so a card
+     * named "XP BANK" also matches the stored bank name "xp".
+     */
+    public double getSpentByBank(String bank, long start, long end) {
+        double sum = 0.0;
+
+        String query = "SELECT SUM(" + Constants.COLUMN_NAME_EXPENSE_VALUE + ") FROM " + Constants.TABLE_NAME_EXPENSE_TEST +
+                " WHERE " + Constants.COLUMN_NAME_BANK_NAME + " LIKE ? AND " +
+                Constants.COLUMN_NAME_TIMESTAMP + " >= ? AND " +
+                Constants.COLUMN_NAME_TIMESTAMP + " <= ?";
+
+        String bankFilter = "%" + bank.trim().toLowerCase() + "%";
+
+        try (Cursor cursor = mSqliteDatabase.rawQuery(query,
+                new String[]{bankFilter, String.valueOf(start), String.valueOf(end)})) {
+            if (cursor.moveToFirst() && cursor.getString(0) != null) {
+                sum = cursor.getDouble(0);
+                Log.d(TAG, "Expense sum for " + bank + ": " + sum);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error calculating expense sum for " + bank + ": " + e.getMessage());
+        }
+
+        return sum;
+    }
+
+    /**
      * Returns the total expense amount per day within the given time range.
      * The map keys are the start-of-day timestamps (local timezone).
      */

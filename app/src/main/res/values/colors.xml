@@ -2,13 +2,105 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="background">#1E1B22</color>
-    <color name="green">#E100FF09</color>
-    <color name="yellow">#F2FF00</color>
-    <color name="red">#FF0000</color>
-    <color name="subTextView">#ABABAB</color>
-    <color name="calendar_green">#2E7D32</color>
-    <color name="calendar_yellow">#F9A825</color>
-    <color name="calendar_red">#C62828</color>
-    <color name="calendar_day_background_default">#2D2C2C</color>
+
+    <!-- ==================== BASE / SURFACES ==================== -->
+    <color name="background">#0F0F1A</color>
+    <color name="background_secondary">#1A1A2E</color>
+    <color name="surface_dark">#0D0D18</color>
+    <color name="surface_input">#12121A</color>
+    <color name="calendar_day_background_default">#1E1E2E</color>
+
+    <!-- ==================== GRADIENT BACKGROUNDS ==================== -->
+    <color name="gradient_start">#0F0F1A</color>
+    <color name="gradient_center">#1A1A2E</color>
+    <color name="gradient_end">#16213E</color>
+    <color name="gradient_accent">#0F3460</color>
+    <color name="gradient_accent_1A">#1A0F3460</color>
+
+    <!-- ==================== NEON / ACCENT PALETTE (solid) ==================== -->
+    <color name="neon_blue">#00D4FF</color>
+    <color name="neon_purple">#A855F7</color>
+    <color name="neon_pink">#FF6B9D</color>
+    <color name="neon_orange">#FF8C42</color>
+    <color name="neon_cyan">#06FFA5</color>
+
+    <!-- ==================== STATUS / SEMANTIC COLORS ====================
+         Single source of truth for the app's status colors:
+           GREEN  = goal achieved / correct meal / completed / day score good
+           YELLOW = warning meal / partial goal / day score warning
+           RED    = wrong meal / over budget / day score bad
+         These tokens are used in text, calendar day cells and the principal
+         day score pill so they always match. Change them here and everything
+         updates everywhere. -->
+    <color name="green">#39FF14</color>
+    <color name="yellow">#FFD700</color>
+    <color name="red">#FF3131</color>
+
+    <!-- ==================== GLASS EFFECT ==================== -->
+    <color name="glass_background">#1AFFFFFF</color>
+    <color name="glass_border">#2AFFFFFF</color>
+    <color name="glass_dark">#D9000000</color>
+
+    <!-- ==================== TRANSLUCENT VARIANTS ====================
+         Naming: <base>_<alphaHex>, where alphaHex is the two hex digits of
+         the alpha channel combined with that solid color. -->
+    <!-- White -->
+    <color name="white_08">#08FFFFFF</color>
+    <color name="white_10">#10FFFFFF</color>
+    <color name="white_15">#15FFFFFF</color>
+    <color name="white_20">#20FFFFFF</color>
+    <color name="white_30">#30FFFFFF</color>
+    <color name="white_33">#33FFFFFF</color>
+    <color name="white_40">#40FFFFFF</color>
+    <!-- Blue -->
+    <color name="neon_blue_08">#0800D4FF</color>
+    <color name="neon_blue_10">#1000D4FF</color>
+    <color name="neon_blue_1A">#1A00D4FF</color>
+    <color name="neon_blue_20">#2000D4FF</color>
+    <color name="neon_blue_30">#3000D4FF</color>
+    <color name="neon_blue_40">#4000D4FF</color>
+    <!-- Purple -->
+    <color name="neon_purple_06">#06A855F7</color>
+    <color name="neon_purple_10">#10A855F7</color>
+    <color name="neon_purple_20">#20A855F7</color>
+    <color name="neon_purple_40">#40A855F7</color>
+    <!-- Green -->
+    <color name="neon_green_10">#1039FF14</color>
+    <color name="neon_green_20">#2039FF14</color>
+    <color name="neon_green_40">#4039FF14</color>
+    <!-- Orange -->
+    <color name="neon_orange_10">#10FF8C42</color>
+    <color name="neon_orange_1A">#1AFF8C42</color>
+    <color name="neon_orange_20">#20FF8C42</color>
+    <color name="neon_orange_40">#40FF8C42</color>
+    <!-- Pink -->
+    <color name="neon_pink_10">#10FF6B9D</color>
+    <color name="neon_pink_20">#20FF6B9D</color>
+    <color name="neon_pink_40">#40FF6B9D</color>
+    <!-- Cyan -->
+    <color name="neon_cyan_10">#1006FFA5</color>
+    <color name="neon_cyan_20">#2006FFA5</color>
+    <color name="neon_cyan_40">#4006FFA5</color>
+
+    <!-- ==================== BOTTOM NAV ==================== -->
+    <color name="bottom_nav_start">#E60F0F1A</color>
+    <color name="bottom_nav_end">#E61A1A2E</color>
+
+    <!-- ==================== TEXT ==================== -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#D1D5DB</color>
+    <color name="text_tertiary">#9CA3AF</color>
+    <color name="text_accent">#00D4FF</color>
+
+    <!-- ==================== BUTTONS ==================== -->
+    <color name="button_primary">#0F3460</color>
+    <color name="button_secondary">#1E1E2E</color>
+    <color name="button_glass">#2A2A3E</color>
+
+    <!-- ==================== PROGRESS ==================== -->
+    <color name="progress_track">#1E1E2E</color>
+    <color name="progress_indicator">#00D4FF</color>
+    <color name="progress_indicator_secondary">#A855F7</color>
+    <color name="progress_gradient_start">#00D4FF</color>
+    <color name="progress_gradient_end">#A855F7</color>
 </resources>

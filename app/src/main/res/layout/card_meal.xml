@@ -3,15 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/MaterialCardView"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/home_background"
-    android:fillViewport="true">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:padding="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -20,19 +18,19 @@
 
             <ImageView
                 android:id="@+id/imgViewMeal"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_gravity="top"
+                style="@style/iconContainer"
+                android:background="@drawable/icon_background_green"
                 android:contentDescription="@string/meal"
-                android:src="@drawable/ic_meal" />
+                android:src="@drawable/ic_meal"
+                app:tint="@color/green" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp">
+                android:paddingStart="14dp"
+                android:paddingEnd="12dp">
 
                 <TextView
                     style="@style/titleTextView"
@@ -44,7 +42,7 @@
                     style="@style/subTitleTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="8dp"
                     android:text="@string/how_was_your_meal" />
             </LinearLayout>
         </LinearLayout>
@@ -53,48 +51,42 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
             android:baselineAligned="false"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
             android:gravity="center"
             android:orientation="horizontal"
             android:weightSum="3">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCorrectMeal"
+                style="@style/buttonTextStyle.Success"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
-                android:backgroundTint="@color/background"
                 android:text="@string/correct_meal"
-                android:textColor="@color/green"
-                app:strokeColor="@color/green"
-                app:strokeWidth="2sp"/>
+                android:textColor="@color/green" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnWarningMeal"
+                style="@style/buttonTextStyle.Warning"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:layout_marginStart="10dp"
-                android:backgroundTint="@color/background"
                 android:text="@string/warning_meal"
-                android:textColor="@color/yellow"
-                app:strokeColor="@color/yellow"
-                app:strokeWidth="2sp"/>
+                android:textColor="@color/yellow" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnWrongMeal"
+                style="@style/buttonTextStyle.Danger"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:layout_marginStart="10dp"
-                android:backgroundTint="@color/background"
                 android:text="@string/wrong_meal"
-                android:textColor="@color/red"
-                app:strokeColor="@color/red"
-                app:strokeWidth="2sp"/>
+                android:textColor="@color/red" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

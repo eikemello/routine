@@ -1,348 +1,367 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/home_background">
 
-    <LinearLayout
-        android:id="@+id/mainScrollView"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".activity.ConfigActivity">
+        android:layout_marginBottom="85dp"
+        android:fillViewport="true"
+        android:scrollbars="none">
 
         <LinearLayout
-            android:id="@+id/mainLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="16dp">
 
             <TextView
                 style="@style/titleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                android:layout_marginBottom="15dp"
-                android:text="@string/daily" />
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/config" />
 
+            <!-- Daily Water Goal -->
             <com.google.android.material.card.MaterialCardView
+                style="@style/MaterialCardView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="20dp">
+                android:layout_height="wrap_content">
 
                 <LinearLayout
-                    android:id="@+id/btnDailyWater"
                     android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:background="#1E1B22"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="16dp"
-                    android:tag="btnDailyWater">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
                     <TextView
-                        style="@style/expenseTextViewInfo"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/daily_water" />
-
-                    <TextView
-                        android:id="@+id/txtDailyWaterGoal"
-                        style="@style/expenseTextViewInfo"
+                        style="@style/titleTextView"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:text="@string/daily_water"
+                        android:textSize="18sp" />
 
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginStart="8dp"
-                        android:contentDescription="@string/edit_default_value"
-                        android:src="@drawable/ic_chevron_right"
-                        app:tint="?attr/colorOnSurfaceVariant" />
+                    <!-- Sub-section: Goal -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="vertical">
 
+                        <LinearLayout
+                            android:id="@+id/btnDailyWater"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="?attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="8dp">
+
+                            <TextView
+                                style="@style/subTitleTextView.Muted"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/goal"
+                                android:textSize="12sp" />
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:contentDescription="@string/goal"
+                                android:src="@drawable/ic_chevron_right"
+                                app:tint="@color/text_tertiary" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/txtDailyWaterGoal"
+                            style="@style/textViewCardInfo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="@string/water_default_value_init" />
+                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-
-            <TextView
-                style="@style/titleTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:layout_marginBottom="12dp"
-                android:text="@string/quick_buttons" />
-
+            <!-- Quick Buttons -->
             <com.google.android.material.card.MaterialCardView
+                style="@style/MaterialCardView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="20dp">
+                android:layout_height="wrap_content">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#1E1B22"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
+                    <TextView
+                        style="@style/titleTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/quick_buttons"
+                        android:textSize="18sp" />
+
+                    <!-- Quick buttons values, side by side -->
                     <LinearLayout
-                        android:id="@+id/btnDefaultValue1"
                         android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?attr/selectableItemBackground"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="16dp">
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal"
+                        android:weightSum="3">
 
-                        <TextView
-                            style="@style/expenseTextViewInfo"
+                        <LinearLayout
+                            android:id="@+id/btnDefaultValue1"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="@string/button_1" />
+                            android:background="?attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="6dp">
 
-                        <TextView
-                            android:id="@+id/txtDefaultBtn1"
-                            style="@style/expenseTextViewInfo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            <TextView
+                                android:id="@+id/txtDefaultBtn1"
+                                style="@style/textViewCardInfo"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:maxLines="1"
+                                android:text="@string/water_default_value_50"
+                                android:textSize="16sp" />
 
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_marginStart="8dp"
-                            android:contentDescription="@string/edit_default_value"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="?attr/colorOnSurfaceVariant" />
+                        </LinearLayout>
 
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:background="?attr/colorOutlineVariant" />
-
-                    <LinearLayout
-                        android:id="@+id/btnDefaultValue2"
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?attr/selectableItemBackground"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="16dp">
-
-                        <TextView
-                            style="@style/expenseTextViewInfo"
+                        <LinearLayout
+                            android:id="@+id/btnDefaultValue2"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
                             android:layout_weight="1"
-                            android:text="@string/button_2" />
+                            android:background="?attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="6dp">
 
-                        <TextView
-                            android:id="@+id/txtDefaultBtn2"
-                            style="@style/expenseTextViewInfo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            <TextView
+                                android:id="@+id/txtDefaultBtn2"
+                                style="@style/textViewCardInfo"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:maxLines="1"
+                                android:text="@string/water_default_value_100"
+                                android:textSize="16sp" />
 
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_marginStart="8dp"
-                            android:contentDescription="@string/edit_default_value"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="?attr/colorOnSurfaceVariant" />
+                        </LinearLayout>
 
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:background="?attr/colorOutlineVariant" />
-
-                    <LinearLayout
-                        android:id="@+id/btnDefaultValue3"
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?attr/selectableItemBackground"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="16dp">
-
-                        <TextView
-                            style="@style/expenseTextViewInfo"
+                        <LinearLayout
+                            android:id="@+id/btnDefaultValue3"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
                             android:layout_weight="1"
-                            android:text="@string/button_3" />
+                            android:background="?attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="6dp">
 
-                        <TextView
-                            android:id="@+id/txtDefaultBtn3"
-                            style="@style/expenseTextViewInfo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            <TextView
+                                android:id="@+id/txtDefaultBtn3"
+                                style="@style/textViewCardInfo"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:maxLines="1"
+                                android:text="@string/water_default_value_250"
+                                android:textSize="16sp" />
 
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_marginStart="8dp"
-                            android:contentDescription="@string/edit_default_value"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="?attr/colorOnSurfaceVariant" />
-
+                        </LinearLayout>
                     </LinearLayout>
-
                 </LinearLayout>
-
             </com.google.android.material.card.MaterialCardView>
-
-
-            <!-- Expenses -->
-            <TextView
-                style="@style/titleTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:layout_marginBottom="12dp"
-                android:text="@string/expenses" />
-
+            <!-- Expenses Card with Sub-sections -->
             <com.google.android.material.card.MaterialCardView
+                style="@style/MaterialCardView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="20dp">
+                android:layout_height="wrap_content">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#1E1B22"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
+                    <!-- Card Title -->
+                    <TextView
+                        style="@style/titleTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/expenses"
+                        android:textSize="18sp" />
+
+                    <!-- Sub-section: Monthly Limit -->
                     <LinearLayout
-                        android:id="@+id/btnMonthlyLimit"
                         android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:background="#1E1B22"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?attr/selectableItemBackground"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="16dp">
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="vertical">
 
-                        <TextView
-                            style="@style/expenseTextViewInfo"
-                            android:layout_width="0dp"
+                        <LinearLayout
+                            android:id="@+id/btnMonthlyLimit"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/limit" />
+                            android:background="?attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="8dp">
+
+                            <TextView
+                                style="@style/subTitleTextView.Muted"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/limit"
+                                android:textSize="12sp" />
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:contentDescription="@string/limit"
+                                android:src="@drawable/ic_chevron_right"
+                                app:tint="@color/text_tertiary" />
+                        </LinearLayout>
 
                         <TextView
                             android:id="@+id/txtMonthlyLimit"
-                            style="@style/expenseTextViewInfo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
+                            style="@style/textViewCardInfo.Warning"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
-                            android:contentDescription="@string/edit_default_value"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="?attr/colorOnSurfaceVariant" />
+                            android:text="@string/total_expense_value_init" />
                     </LinearLayout>
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:background="?attr/colorOutlineVariant" />
+                    <!-- Divider -->
+                    <View style="@style/divider" />
 
+                    <!-- Sub-section: Card Statement Closing -->
+                    <!-- Sub-section: Card Statement Closing (one row per card) -->
                     <LinearLayout
-                        android:id="@+id/btnCardStatementClosing"
                         android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:background="#1E1B22"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?attr/selectableItemBackground"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="16dp">
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="vertical">
 
-                        <TextView
-                            style="@style/expenseTextViewInfo"
-                            android:layout_width="0dp"
+                        <LinearLayout
+                            android:id="@+id/btnCardStatementClosing"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/card_statement_closing" />
+                            android:background="?attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="8dp">
+
+                            <TextView
+                                style="@style/subTitleTextView.Muted"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/card_statement_closing"
+                                android:textSize="12sp" />
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:contentDescription="@string/card_statement_closing"
+                                android:src="@drawable/ic_chevron_right"
+                                app:tint="@color/text_tertiary" />
+                        </LinearLayout>
 
                         <TextView
-                            android:id="@+id/txtCardStatementClosingDate"
-                            style="@style/expenseTextViewInfo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
+                            android:id="@+id/txtNoCards"
+                            style="@style/subTitleTextView.Muted"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
-                            android:contentDescription="@string/edit_default_value"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="?attr/colorOnSurfaceVariant" />
-                    </LinearLayout>
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:background="?attr/colorOutlineVariant" />
+                            android:text="@string/no_cards_added" />
 
-                    <LinearLayout
-                        android:id="@+id/btnAllowNotifyAccess"
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:background="#1E1B22"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?attr/selectableItemBackground"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="16dp">
-
-                        <TextView
-                            style="@style/expenseTextViewInfo"
-                            android:layout_width="0dp"
+                        <LinearLayout
+                            android:id="@+id/cardsListContainer"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/notify_access_allowed" />
+                            android:orientation="vertical" />
+                    </LinearLayout>
+
+                    <!-- Divider -->
+                    <View style="@style/divider" />
+
+                    <!-- Sub-section: Notify Access -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/btnAllowNotifyAccess"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="?attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="8dp">
+
+                            <TextView
+                                style="@style/subTitleTextView.Muted"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/notify"
+                                android:textSize="12sp" />
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:contentDescription="@string/notify_access_allowed"
+                                android:src="@drawable/ic_chevron_right"
+                                app:tint="@color/text_tertiary" />
+                        </LinearLayout>
 
                         <TextView
                             android:id="@+id/txtNotifyAccess"
-                            style="@style/expenseTextViewInfo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
+                            style="@style/subTitleTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
-                            android:contentDescription="@string/edit_default_value"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="?attr/colorOnSurfaceVariant" />
+                            android:layout_marginTop="2dp" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
 
     <include layout="@menu/bottom_nav" />
 </FrameLayout>

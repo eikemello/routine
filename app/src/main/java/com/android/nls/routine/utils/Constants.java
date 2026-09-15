@@ -9,7 +9,12 @@ public class Constants {
     //HomeActivity
     public static final String WATER_INVALID_NUMBER = "Please enter a valid number!";
     public static final String MEAL_INVALID_TEXT = "Please enter a valid text!";
-    public static final String OTHER_MEAL_INVALID_TEXT = "Please enter an valid observation for irregular meals!";
+    public static final String MEAL_SELECTION_REQUIRED = "Please select a meal option!";
+    public static final String CUSTOM_MEAL_INVALID_TEXT = "Please enter the meal name!";
+    public static final String CUSTOM_MEAL_OBSERVATION_REQUIRED = "Please enter an observation for irregular meals!";
+    public static final String CARD_BANK_INVALID_TEXT = "Please enter the bank name!";
+    public static final String CARD_LAST_FOUR_INVALID_TEXT = "Please enter the last four digits!";
+    public static final String CARD_CLOSING_DAY_INVALID_TEXT = "Please enter a valid closing day (1-31)!";
     public static final List<String> GREETINGS = Arrays.asList("Good morning", "Good afternoon", "Good night");
     public static final double DEFAULT_DAILY_WATER = 2500;
 
@@ -40,6 +45,11 @@ public class Constants {
     public static final String COLUMN_NAME_MONTHLY_LIMIT = "MONTHLY_LIMIT";
     public static final String COLUMN_NAME_CARD_STATEMENT_CLOSING = "CARD_STATEMENT_CLOSING";
 
+    public static final String TABLE_NAME_CARDS = "CARDS";
+    public static final String COLUMN_NAME_CARD_BANK = "BANK_NAME";
+    public static final String COLUMN_NAME_CARD_LAST_FOUR = "LAST_FOUR";
+    public static final String COLUMN_NAME_CARD_CLOSING_DAY = "CLOSING_DAY";
+
     public static final String TABLE_NAME_EXPENSE_TEST = "EXPENSE_TEST";
     public static final String COLUMN_NAME_EXPENSE_TEXT = "EXPENSE_TEXT";
     public static final String COLUMN_NAME_EXPENSE_VALUE = "EXPENSE_VALUE";
@@ -64,6 +74,8 @@ public class Constants {
     public static final String BANK_ITAU = "itau";
     public static final String BANK_NUBANK = "nubank";
     public static final String BANK_XP = "xp";
+    public static final List<String> KNOWN_BANKS = Arrays.asList(
+            BANK_BRADESCO, BANK_INTER, BANK_ITAU, BANK_NUBANK, BANK_XP);
 
     //Trackers
     public static final String TABLE_NAME_TRACKERS = "TRACKERS";

@@ -5,25 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
-    android:layout_marginStart="20dp"
-    android:layout_marginEnd="20dp"
-    android:layout_marginBottom="20dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="24dp"
     android:background="@drawable/bottom_nav_background"
     android:baselineAligned="false"
-    android:padding="5dp"
+    android:padding="6dp"
     android:gravity="center"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:elevation="12dp">
 
     <LinearLayout
         android:id="@+id/nav_home"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
+        style="@style/bottomNavItem"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:focusable="true">
 
         <ImageView
             android:id="@+id/nav_home_icon"
@@ -37,21 +34,19 @@
             android:id="@+id/nav_home_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:text="@string/home"
             android:textColor="@color/bottom_nav_item_color"
-            android:textSize="11sp" />
+            android:textSize="10sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/nav_trackers"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
+        style="@style/bottomNavItem"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:focusable="true">
 
         <ImageView
             android:id="@+id/nav_trackers_icon"
@@ -65,21 +60,19 @@
             android:id="@+id/nav_trackers_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:text="@string/trackers"
             android:textColor="@color/bottom_nav_item_color"
-            android:textSize="11sp" />
+            android:textSize="10sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/nav_history"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
+        style="@style/bottomNavItem"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:focusable="true">
 
         <ImageView
             android:id="@+id/nav_history_icon"
@@ -93,21 +86,19 @@
             android:id="@+id/nav_history_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:text="@string/history"
             android:textColor="@color/bottom_nav_item_color"
-            android:textSize="11sp" />
+            android:textSize="10sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/nav_config"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
+        style="@style/bottomNavItem"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:focusable="true">
 
         <ImageView
             android:id="@+id/nav_config_icon"
@@ -121,8 +112,10 @@
             android:id="@+id/nav_config_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:text="@string/config"
             android:textColor="@color/bottom_nav_item_color"
-            android:textSize="11sp" />
+            android:textSize="10sp"
+            android:textStyle="bold" />
     </LinearLayout>
 </LinearLayout>

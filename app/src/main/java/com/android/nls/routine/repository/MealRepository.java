@@ -203,33 +203,6 @@ public class MealRepository {
     }
 
     /**
-     * Gets the ID of the existing OTHER_MEAL for a given meal type today.
-     * Used when saving irregular meals (when no radio button is selected).
-     * @param mealType The meal type to look for (e.g., Constants.BREAKFAST, Constants.LUNCH, etc.)
-     * @return The row ID of the existing OTHER_MEAL, or -1 if no meal exists
-     */
-    public long getOtherMealIdForToday(String mealType) {
-        long startOfDay = Common.getStartOfDayInMillis();
-        long endOfDay = Common.getEndOfDayInMillis();
-        
-        String query = "SELECT " + Constants._ID + " FROM " + Constants.TABLE_NAME_MEAL +
-                " WHERE " + Constants.COLUMN_NAME_MEAL + " = ? AND " +
-                Constants.COLUMN_NAME_MEAL_STATUS + " = ? AND " +
-                Constants.COLUMN_NAME_TIMESTAMP + " >= ? AND " +
-                Constants.COLUMN_NAME_TIMESTAMP + " <= ?";
-        
-        try (Cursor cursor = mSqliteDatabase.rawQuery(query, 
-                new String[]{mealType, Constants.OTHER_MEAL, String.valueOf(startOfDay), String.valueOf(endOfDay)})) {
-            if (cursor.moveToFirst()) {
-                return cursor.getLong(0);
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error getting OTHER_MEAL ID: " + e.getMessage());
-        }
-        return -1;
-    }
-
-    /**
      * Updates an existing meal record.
      * @param rowId The ID of the meal record to update
      * @param status The new meal status

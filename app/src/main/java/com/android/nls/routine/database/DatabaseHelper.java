@@ -10,7 +10,7 @@ import com.android.nls.routine.utils.Constants;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = Common.generateTag(DatabaseHelper.class);
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
     private static final String DATABASE_NAME = "Routine";
     private static DatabaseHelper sInstance;
     private static int sReferenceCount = 0;
@@ -56,13 +56,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(WaterFeedEntry.SQL_CREATE_ENTRIES_MEAL);
         db.execSQL(WaterFeedEntry.SQL_CREATE_ENTRIES_TRACKERS);
         db.execSQL(WaterFeedEntry.SQL_CREATE_ENTRIES_TRACKER_RECORDS);
+        db.execSQL(WaterFeedEntry.SQL_CREATE_ENTRIES_CARDS);
         createIndexes(db);
         insertDefaultTrackers(db);
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // No migrations needed yet — the app has not been released.
-        // Future schema changes should be added here, guarded by version checks.
+        // The app has not been released yet. Migrations are applied in order,
+        // each one guarded by a version check.
     }
 
     private void createIndexes(SQLiteDatabase db) {
@@ -156,5 +157,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         Constants.COLUMN_NAME_TRACKER_RECORD_COMPLETED + " INTEGER," +
                         Constants.COLUMN_NAME_TRACKER_RECORD_NOTE + " TEXT," +
                         Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " INTEGER)";
+
+        private static final String SQL_CREATE_ENTRIES_CARDS =
+                "CREATE TABLE " + Constants.TABLE_NAME_CARDS + " (" +
+                        _ID + " INTEGER PRIMARY KEY," +
+                        Constants.COLUMN_NAME_CARD_BANK + " TEXT," +
+                        Constants.COLUMN_NAME_CARD_LAST_FOUR + " TEXT," +
+                        Constants.COLUMN_NAME_CARD_CLOSING_DAY + " INTEGER)";
     }
 }

@@ -68,6 +68,9 @@ public class HomeService {
         List<MealRecord> mealRecords = mMealRepository.getMealRecords(startOfDay, endOfDay);
         Set<String> loggedMeals = new HashSet<>();
         for (MealRecord record : mealRecords) {
+            if (Constants.OTHER_MEAL.equals(record.status())) {
+                continue; // irregular meals don't count toward the 4 regular ones
+            }
             loggedMeals.add(record.meal());
         }
         return loggedMeals.contains(Constants.BREAKFAST)
