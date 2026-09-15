@@ -23,7 +23,6 @@ public class WeekPreviewRenderer {
 
     private static final int CELL_HEIGHT_DP = 40;
     private static final int CELL_MARGIN_DP = 2;
-
     private final Context mContext;
     private final LinearLayout mContainer;
     private final HistoryService mHistoryService;
