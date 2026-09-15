@@ -8,27 +8,35 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.content.res.AppCompatResources;
 import com.android.nls.routine.R;
 import com.android.nls.routine.activity.ConfigActivity;
+import com.android.nls.routine.model.CreditCard;
+import com.android.nls.routine.repository.CardRepository;
 import com.android.nls.routine.repository.ConfigRepository;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class ConfigService {
     private static final String TAG = Common.generateTag(ConfigActivity.class);
     private final Context mContext;
     private final ConfigRepository mConfigRepository;
+    private final CardRepository mCardRepository;
 
     public ConfigService(Context context) {
         mContext = context;
         mConfigRepository = new ConfigRepository(mContext);
+        mCardRepository = new CardRepository(mContext);
     }
 
     public void showAlertDialog(String buttonClicked, TextView textView) {
@@ -59,11 +67,6 @@ public class ConfigService {
                 title = mContext.getString(R.string.expenses);
                 saveAction = value -> setMonthlyLimit(value, textView);
                 break;
-            case Constants.CARD_STATEMENT_CLOSING:
-                title = mContext.getString(R.string.card_statement_closing);
-                maxLength = 2;
-                saveAction = value -> setCardStatementClosingDate(value, textView);
-                break;
             default:
                 return;
         }
@@ -90,10 +93,6 @@ public class ConfigService {
         saveConfigValue(Constants.COLUMN_NAME_MONTHLY_LIMIT, value, txtMonthlyLimit, R.string.total_expense_value_init);
     }
 
-    private void setCardStatementClosingDate(String value, TextView txtCardStatementClosingDate) {
-        saveConfigValue(Constants.COLUMN_NAME_CARD_STATEMENT_CLOSING, value, txtCardStatementClosingDate, R.string.card_statement_closing_date_init_value);
-    }
-
     private void showSaveDialog(String title, View view, TextInputEditText etValue, Consumer<String> saveAction, int maxLength) {
         TextInputLayout txtInputError = view.findViewById(R.id.txtInputError);
         txtInputError.setError(null);
@@ -101,8 +100,8 @@ public class ConfigService {
         AlertDialog dialog = new MaterialAlertDialogBuilder(mContext)
                 .setTitle(title)
                 .setView(view)
-                .setPositiveButton("Save", null)
-                .setNegativeButton("Cancel", null)
+                .setPositiveButton(mContext.getString(R.string.save_label), null)
+                .setNegativeButton(mContext.getString(R.string.cancel_label), null)
                 .setCancelable(true)
                 .show();
 
@@ -147,8 +146,163 @@ public class ConfigService {
         return mConfigRepository.getMonthlyLimitValue();
     }
 
-    public double getCardStatementClosingDate() {
-        return mConfigRepository.getCardStatementClosingDate();
+    /**
+     * Opens the dialog used to manage the user's credit cards. Each card block
+     * holds the bank name, the last four digits and the statement closing day,
+     * and the user can append as many cards as needed.
+     */
+    public void showCardsDialog(Runnable onSaved) {
+        View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_cards_config, new FrameLayout(mContext), false);
+        LinearLayout cardsContainer = view.findViewById(R.id.cardsContainer);
+        MaterialButton btnAddAnotherCard = view.findViewById(R.id.btnAddAnotherCard);
+
+        for (CreditCard card : getCards()) {
+            addCardBlock(cardsContainer, card);
+        }
+        if (cardsContainer.getChildCount() == 0) {
+            // Start with one empty block so the dialog can be used right away
+            addCardBlock(cardsContainer, null);
+        }
+
+        btnAddAnotherCard.setOnClickListener(v -> addCardBlock(cardsContainer, null));
+
+        AlertDialog dialog = new MaterialAlertDialogBuilder(mContext)
+                .setTitle(R.string.card_statement_closing)
+                .setView(view)
+                .setPositiveButton(mContext.getString(R.string.save_label), null)
+                .setNegativeButton(mContext.getString(R.string.cancel_label), null)
+                .setCancelable(true)
+                .show();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(AppCompatResources.getDrawable(mContext, R.drawable.dialog_background));
+        }
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            List<CreditCard> cards = readCards(cardsContainer);
+            if (cards == null) {
+                return;
+            }
+            mCardRepository.saveCards(cards);
+            syncExpenseCycleClosingDay(cards);
+            dialog.dismiss();
+            if (onSaved != null) {
+                onSaved.run();
+            }
+        });
+    }
+
+    public List<CreditCard> getCards() {
+        return mCardRepository.getCards();
+    }
+
+    /**
+     * Inflates one card block, prefilled when a card is given (null adds a
+     * clean block).
+     */
+    private void addCardBlock(LinearLayout cardsContainer, CreditCard card) {
+        View block = LayoutInflater.from(mContext).inflate(R.layout.item_card_config, cardsContainer, false);
+
+        if (card != null) {
+            TextInputEditText etBank = block.findViewById(R.id.etCardBank);
+            TextInputEditText etLastFour = block.findViewById(R.id.etCardLastFour);
+            TextInputEditText etClosingDay = block.findViewById(R.id.etCardClosingDay);
+            etBank.setText(card.bankName());
+            etLastFour.setText(card.lastFour());
+            etClosingDay.setText(String.valueOf(card.closingDay()));
+        }
+
+        block.findViewById(R.id.btnRemoveCard).setOnClickListener(v -> {
+            cardsContainer.removeView(block);
+            renumberCardBlocks(cardsContainer);
+        });
+
+        cardsContainer.addView(block);
+        renumberCardBlocks(cardsContainer);
+    }
+
+    private void renumberCardBlocks(LinearLayout cardsContainer) {
+        for (int i = 0; i < cardsContainer.getChildCount(); i++) {
+            TextView txtCardBlockTitle = cardsContainer.getChildAt(i).findViewById(R.id.txtCardBlockTitle);
+            txtCardBlockTitle.setText(mContext.getString(R.string.card_number, i + 1));
+        }
+    }
+
+    /**
+     * Reads and validates every card block.
+     * @return the cards to save, or null when a field is invalid
+     *         (the error is shown on the offending field)
+     */
+    private List<CreditCard> readCards(LinearLayout cardsContainer) {
+        List<CreditCard> cards = new ArrayList<>();
+
+        for (int i = 0; i < cardsContainer.getChildCount(); i++) {
+            View block = cardsContainer.getChildAt(i);
+
+            String bankName = getCardFieldValue(block, R.id.etCardBank);
+            String lastFour = getCardFieldValue(block, R.id.etCardLastFour);
+            String closingDayValue = getCardFieldValue(block, R.id.etCardClosingDay);
+
+            if (bankName.isEmpty()) {
+                setCardFieldError(block, R.id.txtInputCardBank, Constants.CARD_BANK_INVALID_TEXT);
+                return null;
+            }
+            if (!lastFour.matches("\\d{4}")) {
+                setCardFieldError(block, R.id.txtInputCardLastFour, Constants.CARD_LAST_FOUR_INVALID_TEXT);
+                return null;
+            }
+
+            int closingDay = parseClosingDay(closingDayValue);
+            if (closingDay == -1) {
+                setCardFieldError(block, R.id.txtInputCardClosingDay, Constants.CARD_CLOSING_DAY_INVALID_TEXT);
+                return null;
+            }
+
+            cards.add(new CreditCard(bankName, lastFour, closingDay));
+        }
+
+        return cards;
+    }
+
+    private String getCardFieldValue(View block, int editTextId) {
+        Editable value = ((TextInputEditText) block.findViewById(editTextId)).getText();
+        return value != null ? value.toString().trim() : "";
+    }
+
+    private void setCardFieldError(View block, int textInputLayoutId, String error) {
+        TextInputLayout txtInputError = block.findViewById(textInputLayoutId);
+        txtInputError.setError(error);
+    }
+
+    /**
+     * Validates the closing day typed by the user.
+     * @return the day (1-31), or -1 when the value is not valid
+     */
+    private int parseClosingDay(String value) {
+        try {
+            int day = Integer.parseInt(value);
+            return (day >= 1 && day <= 31) ? day : -1;
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
+    /**
+     * The expense cycle (spent/limit on the home card) still runs from a single
+     * closing day, so it is kept in sync with the configured cards: the earliest
+     * closing day, or the default value when no card is configured.
+     */
+    private void syncExpenseCycleClosingDay(List<CreditCard> cards) {
+        int closingDay = -1;
+        for (CreditCard card : cards) {
+            if (closingDay == -1 || card.closingDay() < closingDay) {
+                closingDay = card.closingDay();
+            }
+        }
+        if (closingDay == -1) {
+            closingDay = (int) Constants.DEFAULT_CARD_STATEMENT_CLOSING;
+        }
+        mConfigRepository.saveConfigValue(Constants.COLUMN_NAME_CARD_STATEMENT_CLOSING, String.valueOf(closingDay));
     }
 
     public void setNotifyAccess() {
@@ -180,5 +334,6 @@ public class ConfigService {
 
     public void closeDb() {
         mConfigRepository.closeDb();
+        mCardRepository.closeDb();
     }
 }

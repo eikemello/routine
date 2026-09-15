@@ -249,24 +249,17 @@
                     <View style="@style/divider" />
 
                     <!-- Sub-section: Card Statement Closing -->
+                    <!-- Sub-section: Card Statement Closing (one row per card) -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:orientation="vertical">
 
-                        <TextView
-                            style="@style/subTitleTextView.Muted"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/card_statement_closing"
-                            android:textSize="12sp" />
-
                         <LinearLayout
                             android:id="@+id/btnCardStatementClosing"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
                             android:background="?attr/selectableItemBackground"
                             android:clickable="true"
                             android:focusable="true"
@@ -275,20 +268,34 @@
                             android:padding="8dp">
 
                             <TextView
-                                android:id="@+id/txtCardStatementClosingDate"
-                                style="@style/subTitleTextView"
+                                style="@style/subTitleTextView.Muted"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="@string/card_statement_closing_date_init_value" />
+                                android:text="@string/card_statement_closing"
+                                android:textSize="12sp" />
 
                             <ImageView
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:contentDescription="@string/edit_default_value"
+                                android:contentDescription="@string/card_statement_closing"
                                 android:src="@drawable/ic_chevron_right"
                                 app:tint="@color/text_tertiary" />
                         </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/txtNoCards"
+                            style="@style/subTitleTextView.Muted"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="@string/no_cards_added" />
+
+                        <LinearLayout
+                            android:id="@+id/cardsListContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical" />
                     </LinearLayout>
 
                     <!-- Divider -->
