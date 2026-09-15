@@ -22,17 +22,26 @@ public class NotificationListener extends NotificationListenerService {
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
-        Expense expense = mBankDetector.detect(sbn);
-        if (expense != null) {
-            Log.d(Constants.TAG, "Detected expense: " + expense);
-            mHomeCardExpenseService.saveExpenseTest(expense);
+        if (sbn == null) {
+            return;
+        }
+
+        try {
+            Expense expense = mBankDetector.detect(sbn);
+            if (expense != null) {
+                Log.d(Constants.TAG, "Detected expense: " + expense);
+                mHomeCardExpenseService.saveExpenseTest(expense);
+            }
+        } catch (Exception e) {
+            // A single malformed notification must never kill the process:
+            // this callback runs in the app process, so an unhandled exception
+            // here closes the app even when it is in the background.
+            Log.e(TAG, "Failed to process notification", e);
         }
     }
 
     @Override
     public void onDestroy() {
-        // Releases the repositories created in onCreate(), otherwise their
-        // references keep the database open for the whole process lifetime.
         mHomeCardExpenseService.closeDb();
         mHomeCardExpenseService = null;
         super.onDestroy();

@@ -41,7 +41,13 @@ public class TrackerRepository {
 
         try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
             while (cursor.moveToNext()) {
-                trackers.add(cursorToTracker(cursor));
+                // Skip rows with a missing/unknown type instead of propagating
+                // a Tracker with a null type, which would crash the switch
+                // statements that build the tracker cards downstream.
+                Tracker tracker = cursorToTracker(cursor);
+                if (tracker != null) {
+                    trackers.add(tracker);
+                }
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting all trackers: " + e.getMessage());
@@ -61,7 +67,13 @@ public class TrackerRepository {
 
         try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
             while (cursor.moveToNext()) {
-                trackers.add(cursorToTracker(cursor));
+                // Skip rows with a missing/unknown type instead of propagating
+                // a Tracker with a null type, which would crash the switch
+                // statements that build the tracker cards downstream.
+                Tracker tracker = cursorToTracker(cursor);
+                if (tracker != null) {
+                    trackers.add(tracker);
+                }
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting enabled trackers: " + e.getMessage());
@@ -170,10 +182,14 @@ public class TrackerRepository {
                 new String[]{type.name(), String.valueOf(start), String.valueOf(end)})) {
             while (cursor.moveToNext()) {
                 String typeStr = cursor.getString(0);
+                TrackerType recordType = toTrackerType(typeStr);
+                if (recordType == null) {
+                    continue; // skip unknown/corrupted type rows
+                }
                 boolean completed = cursor.getInt(1) == 1;
                 String note = cursor.getString(2);
                 long timestamp = cursor.getLong(3);
-                records.add(new TrackerRecord(0, TrackerType.valueOf(typeStr), completed, note, timestamp));
+                records.add(new TrackerRecord(0, recordType, completed, note, timestamp));
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting tracker records " + type + ": " + e.getMessage());
@@ -205,12 +221,9 @@ public class TrackerRepository {
                 long timestamp = cursor.getLong(2);
                 long dayStart = Common.getStartOfDayInMillis(timestamp);
 
-                TrackerType trackerType;
-                try {
-                    trackerType = TrackerType.valueOf(typeStr);
-                } catch (IllegalArgumentException e) {
-                    Log.e(TAG, "Unknown tracker type: " + typeStr);
-                    continue;
+                TrackerType trackerType = toTrackerType(typeStr);
+                if (trackerType == null) {
+                    continue; // skip unknown/corrupted type rows
                 }
 
                 dailyCompletions.computeIfAbsent(dayStart, k -> new HashMap<>())
@@ -272,6 +285,12 @@ public class TrackerRepository {
         return null;
     }
 
+    /**
+     * Maps the current cursor row to a Tracker, or null when the row has a
+     * missing/unknown tracker type. Null must never be propagated to callers:
+     * a Tracker without a type would crash the switch statements that build
+     * the tracker cards downstream.
+     */
     private Tracker cursorToTracker(Cursor cursor) {
         long id = cursor.getLong(cursor.getColumnIndexOrThrow(BaseColumns._ID));
         String typeStr = cursor.getString(cursor.getColumnIndexOrThrow(Constants.COLUMN_NAME_TRACKER_TYPE));
@@ -280,17 +299,18 @@ public class TrackerRepository {
         boolean enabled = cursor.getInt(cursor.getColumnIndexOrThrow(Constants.COLUMN_NAME_TRACKER_ENABLED)) == 1;
         String description = cursor.getString(cursor.getColumnIndexOrThrow(Constants.COLUMN_NAME_TRACKER_DESCRIPTION));
 
-        TrackerType trackerType;
-        try {
-            trackerType = TrackerType.valueOf(typeStr);
-        } catch (IllegalArgumentException e) {
-            Log.e(TAG, "Unknown tracker type: " + typeStr);
-            trackerType = null;
+        TrackerType trackerType = toTrackerType(typeStr);
+        if (trackerType == null) {
+            return null;
         }
 
         return new Tracker(id, trackerType, name, icon, enabled, description);
     }
 
+    /**
+     * Maps the current cursor row to a TrackerRecord, or null when the row has
+     * a missing/unknown tracker type (callers already treat null as "no record").
+     */
     private TrackerRecord cursorToTrackerRecord(Cursor cursor) {
         long id = cursor.getLong(cursor.getColumnIndexOrThrow(BaseColumns._ID));
         String typeStr = cursor.getString(cursor.getColumnIndexOrThrow(Constants.COLUMN_NAME_TRACKER_RECORD_TYPE));
@@ -298,15 +318,31 @@ public class TrackerRepository {
         String note = cursor.getString(cursor.getColumnIndexOrThrow(Constants.COLUMN_NAME_TRACKER_RECORD_NOTE));
         long timestamp = cursor.getLong(cursor.getColumnIndexOrThrow(Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP));
 
-        TrackerType trackerType;
-        try {
-            trackerType = TrackerType.valueOf(typeStr);
-        } catch (IllegalArgumentException e) {
-            Log.e(TAG, "Unknown tracker type: " + typeStr);
-            trackerType = null;
+        TrackerType trackerType = toTrackerType(typeStr);
+        if (trackerType == null) {
+            return null;
         }
 
         return new TrackerRecord(id, trackerType, completed, note, timestamp);
+    }
+
+    /**
+     * Safely parses a tracker type stored in the database.
+     * TrackerType.valueOf(null) throws NullPointerException (not
+     * IllegalArgumentException), so the null case is checked explicitly.
+     * Returns null when the value is missing or unknown.
+     */
+    private TrackerType toTrackerType(String typeStr) {
+        if (typeStr == null) {
+            Log.e(TAG, "Tracker type is null");
+            return null;
+        }
+        try {
+            return TrackerType.valueOf(typeStr);
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "Unknown tracker type: " + typeStr);
+            return null;
+        }
     }
 
     public void closeDb() {
