@@ -8,6 +8,7 @@
         <item name="colorSecondary">@color/neon_purple</item>
         <item name="colorOnSecondary">@color/white</item>
         <item name="colorSecondaryContainer">@color/gradient_center</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Routine.MaterialAlertDialog</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">false</item>

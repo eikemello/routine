@@ -206,4 +206,18 @@
         <item name="android:layout_marginBottom">8dp</item>
     </style>
 
+    <!-- ==================== DIALOGS ==================== -->
+
+    <!-- The dialog content views are hardcoded dark (surface_dark cards,
+         white text), so dialogs must keep the dark palette regardless of the
+         system DayNight theme - otherwise the light theme renders a white
+         window with a dark title on top of dark content. -->
+    <style name="ThemeOverlay.Routine.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">@color/surface_dark</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <item name="colorPrimary">@color/neon_blue</item>
+        <item name="colorError">@color/red_dark</item>
+    </style>
+
 </resources>
