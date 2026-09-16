@@ -105,6 +105,17 @@ The total 100% is divided equally among the **enabled** trackers, excluding Expe
 
 The APK will be generated at `app/build/outputs/apk/debug/app-debug.apk`.
 
+### Firebase configuration
+
+The app uses Firebase Crashlytics, which requires an `app/google-services.json` file. This file is **not** committed to the repository (it contains a project API key) and must be downloaded for each development machine:
+
+1. Open the [Firebase console](https://console.firebase.google.com/) project.
+2. Go to **Project settings → Your apps → Android app (`com.android.nls.routine`)**.
+3. Download `google-services.json` and place it at `app/google-services.json`.
+4. Rebuild (`./gradlew assembleDebug`).
+
+Without this file the build fails with *"File google-services.json is missing"*. See `app/google-services.json.example` for the expected structure (values redacted).
+
 ## Permissions
 
 The app requires **Notification Access** to detect bank expense notifications. It is registered in the manifest as a `NotificationListenerService`. Access can be granted from **Config → Notification Access**, which opens the system settings screen.
