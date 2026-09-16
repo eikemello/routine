@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 android {
@@ -11,7 +13,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.android.nls.Routine"
+        applicationId "com.android.nls.routine"
         minSdk 33
         targetSdk 36
         versionCode 1
@@ -41,4 +43,9 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.espresso.core
     androidTestImplementation libs.ext.junit
+
+    //Firebase Crash Analytics
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
 }
