@@ -15,6 +15,14 @@
     <string name="warning_meal">Warning</string>
     <string name="wrong_meal">Wrong</string>
     <string name="add_water">Add water</string>
+    <string name="water_history">Today water history</string>
+    <string name="water_record_amount">+%1$d ml</string>
+    <string name="no_water_records_today">No water added today.</string>
+    <string name="close_label">Close</string>
+    <string name="water_record_edit_title">Edit insertion</string>
+    <string name="water_record_delete_title">Remove insertion</string>
+    <string name="water_record_delete_message">Remove this %1$d ml insertion?</string>
+    <string name="record_amount_hint">Amount (ml)</string>
     <string name="configure_default_values">Configure default values</string>
     <string name="config">Config</string>
     <string name="spent">Spent</string>

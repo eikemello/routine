@@ -42,6 +42,31 @@ public class WaterRepository {
         return newRowId;
     }
 
+    public void updateWater(int id, int amount) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Constants.COLUMN_NAME_WATER_DRANK, amount);
+
+        String selection = BaseColumns._ID + " = ?";
+        int rows = mSqliteDatabase.update(Constants.TABLE_NAME_WATER, contentValues, selection,
+                new String[]{String.valueOf(id)});
+        Log.d(TAG, "Updated water record ID " + id + " to " + amount + "ml. Rows: " + rows);
+
+        if (rows == 0) {
+            Log.e(TAG, "Failed to update water record ID " + id);
+        }
+    }
+
+    public void deleteWater(int id) {
+        String selection = BaseColumns._ID + " = ?";
+        int rows = mSqliteDatabase.delete(Constants.TABLE_NAME_WATER, selection,
+                new String[]{String.valueOf(id)});
+        Log.d(TAG, "Deleted water record ID " + id + ". Rows: " + rows);
+
+        if (rows == 0) {
+            Log.e(TAG, "Failed to delete water record ID " + id);
+        }
+    }
+
     public int getWaterSum(long start, long end) {
         int sum = 0;
         String query = "SELECT SUM(" + Constants.COLUMN_NAME_WATER_DRANK + ") FROM " + Constants.TABLE_NAME_WATER +
@@ -60,19 +85,17 @@ public class WaterRepository {
         return sum;
     }
 
-    /**
-     * Returns the last water record (amount and timestamp), or null if none exists.
-     */
     public WaterRecord getLastWaterAddedRecord() {
-        String query = "SELECT " + Constants.COLUMN_NAME_TIMESTAMP + ", " + Constants.COLUMN_NAME_WATER_DRANK +
+        String query = "SELECT " + BaseColumns._ID + ", " + Constants.COLUMN_NAME_TIMESTAMP + ", " + Constants.COLUMN_NAME_WATER_DRANK +
                 " FROM " + Constants.TABLE_NAME_WATER +
                 " ORDER BY " + BaseColumns._ID + " DESC LIMIT 1";
 
         try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
             if (cursor.moveToFirst() && !cursor.isNull(0)) {
-                long timestamp = cursor.getLong(0);
-                int amount = cursor.getInt(1);
-                return new WaterRecord(amount, timestamp);
+                int id = cursor.getInt(0);
+                long timestamp = cursor.getLong(1);
+                int amount = cursor.getInt(2);
+                return new WaterRecord(id, amount, timestamp);
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting last drank record: " + e.getMessage());
@@ -87,7 +110,7 @@ public class WaterRepository {
     public List<WaterRecord> getWaterRecords(long start, long end) {
         List<WaterRecord> records = new ArrayList<>();
 
-        String query = "SELECT " + Constants.COLUMN_NAME_WATER_DRANK + ", " + Constants.COLUMN_NAME_TIMESTAMP +
+        String query = "SELECT " + BaseColumns._ID + ", " + Constants.COLUMN_NAME_WATER_DRANK + ", " + Constants.COLUMN_NAME_TIMESTAMP +
                 " FROM " + Constants.TABLE_NAME_WATER +
                 " WHERE " + Constants.COLUMN_NAME_TIMESTAMP + " >= ? AND " +
                 Constants.COLUMN_NAME_TIMESTAMP + " <= ?" +
@@ -95,9 +118,10 @@ public class WaterRepository {
 
         try (Cursor cursor = mSqliteDatabase.rawQuery(query, new String[]{String.valueOf(start), String.valueOf(end)})) {
             while (cursor.moveToNext()) {
-                int amount = cursor.getInt(0);
-                long timestamp = cursor.getLong(1);
-                records.add(new WaterRecord(amount, timestamp));
+                int id = cursor.getInt(0);
+                int amount = cursor.getInt(1);
+                long timestamp = cursor.getLong(2);
+                records.add(new WaterRecord(id, amount, timestamp));
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting water records: " + e.getMessage());
