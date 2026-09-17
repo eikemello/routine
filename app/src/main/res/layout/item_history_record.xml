@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One row of a history panel (rendered by CardHistoryDialog): the icon of the
+    card, when the record was stored, an optional detail - the bank of an
+    expense, for instance - the amount of the record and the actions offered for
+    it. The renderer hides the pieces a card does not use, so this same row
+    serves every card history.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <ImageView
+            android:id="@+id/imgHistoryRecordIcon"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:contentDescription="@null"
+            android:scaleType="fitCenter" />
+
+        <TextView
+            android:id="@+id/txtHistoryRecordTime"
+            style="@style/subTitleTextView.Muted"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1" />
+
+        <TextView
+            android:id="@+id/txtHistoryRecordDetail"
+            style="@style/subTitleTextView.Muted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginStart="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/txtHistoryRecordValue"
+            style="@style/subTitleTextView.Muted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginStart="12dp"
+            android:includeFontPadding="false" />
+
+        <!-- Actions offered for every record. The 32dp box keeps the touch
+             target usable while the 8dp padding keeps the glyph small. -->
+        <ImageButton
+            android:id="@+id/btnHistoryRecordEdit"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/history_record_edit"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_edit"
+            app:tint="@color/text_secondary" />
+
+        <ImageButton
+            android:id="@+id/btnHistoryRecordDelete"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/history_record_delete"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_delete"
+            app:tint="@color/red_dark" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/viewHistoryRecordDivider"
+        style="@style/divider" />
+</LinearLayout>
