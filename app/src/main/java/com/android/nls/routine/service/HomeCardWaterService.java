@@ -1,34 +1,21 @@
 package com.android.nls.routine.service;
 
 import android.content.Context;
-import android.text.Editable;
+import android.text.InputType;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.content.res.AppCompatResources;
 import com.android.nls.routine.R;
 import com.android.nls.routine.model.WaterRecord;
 import com.android.nls.routine.repository.ConfigRepository;
 import com.android.nls.routine.repository.WaterRepository;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
+import java.util.ArrayList;
 import java.util.List;
 
-public class HomeCardWaterService {
+public class HomeCardWaterService implements CardHistory {
     private static final String TAG = Common.generateTag(HomeCardWaterService.class);
-
-    // Extra scrim applied to whatever is behind the history panel. The dialog and
-    // the home cards share the same dark palette, so a stronger dim is what makes
-    // it obvious that the panel is a modal opened on top of the home screen.
-    private static final float HISTORY_DIALOG_DIM = 0.65f;
     private final WaterRepository mWaterRepository;
     private final ConfigRepository mConfigRepository;
     private final Context mContext;
@@ -105,130 +92,103 @@ public class HomeCardWaterService {
         return mWaterRepository.getWaterRecords(startOfDay, endOfDay);
     }
 
+    /**
+     * Opens the history panel with today's insertions. The panel is rendered by
+     * CardHistoryDialog, the renderer shared by every card history.
+     */
     public void showDailyHistoryDialog(Runnable onChanged) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_water_history, new FrameLayout(mContext), false);
+        new CardHistoryDialog(mContext, this).show(onChanged);
+    }
 
-        AlertDialog dialog = new MaterialAlertDialogBuilder(mContext)
-                .setTitle(R.string.water_history)
-                .setView(view)
-                .setPositiveButton(R.string.close_label, null)
-                .setCancelable(true)
-                .show();
+    @Override
+    public int getHistoryTitleRes() {
+        return R.string.water_history;
+    }
 
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawable(AppCompatResources.getDrawable(mContext, R.drawable.dialog_background));
-            // Dims the screen behind the panel further than the default scrim,
-            // so the modal is not mistaken for part of the home screen
-            dialog.getWindow().setDimAmount(HISTORY_DIALOG_DIM);
-        }
+    @Override
+    public int getHistoryEmptyTextRes() {
+        return R.string.no_water_records_today;
+    }
 
-        renderRecords(view, onChanged);
+    @Override
+    public int getHistoryIconRes() {
+        return R.drawable.ic_water;
+    }
+
+    @Override
+    public int getHistoryIconTintRes() {
+        return R.color.neon_blue_40;
+    }
+
+    @Override
+    public int getHistoryValueColorRes() {
+        return R.color.neon_blue;
     }
 
     /**
-     * Rebuilds the record list inside the dialog view. Called on open and again
-     * after an insertion is edited or removed, so the rows and the day total
-     * always match what is stored.
+     * Today's insertions, newest first so the latest ones stay on top of the
+     * panel, each one editable and removable, plus the day total. Both actions
+     * call the refresh handle of the panel, so the list and the total are
+     * rebuilt from the database after a change.
      */
-    private void renderRecords(View view, Runnable onChanged) {
-        TextView txtEmpty = view.findViewById(R.id.txtWaterHistoryEmpty);
-        TextView txtTotal = view.findViewById(R.id.txtWaterHistoryTotal);
-        LinearLayout recordsContainer = view.findViewById(R.id.waterRecordsContainer);
-
-        recordsContainer.removeAllViews();
-
+    @Override
+    public CardHistory.Panel getHistoryPanel(Runnable refresh) {
+        List<CardHistory.Row> rows = new ArrayList<>();
         List<WaterRecord> records = getDailyWaterRecords();
-        boolean hasRecords = !records.isEmpty();
-
         int total = 0;
-        for (WaterRecord record : records) {
+
+        // The records are stored oldest first, so the panel walks them from the
+        // end: the insertions the user edits or removes are the latest ones
+        for (int i = records.size() - 1; i >= 0; i--) {
+            WaterRecord record = records.get(i);
             total += record.amount();
-            addRecordRow(recordsContainer, record, view, onChanged);
+            rows.add(new CardHistory.Row(
+                    Common.getHourFromTimestamp(String.valueOf(record.timestamp())),
+                    mContext.getString(R.string.water_record_amount, record.amount()),
+                    () -> showEditRecordDialog(record, refresh),
+                    () -> confirmDeleteRecord(record, refresh)));
         }
 
-        if (hasRecords) {
-            recordsContainer.getChildAt(recordsContainer.getChildCount() - 1)
-                    .findViewById(R.id.viewWaterRecordDivider)
-                    .setVisibility(View.GONE);
-        }
-
-        txtEmpty.setVisibility(hasRecords ? View.GONE : View.VISIBLE);
-        txtTotal.setVisibility(hasRecords ? View.VISIBLE : View.GONE);
-        txtTotal.setText(mContext.getString(R.string.water_sum, total));
+        return new CardHistory.Panel(rows, mContext.getString(R.string.water_sum, total));
     }
 
-    private void addRecordRow(LinearLayout recordsContainer, WaterRecord record, View dialogView, Runnable onChanged) {
-        View row = LayoutInflater.from(mContext).inflate(R.layout.item_water_record, recordsContainer, false);
-        TextView txtTime = row.findViewById(R.id.txtWaterRecordTime);
-        TextView txtAmount = row.findViewById(R.id.txtWaterRecordAmount);
+    /**
+     * Prompts for a new amount of an insertion, through the shared record editor
+     * of a card history. The refresh handle of the panel is what repaints the
+     * list and notifies the home screen behind it.
+     */
+    private void showEditRecordDialog(WaterRecord record, Runnable refresh) {
+        CardRecordDialog.showEditAmountDialog(
+                mContext,
+                R.string.water_record_edit_title,
+                R.string.record_amount_hint,
+                String.valueOf(record.amount()),
+                InputType.TYPE_CLASS_NUMBER,
+                amount -> {
+                    if (!checkAmount(amount)) {
+                        return Constants.WATER_INVALID_NUMBER;
+                    }
 
-        txtTime.setText(Common.getHourFromTimestamp(String.valueOf(record.timestamp())));
-        txtAmount.setText(mContext.getString(R.string.water_record_amount, record.amount()));
-
-        row.findViewById(R.id.btnWaterRecordEdit).setOnClickListener(v -> showEditRecordDialog(record, dialogView, onChanged));
-        row.findViewById(R.id.btnWaterRecordDelete).setOnClickListener(v -> confirmDeleteRecord(record, dialogView, onChanged));
-
-        recordsContainer.addView(row);
+                    mWaterRepository.updateWater(record.id(), Integer.parseInt(amount));
+                    refresh.run();
+                    return null;
+                });
     }
 
-    private void showEditRecordDialog(WaterRecord record, View dialogView, Runnable onChanged) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_config_default_values, new FrameLayout(mContext), false);
-        TextInputLayout txtInputError = view.findViewById(R.id.txtInputError);
-        TextInputEditText etValue = view.findViewById(R.id.etValue);
-
-        txtInputError.setHint(mContext.getString(R.string.record_amount_hint));
-        txtInputError.setError(null);
-        etValue.setText(String.valueOf(record.amount()));
-
-        AlertDialog dialog = new MaterialAlertDialogBuilder(mContext)
-                .setTitle(R.string.water_record_edit_title)
-                .setView(view)
-                .setPositiveButton(mContext.getString(R.string.save_label), null)
-                .setNegativeButton(mContext.getString(R.string.cancel_label), null)
-                .setCancelable(true)
-                .show();
-
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawable(AppCompatResources.getDrawable(mContext, R.drawable.dialog_background));
-        }
-
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-            Editable value = etValue.getText();
-            if (!checkAmount(value)) {
-                txtInputError.setError(Constants.WATER_INVALID_NUMBER);
-                return;
-            }
-
-            mWaterRepository.updateWater(record.id(), Integer.parseInt(value.toString().trim()));
-            dialog.dismiss();
-            renderRecords(dialogView, onChanged);
-            onChanged.run();
-        });
-    }
-
-    private void confirmDeleteRecord(WaterRecord record, View dialogView, Runnable onChanged) {
-        AlertDialog dialog = new MaterialAlertDialogBuilder(mContext)
-                .setTitle(R.string.water_record_delete_title)
-                .setMessage(mContext.getString(R.string.water_record_delete_message, record.amount()))
-                .setPositiveButton(mContext.getString(R.string.remove_label), (d, which) -> {
+    /** Asks before removing an insertion, then refreshes the panel. */
+    private void confirmDeleteRecord(WaterRecord record, Runnable refresh) {
+        CardRecordDialog.confirmRemove(
+                mContext,
+                R.string.water_record_delete_title,
+                mContext.getString(R.string.water_record_delete_message, record.amount()),
+                () -> {
                     mWaterRepository.deleteWater(record.id());
-                    renderRecords(dialogView, onChanged);
-                    onChanged.run();
-                })
-                .setNegativeButton(mContext.getString(R.string.cancel_label), null)
-                .setCancelable(true)
-                .show();
-
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawable(AppCompatResources.getDrawable(mContext, R.drawable.dialog_background));
-        }
+                    refresh.run();
+                });
     }
 
-    private boolean checkAmount(Editable value) {
-        return value != null
-                && !value.toString().trim().isEmpty()
-                && value.toString().trim().matches("\\d+")
-                && value.length() <= 6;
+    private boolean checkAmount(String value) {
+        return !value.isEmpty() && value.matches("\\d+") && value.length() <= 6;
     }
 
     public void closeDb() {

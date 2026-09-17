@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    History panel shared by every home card (rendered by CardHistoryDialog). The
+    empty state and the day total stay visible while only the record list
+    scrolls, which keeps the dialog a compact panel: without the height cap the
+    dialog grew with the number of records until it covered almost the whole
+    screen, making it look like a second home screen behind the card.
+-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -25,24 +32,20 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp">
 
+            <!-- Text comes from the card (CardHistory.getHistoryEmptyTextRes) -->
             <TextView
-                android:id="@+id/txtWaterHistoryEmpty"
+                android:id="@+id/txtHistoryEmpty"
                 style="@style/subTitleTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="@string/no_water_records_today"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Only the insertions scroll: the list height is capped so the dialog
-                 never grows taller than a panel, no matter how many records exist.
-                 ScrollView has no android:maxHeight, hence the ConstraintLayout cap.
-                 One block is inflated here per water insertion of today. -->
             <ScrollView
-                android:id="@+id/scrollWaterRecords"
+                android:id="@+id/scrollHistoryRecords"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -52,17 +55,17 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHeight_max="260dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtWaterHistoryEmpty">
+                app:layout_constraintTop_toBottomOf="@+id/txtHistoryEmpty">
 
                 <LinearLayout
-                    android:id="@+id/waterRecordsContainer"
+                    android:id="@+id/historyRecordsContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
             </ScrollView>
 
             <TextView
-                android:id="@+id/txtWaterHistoryTotal"
+                android:id="@+id/txtHistoryTotal"
                 style="@style/textViewCardInfo"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -72,7 +75,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/scrollWaterRecords" />
+                app:layout_constraintTop_toBottomOf="@+id/scrollHistoryRecords" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

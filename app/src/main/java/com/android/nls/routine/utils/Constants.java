@@ -8,13 +8,13 @@ public class Constants {
 
     //HomeActivity
     public static final String WATER_INVALID_NUMBER = "Please enter a valid number!";
-    public static final String MEAL_INVALID_TEXT = "Please enter a valid text!";
     public static final String MEAL_SELECTION_REQUIRED = "Please select a meal option!";
     public static final String CUSTOM_MEAL_INVALID_TEXT = "Please enter the meal name!";
     public static final String CUSTOM_MEAL_OBSERVATION_REQUIRED = "Please enter an observation for irregular meals!";
     public static final String CARD_BANK_INVALID_TEXT = "Please enter the bank name!";
     public static final String CARD_LAST_FOUR_INVALID_TEXT = "Please enter the last four digits!";
     public static final String CARD_CLOSING_DAY_INVALID_TEXT = "Please enter a valid closing day (1-31)!";
+    public static final String EXPENSE_INVALID_VALUE = "Please enter a valid expense value!";
     public static final List<String> GREETINGS = Arrays.asList("Good morning", "Good afternoon", "Good night");
     public static final double DEFAULT_DAILY_WATER = 2500;
 
@@ -24,7 +24,6 @@ public class Constants {
     public static final String BTN_DEFAULT_2 = "BTN_DEFAULT_2";
     public static final String BTN_DEFAULT_3 = "BTN_DEFAULT_3";
     public static final String MONTHLY_LIMIT = "MONTHLY_LIMIT";
-    public static final String CARD_STATEMENT_CLOSING = "CARD_STATEMENT_CLOSING";
     public static final double DEFAULT_BTN_1_VALUE = 50;
     public static final double DEFAULT_BTN_2_VALUE = 100;
     public static final double DEFAULT_BTN_3_VALUE = 250;

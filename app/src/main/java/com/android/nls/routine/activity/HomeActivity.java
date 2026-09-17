@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.util.Log;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowInsetsControllerCompat;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.Set;
 
 public class HomeActivity extends AppCompatActivity {
+    private static final String TAG = Common.generateTag(HomeActivity.class);
     private HomeService mHomeService;
     private HomeCardWaterService mHomeCardWaterService;
     private HomeCardExpenseService mHomeCardExpenseService;
@@ -203,6 +205,19 @@ public class HomeActivity extends AppCompatActivity {
 
     private View createExpenseCard(LayoutInflater inflater) {
         View card = inflater.inflate(R.layout.card_expense, mTrackerCardsContainer, false);
+
+        renderExpenseCard(card);
+
+        card.findViewById(R.id.btnExpenseHistory).setOnClickListener(v ->
+                mHomeCardExpenseService.showDailyHistoryDialog(() -> {
+                    renderExpenseCard(card);
+                    renderTrackerProgress();
+                }));
+
+        return card;
+    }
+
+    private void renderExpenseCard(View card) {
         double monthlyLimit = mHomeCardExpenseService.getMonthlyLimitValue();
         ExpenseCardSummary expenseSummary = mHomeCardExpenseService.getExpenseCardSummary();
         double totalSpent = expenseSummary.totalSpent();
@@ -214,8 +229,22 @@ public class HomeActivity extends AppCompatActivity {
         LinearProgressIndicator progressExpense = card.findViewById(R.id.progressExpense);
         LinearLayout cardProgressContainer = card.findViewById(R.id.cardProgressContainer);
 
+        if (txtTotalSpent == null || txtTotalValue == null || txtLastExpenseRecord == null
+                || progressExpense == null || cardProgressContainer == null) {
+            Log.e(TAG, "renderExpenseCard: failed to find views on the expense card");
+            return;
+        }
+
         txtTotalValue.setText(this.getString(R.string.total_expense_value_init, monthlyLimit));
         txtTotalSpent.setText(this.getString(R.string.total_expense_value_init, totalSpent));
+
+        if (totalSpent > monthlyLimit) {
+            txtTotalSpent.setTextColor(this.getColor(R.color.red_dark));
+        } else {
+            // Reset it, otherwise the total would stay red after a new cycle
+            // starts and the spending is back below the limit
+            txtTotalSpent.setTextColor(this.getColor(R.color.yellow_dark));
+        }
 
         if (expenseRecord != null) {
             txtLastExpenseRecord.setText(this.getString(R.string.last_expense, expenseRecord.amount(), expenseRecord.bank()));
@@ -223,13 +252,7 @@ public class HomeActivity extends AppCompatActivity {
             txtLastExpenseRecord.setText(this.getString(R.string.no_expenses_yet));
         }
 
-        if (totalSpent > monthlyLimit) {
-            txtTotalSpent.setTextColor(this.getColor(R.color.red_dark));
-        }
-
-        renderCardProgress(inflater, cardProgressContainer, progressExpense, expenseSummary, monthlyLimit);
-
-        return card;
+        renderCardProgress(LayoutInflater.from(this), cardProgressContainer, progressExpense, expenseSummary, monthlyLimit);
     }
 
     /**
@@ -244,8 +267,8 @@ public class HomeActivity extends AppCompatActivity {
                                     double monthlyLimit) {
         cardProgressContainer.removeAllViews();
 
-        List<CardSpending> cardSpendings = expenseSummary.cardSpendings();
-        if (cardSpendings.isEmpty()) {
+        List<CardSpending> cardSpending = expenseSummary.cardSpendings();
+        if (cardSpending.isEmpty()) {
             progressExpense.setVisibility(View.VISIBLE);
             mHomeCardWaterService.updateExpenseProgress(progressExpense, expenseSummary.totalSpent(), monthlyLimit);
             return;
@@ -253,16 +276,20 @@ public class HomeActivity extends AppCompatActivity {
 
         progressExpense.setVisibility(View.GONE);
 
-        for (CardSpending cardSpending : cardSpendings) {
+        for (CardSpending spending : cardSpending) {
             View row = inflater.inflate(R.layout.item_card_progress, cardProgressContainer, false);
             TextView txtCardProgressLabel = row.findViewById(R.id.txtCardProgressLabel);
             TextView txtCardProgressValue = row.findViewById(R.id.txtCardProgressValue);
             LinearProgressIndicator progressCard = row.findViewById(R.id.progressCard);
 
             txtCardProgressLabel.setText(this.getString(R.string.card_progress_label,
-                    cardSpending.bankName(), cardSpending.lastFour()));
-            txtCardProgressValue.setText(this.getString(R.string.total_expense_value_init, cardSpending.spent()));
-            progressCard.setProgress(cardSpending.progress());
+                    spending.bankName(), spending.lastFour()));
+            txtCardProgressLabel.setTextSize(14);
+
+            txtCardProgressValue.setText(this.getString(R.string.total_expense_value_init, spending.spent()));
+            txtCardProgressValue.setTextSize(14);
+
+            progressCard.setProgress(spending.progress());
 
             cardProgressContainer.addView(row);
         }
