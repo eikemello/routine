@@ -1,4 +1,4 @@
-<resources>
+﻿<resources>
     <string name="app_name">Rotta</string>
     <string name="home">Home</string>
     <string name="water">Water</string>
@@ -69,7 +69,6 @@
     <string name="water_sum">Total: %1$d ml</string>
     <string name="meal_record">%1$s %2$s - %3$s</string>
     <string name="meal_record_with_obs">%1$s %2$s - %3$s : %4$s</string>
-    <string name="expense_record">%1$s : $%2$.2f - %3$s</string>
     <string name="expense_sum">Total: $%1$.2f</string>
     <string name="history_menu">History</string>
     <string name="legend_good">Good</string>
@@ -109,6 +108,15 @@
     <string name="card_progress_label">%1$s - %2$s</string>
     <string name="save_label">Save</string>
     <string name="last_expense">Last expense was %1$.2f from %2$s bank</string>
+    <string name="expense_history">Today expenses history</string>
+    <string name="expense_record_amount">$%1$.2f</string>
+    <string name="expense_record_edit_title">Edit expense</string>
+    <string name="expense_record_delete_title">Remove expense</string>
+    <string name="expense_record_delete_message">Remove this $%1$.2f expense from %2$s?</string>
+    <string name="expense_record_amount_hint">Amount ($)</string>
+    <string name="no_expenses_today">No expenses recorded today.</string>
+    <string name="history_record_edit">Edit record</string>
+    <string name="history_record_delete">Remove record</string>
     <string name="no_expenses_yet">No expenses recorded yet</string>
     <string name="notify_access_allowed">Allowed notify access</string>
     <string name="allowed">Allowed</string>
@@ -133,3 +141,4 @@
     <string name="gt"><![CDATA[>]]></string>
     <string name="gt2"><![CDATA[<]]></string>
 </resources>
+

@@ -74,9 +74,11 @@ public class WaterRepository {
                 Constants.COLUMN_NAME_TIMESTAMP + " <= ?";
 
         try (Cursor cursor = mSqliteDatabase.rawQuery(query, new String[]{String.valueOf(start), String.valueOf(end)})) {
-            if (cursor.moveToFirst() && cursor.getString(0) != null) {
-                sum = cursor.getInt(0);
-                Log.d(TAG, "Water sum loaded: " + sum + "ml");
+            if (cursor.moveToFirst()) {
+                if (!cursor.isNull(0)) {
+                    sum = cursor.getInt(0);
+                    Log.d(TAG, "Water sum loaded: " + sum + "ml");
+                }
             }
         } catch (Exception e) {
             Log.e(TAG, "Error calculating water sum: " + e.getMessage());

@@ -44,6 +44,32 @@ public class ExpenseRepository {
         }
     }
 
+    public void updateExpense(int id, double amount) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Constants.COLUMN_NAME_EXPENSE_VALUE, amount);
+
+        String selection = BaseColumns._ID + " = ?";
+        int rows = mSqliteDatabase.update(Constants.TABLE_NAME_EXPENSE_TEST, contentValues, selection,
+                new String[]{String.valueOf(id)});
+        Log.d(TAG, "Updated expense record ID " + id + " to " + amount + ". Rows: " + rows);
+
+        if (rows == 0) {
+            Log.e(TAG, "Failed to update expense record ID " + id);
+        }
+    }
+
+    public void deleteExpense(int id) {
+        String selection = BaseColumns._ID + " = ?";
+        int rows = mSqliteDatabase.delete(Constants.TABLE_NAME_EXPENSE_TEST, selection,
+                new String[]{String.valueOf(id)});
+        Log.d(TAG, "Deleted expense record ID " + id + ". Rows: " + rows);
+
+        if (rows == 0) {
+            Log.e(TAG, "Failed to delete expense record ID " + id);
+        }
+    }
+
+
     /**
      * Returns the sum of expense values within the given time range.
      */
@@ -125,7 +151,7 @@ public class ExpenseRepository {
     public List<ExpenseRecord> getExpenseRecords(long start, long end) {
         List<ExpenseRecord> records = new ArrayList<>();
 
-        String query = "SELECT " + Constants.COLUMN_NAME_EXPENSE_VALUE + ", " +
+        String query = "SELECT " + BaseColumns._ID + ", " + Constants.COLUMN_NAME_EXPENSE_VALUE + ", " +
                 Constants.COLUMN_NAME_EXPENSE_TEXT + ", " +
                 Constants.COLUMN_NAME_BANK_NAME + ", " +
                 Constants.COLUMN_NAME_TIMESTAMP +
@@ -136,11 +162,12 @@ public class ExpenseRepository {
 
         try (Cursor cursor = mSqliteDatabase.rawQuery(query, new String[]{String.valueOf(start), String.valueOf(end)})) {
             while (cursor.moveToNext()) {
-                double amount = cursor.getDouble(0);
-                String description = cursor.getString(1);
-                String bank = cursor.getString(2);
-                long timestamp = cursor.getLong(3);
-                records.add(new ExpenseRecord(amount, description, bank, timestamp));
+                int id = cursor.getInt(0);
+                double amount = cursor.getDouble(1);
+                String description = cursor.getString(2);
+                String bank = cursor.getString(3);
+                long timestamp = cursor.getLong(4);
+                records.add(new ExpenseRecord(id, amount, description, bank, timestamp));
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting expense records: " + e.getMessage());
@@ -175,21 +202,24 @@ public class ExpenseRepository {
     }
 
     /**
-     * Returns the last expense record (value and bank), or null if none exists.
+     * Returns the last expense record (id, value and bank), or null if none exists.
      */
     public ExpenseRecord getLastExpenseRecord() {
-        String query = "SELECT " + Constants.COLUMN_NAME_EXPENSE_VALUE + ", " + Constants.COLUMN_NAME_BANK_NAME +
+        String query = "SELECT " + BaseColumns._ID + ", " + Constants.COLUMN_NAME_EXPENSE_VALUE + ", " + Constants.COLUMN_NAME_EXPENSE_TEXT + ", " + Constants.COLUMN_NAME_BANK_NAME + ", " + Constants.COLUMN_NAME_TIMESTAMP +
                 " FROM " + Constants.TABLE_NAME_EXPENSE_TEST +
                 " ORDER BY " + BaseColumns._ID + " DESC LIMIT 1";
 
         try (Cursor cursor = mSqliteDatabase.rawQuery(query, null)) {
-            if (cursor.moveToFirst() && !cursor.isNull(0)) {
-                double amount = cursor.getDouble(0);
-                String bank = cursor.getString(1);
-                return new ExpenseRecord(amount, null, bank, 0);
+            if (cursor.moveToFirst() && !cursor.isNull(1)) {
+                int id = cursor.getInt(0);
+                double amount = cursor.getDouble(1);
+                String description = cursor.isNull(2) ? null : cursor.getString(2);
+                String bank = cursor.getString(3);
+                long timestamp = cursor.getLong(4);
+                return new ExpenseRecord(id, amount, description, bank, timestamp);
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error getting last drank record: " + e.getMessage());
+            Log.e(TAG, "Error getting last expense record: " + e.getMessage());
         }
 
         return null;
