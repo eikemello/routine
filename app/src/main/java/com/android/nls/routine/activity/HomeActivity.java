@@ -130,13 +130,34 @@ public class HomeActivity extends AppCompatActivity {
     private View createWaterCard(LayoutInflater inflater) {
         View card = inflater.inflate(R.layout.card_water, mTrackerCardsContainer, false);
 
+        MaterialButton btnAddWater1 = card.findViewById(R.id.btnAddWater1);
+        MaterialButton btnAddWater2 = card.findViewById(R.id.btnAddWater2);
+        MaterialButton btnAddWater3 = card.findViewById(R.id.btnAddWater3);
+
+        btnAddWater1.setText(this.getString(R.string.water_default_value_50, mHomeCardWaterService.getDefaultValueBtn1()));
+        btnAddWater2.setText(this.getString(R.string.water_default_value_100, mHomeCardWaterService.getDefaultValueBtn2()));
+        btnAddWater3.setText(this.getString(R.string.water_default_value_250, mHomeCardWaterService.getDefaultValueBtn3()));
+
+        renderWaterCard(card);
+
+        btnAddWater1.setOnClickListener(v -> addWater(card, btnAddWater1));
+        btnAddWater2.setOnClickListener(v -> addWater(card, btnAddWater2));
+        btnAddWater3.setOnClickListener(v -> addWater(card, btnAddWater3));
+
+        card.findViewById(R.id.btnWaterHistory).setOnClickListener(v ->
+                mHomeCardWaterService.showDailyHistoryDialog(() -> {
+                    renderWaterCard(card);
+                    renderTrackerProgress();
+                }));
+
+        return card;
+    }
+
+    private void renderWaterCard(View card) {
         TextView txtDailyWater = card.findViewById(R.id.txtDailyWater);
         TextView txtDailyWaterDrank = card.findViewById(R.id.txtDailyWaterDrank);
         TextView txtLastWaterAddedTime = card.findViewById(R.id.txtLastWaterAddedTime);
         LinearProgressIndicator progressWater = card.findViewById(R.id.progressWater);
-        MaterialButton btnAddWater1 = card.findViewById(R.id.btnAddWater1);
-        MaterialButton btnAddWater2 = card.findViewById(R.id.btnAddWater2);
-        MaterialButton btnAddWater3 = card.findViewById(R.id.btnAddWater3);
 
         double dailyWaterGoal = mHomeCardWaterService.getDailyWaterGoal();
         int dailyWaterSum = mHomeCardWaterService.getDailyWaterSum();
@@ -147,30 +168,18 @@ public class HomeActivity extends AppCompatActivity {
         if (lastWaterRecord != null) {
             String lastWaterHour = Common.getHourFromTimestamp(String.valueOf(lastWaterRecord.timestamp()));
             txtLastWaterAddedTime.setText(this.getString(R.string.last_added_at, lastWaterHour, String.valueOf(lastWaterRecord.amount())));
+        } else {
+            txtLastWaterAddedTime.setText(this.getString(R.string.no_water_records_today));
         }
 
-        btnAddWater1.setText(this.getString(R.string.water_default_value_50, mHomeCardWaterService.getDefaultValueBtn1()));
-        btnAddWater2.setText(this.getString(R.string.water_default_value_100, mHomeCardWaterService.getDefaultValueBtn2()));
-        btnAddWater3.setText(this.getString(R.string.water_default_value_250, mHomeCardWaterService.getDefaultValueBtn3()));
         mHomeCardWaterService.updateWaterProgress(progressWater, dailyWaterSum, dailyWaterGoal);
         mHomeCardWaterService.setDailyWaterDrank(txtDailyWaterDrank, dailyWaterSum, dailyWaterGoal);
+    }
 
-        btnAddWater1.setOnClickListener(v -> {
-            mHomeCardWaterService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, btnAddWater1.getText().toString());
-            renderTrackerProgress();
-        });
-
-        btnAddWater2.setOnClickListener(v -> {
-            mHomeCardWaterService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, btnAddWater2.getText().toString());
-            renderTrackerProgress();
-        });
-
-        btnAddWater3.setOnClickListener(v -> {
-            mHomeCardWaterService.addWater(txtDailyWaterDrank, txtLastWaterAddedTime, progressWater, btnAddWater3.getText().toString());
-            renderTrackerProgress();
-        });
-
-        return card;
+    private void addWater(View card, MaterialButton button) {
+        mHomeCardWaterService.addWater(button.getText().toString());
+        renderWaterCard(card);
+        renderTrackerProgress();
     }
 
     private View createMealCard(LayoutInflater inflater) {

@@ -1,5 +1,5 @@
 package com.android.nls.routine.model;
 
-public record WaterRecord(int amount, long timestamp) {
+public record WaterRecord(int id, int amount, long timestamp) {
 
 }

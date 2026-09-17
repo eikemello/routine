@@ -12,9 +12,13 @@
         android:padding="16dp">
 
         <RelativeLayout
+            android:id="@+id/btnWaterHistory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp">
+            android:layout_marginEnd="8dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
 
             <ImageView
                 android:id="@+id/imgViewWater"
@@ -76,6 +80,17 @@
                     android:layout_below="@+id/txtWaterTitle"
                     android:layout_marginBottom="4dp"
                     android:text="@string/last_added_at" />
+
+                <ImageView
+                    android:id="@+id/imgWaterHistoryChevron"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignTop="@+id/txtLastWaterAddedTime"
+                    android:contentDescription="@string/water_history"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_chevron_right"
+                    app:tint="@color/text_tertiary" />
             </RelativeLayout>
 
         </RelativeLayout>
