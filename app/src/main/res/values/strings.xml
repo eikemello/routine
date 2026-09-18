@@ -115,6 +115,12 @@
     <string name="expense_record_delete_message">Remove this $%1$.2f expense from %2$s?</string>
     <string name="expense_record_amount_hint">Amount ($)</string>
     <string name="no_expenses_today">No expenses recorded today.</string>
+    <string name="meal_history">Today meals history</string>
+    <string name="no_meals_today">No meals logged today.</string>
+    <string name="meal_history_sum">%1$d correct, %2$d warning and %3$d wrong</string>
+    <string name="meal_record_edit_title">Edit meal</string>
+    <string name="meal_record_delete_title">Remove meal</string>
+    <string name="meal_record_delete_message">Remove this %1$s meal logged at %2$s?</string>
     <string name="history_record_edit">Edit record</string>
     <string name="history_record_delete">Remove record</string>
     <string name="no_expenses_yet">No expenses recorded yet</string>
