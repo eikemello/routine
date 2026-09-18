@@ -118,6 +118,7 @@ public class CardHistoryDialog {
         ImageView imgIcon = rowView.findViewById(R.id.imgHistoryRecordIcon);
         TextView txtTime = rowView.findViewById(R.id.txtHistoryRecordTime);
         TextView txtDetail = rowView.findViewById(R.id.txtHistoryRecordDetail);
+        TextView txtNote = rowView.findViewById(R.id.txtHistoryRecordNote);
         TextView txtValue = rowView.findViewById(R.id.txtHistoryRecordValue);
 
         imgIcon.setImageResource(mCardHistory.getHistoryIconRes());
@@ -130,6 +131,11 @@ public class CardHistoryDialog {
         if (row.detail() != null) {
             txtDetail.setText(row.detail());
             txtDetail.setVisibility(View.VISIBLE);
+        }
+
+        if (row.note() != null && !row.note().isBlank()) {
+            txtNote.setText(row.note());
+            txtNote.setVisibility(View.VISIBLE);
         }
 
         bindAction(rowView.findViewById(R.id.btnHistoryRecordEdit), row.onEdit());

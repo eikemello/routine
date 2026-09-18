@@ -200,6 +200,9 @@ public class HomeActivity extends AppCompatActivity {
         btnWrongMeal.setOnClickListener(v ->
                 mHomeCardMealService.showAlertDialog(Constants.WRONG_MEAL, this::renderTrackerProgress));
 
+        card.findViewById(R.id.btnMealHistory).setOnClickListener(v ->
+                mHomeCardMealService.showDailyHistoryDialog(this::renderTrackerProgress));
+
         return card;
     }
 

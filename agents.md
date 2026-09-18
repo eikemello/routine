@@ -32,13 +32,13 @@ The app also features a history calendar that visually summarizes daily performa
 - `com.android.nls.routine.model`: Java record POJOs (`WaterRecord`, `MealRecord`, `ExpenseRecord`, `TrackerRecord`, `Tracker`, `TrackerType` enum, `CreditCard`, `CardSpending`, `ExpenseCardSummary`, `WeeklySummary`, `DayDetails`, `DayStatus`, `DayStatusInfo`).
 - `com.android.nls.routine.parser`: `BankDetector`, `NotificationTextExtractor`, and the `Parser` interface with one implementation per bank (Nubank, Itaú, Bradesco, XP, Inter).
 - `com.android.nls.routine.repository`: DAO layer — `WaterRepository`, `MealRepository`, `ExpenseRepository`, `ConfigRepository`, `TrackerRepository`, `CardRepository`.
-- `com.android.nls.routine.service`: Business logic — `HomeService`, `HomeCardWaterService`, `HomeCardMealService`, `HomeCardExpenseService`, `HistoryService`, `ConfigService`.
+- `com.android.nls.routine.service`: Business logic — `HomeService`, `HomeCardWaterService`, `HomeCardMealService`, `HomeCardExpenseService`, `HistoryService`, `ConfigService`, plus the shared card history panel: `CardHistoryDialog` (renderer), `CardRecordDialog` (per-record edit/remove dialogs of the panel) and `CardHistory` (the contract each card implements).
 - `com.android.nls.routine.service.calendar`: History/calendar logic — `DayScore` (weighted scoring), `DayScoreData`, `HistoryContext`, `HistoryCalendarRenderer`, `DayDetailsRenderer`.
 - `com.android.nls.routine.utils`: `Constants` (all table/column names, message strings, tracker/bank identifiers), `Common` (date/time helpers), `BottomNavHelper`.
 
 ### Data Flow
 1.  **Expenses**: `NotificationListener` $\rightarrow$ `BankDetector` $\rightarrow$ `Parser` (per bank) $\rightarrow$ `HomeCardExpenseService.saveExpenseTest()` $\rightarrow$ `ExpenseRepository` $\rightarrow$ SQLite `EXPENSE_TEST`.
-2.  **Home cards**: `HomeActivity` $\rightarrow$ `HomeCardWaterService` / `HomeCardMealService` / `HomeCardExpenseService` / `HomeService` $\rightarrow$ `Repository` $\rightarrow$ SQLite. The card list is built dynamically from `TrackerRepository.getEnabledTrackers()`.
+2.  **Home cards**: `HomeActivity` $\rightarrow$ `HomeCardWaterService` / `HomeCardMealService` / `HomeCardExpenseService` / `HomeService` $\rightarrow$ `Repository` $\rightarrow$ SQLite. The card list is built dynamically from `TrackerRepository.getEnabledTrackers()`. Tapping the history row of the water or expense card opens the shared history panel (`CardHistoryDialog`).
 3.  **History**: `HistoryActivity` $\rightarrow$ `HistoryService` (+ `HistoryContext`) $\rightarrow$ Repositories $\rightarrow$ SQLite $\rightarrow$ `DayScore.compute()` per day $\rightarrow$ `HistoryCalendarRenderer` (grid cells) and `DayDetailsRenderer` (detail grid).
 
 ---
@@ -55,6 +55,7 @@ The app also features a history calendar that visually summarizes daily performa
 - **`HistoryCalendarRenderer` / `DayDetailsRenderer` / `HistoryContext`**: Render the week/month calendar grid (cell colors, selection outline, navigation) and the per-tracker day-details grid; `HistoryContext` bundles the shared history state.
 - **`HomeCardWaterService` / `HomeCardMealService` / `HomeCardExpenseService`**: Per-card business logic for the home dashboard. `HomeService` computes which trackers are completed today (water goal, all 4 meals logged, routines done).
 - **`ConfigService`**: Backs `ConfigActivity` (goal/button/limit dialogs, cards dialog, notification access shortcut).
+- **`CardHistoryDialog` + `CardHistory` + `CardRecordDialog`**: The history panel opened from a home card. `CardHistoryDialog` renders the whole panel (`dialog_card_history.xml` chrome + one `item_history_record.xml` per record: empty state, height-capped scrolling list, total line, optional edit/remove actions) and is shared by every card. Each card service implements `CardHistory` to answer with its title, empty text, row icon/tints and its rows through `getHistoryPanel(refresh)`, calling the `refresh` handle it receives after editing or removing a record so the panel and the card behind it stay in sync. `CardRecordDialog` is the sibling renderer that owns the per-record dialogs (`showEditAmountDialog` and `confirmRemove`): a card passes its texts and returns the error to show, or null when it accepted and stored the amount, so validation and persistence stay in the card service.
 
 ### Database Schema
 All table and column names live in `Constants`. The database contains seven tables:
@@ -119,6 +120,7 @@ The same inputs also produce a human-readable breakdown via `DayScore.getBreakdo
 
 ### Constraints:
 - Maintain the "Activity → Service → Repository" pattern; keep UI construction in Activities/renderers.
+- A card history panel is added by implementing `CardHistory` in the card service, never by building another dialog: `CardHistoryDialog` already owns the shared panel and `CardRecordDialog` owns the per-record edit/remove dialogs.
 - Use `Constants` for table and column names to avoid typos.
 - Ensure `NotificationListener` permissions are handled gracefully (the Config screen offers the system settings shortcut).
 - Balance every `DatabaseHelper.acquire()` with a `release()` (usually via the repository's `closeDb()`), otherwise the database never closes.

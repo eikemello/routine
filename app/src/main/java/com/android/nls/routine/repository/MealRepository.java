@@ -76,7 +76,8 @@ public class MealRepository {
     public List<MealRecord> getMealRecords(long start, long end) {
         List<MealRecord> records = new ArrayList<>();
 
-        String query = "SELECT " + Constants.COLUMN_NAME_MEAL_STATUS + ", " +
+        String query = "SELECT " + Constants._ID + ", " +
+                Constants.COLUMN_NAME_MEAL_STATUS + ", " +
                 Constants.COLUMN_NAME_MEAL + ", " +
                 Constants.COLUMN_NAME_MEAL_OBS + ", " +
                 Constants.COLUMN_NAME_TIMESTAMP +
@@ -87,11 +88,12 @@ public class MealRepository {
 
         try (Cursor cursor = mSqliteDatabase.rawQuery(query, new String[]{String.valueOf(start), String.valueOf(end)})) {
             while (cursor.moveToNext()) {
-                String status = cursor.getString(0);
-                String meal = cursor.getString(1);
-                String observation = cursor.getString(2);
-                long timestamp = cursor.getLong(3);
-                records.add(new MealRecord(status, meal, observation, timestamp));
+                long id = cursor.getLong(0);
+                String status = cursor.getString(1);
+                String meal = cursor.getString(2);
+                String observation = cursor.getString(3);
+                long timestamp = cursor.getLong(4);
+                records.add(new MealRecord(id, status, meal, observation, timestamp));
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting meal records: " + e.getMessage());
@@ -164,7 +166,7 @@ public class MealRepository {
     /**
      * Checks if a meal of the given type already exists for today (excluding OTHER_MEAL).
      * Used for regular meals (Breakfast, Lunch, Tea, Dinner).
-     * @param mealType The meal type to check (e.g., Constants.BREAKFAST, Constants.LUNCH, etc.)
+     * @param mealType The meal type to check (e.g., BREAKFAST, LUNCH, etc.)
      * @return true if a meal of this type exists for today (excluding OTHER_MEAL), false otherwise
      */
     public boolean hasMealForToday(String mealType) {
@@ -178,7 +180,7 @@ public class MealRepository {
     /**
      * Gets the ID of the existing meal for a given meal type today (excluding OTHER_MEAL).
      * Used for regular meals (Breakfast, Lunch, Tea, Dinner).
-     * @param mealType The meal type to look for (e.g., Constants.BREAKFAST, Constants.LUNCH, etc.)
+     * @param mealType The meal type to look for (e.g., BREAKFAST, LUNCH, etc.)
      * @return The row ID of the existing meal, or -1 if no meal exists
      */
     public long getMealIdForTodayExcludingOtherMeal(String mealType) {
@@ -226,5 +228,17 @@ public class MealRepository {
             Log.e(TAG, "Failed to update meal with ID: " + rowId);
         }
         return rowsUpdated;
+    }
+
+    public void deleteMeal(long rowId) {
+        String whereClause = Constants._ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(rowId)};
+
+        int rowsDeleted = mSqliteDatabase.delete(Constants.TABLE_NAME_MEAL, whereClause, whereArgs);
+        Log.d(TAG, "Deleted meal row ID: " + rowId + ", rows deleted: " + rowsDeleted);
+
+        if (rowsDeleted == 0) {
+            Log.e(TAG, "Failed to delete meal with ID: " + rowId);
+        }
     }
 }

@@ -51,21 +51,28 @@ public interface CardHistory {
     }
 
     /**
-     * One line of the panel: when the record was stored, its amount and an
-     * optional detail - the bank of an expense, for instance. An action left
-     * null is not offered, so a card that cannot change a record simply passes
-     * no action.
+     * One line of the panel: when the record was stored, its amount, an
+     * optional detail written beside the time - the bank of an expense or the
+     * status of a meal, for instance - and an optional note written under them -
+     * the observation of a meal, for instance - wrapping over a few lines. An
+     * action left null is not offered, so a card that cannot change a record
+     * simply passes no action.
      */
-    record Row(String time, String value, String detail, Runnable onEdit, Runnable onDelete) {
+    record Row(String time, String value, String detail, String note, Runnable onEdit, Runnable onDelete) {
 
         /** Row of a card that offers no action on the record. */
         public Row(String time, String value, String detail) {
-            this(time, value, detail, null, null);
+            this(time, value, detail, null, null, null);
         }
 
         /** Row of a card that shows no detail besides the amount. */
         public Row(String time, String value, Runnable onEdit, Runnable onDelete) {
-            this(time, value, null, onEdit, onDelete);
+            this(time, value, null, null, onEdit, onDelete);
+        }
+
+        /** Row of a card with a detail beside the time, but no note under it. */
+        public Row(String time, String value, String detail, Runnable onEdit, Runnable onDelete) {
+            this(time, value, detail, null, onEdit, onDelete);
         }
     }
 }

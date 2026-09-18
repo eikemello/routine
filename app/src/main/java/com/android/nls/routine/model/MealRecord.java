@@ -1,5 +1,5 @@
 package com.android.nls.routine.model;
 
-public record MealRecord(String status, String meal, String observation, long timestamp) {
+public record MealRecord(long id, String status, String meal, String observation, long timestamp) {
 
 }

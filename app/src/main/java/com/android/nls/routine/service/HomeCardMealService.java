@@ -10,6 +10,7 @@ import android.widget.RadioButton;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.content.res.AppCompatResources;
 import com.android.nls.routine.R;
+import com.android.nls.routine.model.MealRecord;
 import com.android.nls.routine.repository.MealRepository;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
@@ -17,9 +18,11 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
-public class HomeCardMealService {
+public class HomeCardMealService implements CardHistory {
     private static final String TAG = Common.generateTag(HomeCardMealService.class);
     private final Context mContext;
     private final MealRepository mMealRepository;
@@ -283,6 +286,176 @@ public class HomeCardMealService {
             return Constants.DINNER;
         }
         return null;
+    }
+
+    public void showDailyHistoryDialog(Runnable onChanged) {
+        new CardHistoryDialog(mContext, this).show(onChanged);
+    }
+
+    @Override
+    public CardHistory.Panel getHistoryPanel(Runnable refresh) {
+        List<CardHistory.Row> rows = new ArrayList<>();
+        List<MealRecord> records = getDailyMealRecords();
+        int correct = 0;
+        int warning = 0;
+        int wrong = 0;
+
+        // The records are stored oldest first, so the panel walks them from
+        // the end: the meals the user edits or removes are the latest ones
+        for (int i = records.size() - 1; i >= 0; i--) {
+            MealRecord record = records.get(i);
+            switch (record.status()) {
+                case Constants.CORRECT_MEAL -> correct++;
+                case Constants.WARNING_MEAL -> warning++;
+                case Constants.WRONG_MEAL -> wrong++;
+            }
+
+            rows.add(new CardHistory.Row(
+                    Common.getHourFromTimestamp(String.valueOf(record.timestamp())),
+                    mealDisplayName(record),
+                    statusLabel(record.status()),
+                    mealNote(record),
+                    () -> showEditRecordDialog(record, refresh),
+                    () -> confirmDeleteRecord(record, refresh)));
+        }
+
+        return new CardHistory.Panel(rows,
+                mContext.getString(R.string.meal_history_sum, correct, warning, wrong));
+    }
+
+    @Override
+    public int getHistoryTitleRes() {
+        return R.string.meal_history;
+    }
+
+    @Override
+    public int getHistoryEmptyTextRes() {
+        return R.string.no_meals_today;
+    }
+
+    @Override
+    public int getHistoryIconRes() {
+        return R.drawable.ic_meal;
+    }
+
+    @Override
+    public int getHistoryIconTintRes() {
+        return R.color.neon_green_40;
+    }
+
+    @Override
+    public int getHistoryValueColorRes() {
+        return R.color.green_dark;
+    }
+
+    public List<MealRecord> getDailyMealRecords() {
+        long startOfDay = Common.getStartOfDayInMillis();
+        long endOfDay = Common.getEndOfDayInMillis();
+        return mMealRepository.getMealRecords(startOfDay, endOfDay);
+    }
+
+    private String mealDisplayName(MealRecord record) {
+        return switch (record.meal()) {
+            case Constants.BREAKFAST -> mContext.getString(R.string.breakfast);
+            case Constants.LUNCH -> mContext.getString(R.string.lunch);
+            case Constants.TEA -> mContext.getString(R.string.tea);
+            case Constants.DINNER -> mContext.getString(R.string.dinner);
+            default -> record.meal();
+        };
+    }
+
+    /** The observation of a meal, shown wrapping under its status when there is one. */
+    private String mealNote(MealRecord record) {
+        String observation = record.observation();
+
+        if (observation != null && !observation.isBlank()) {
+            return observation;
+        }
+        return null;
+    }
+
+    private String statusLabel(String status) {
+        return switch (status) {
+            case Constants.CORRECT_MEAL -> mContext.getString(R.string.meal_correct_short);
+            case Constants.WARNING_MEAL -> mContext.getString(R.string.meal_warning_short);
+            case Constants.WRONG_MEAL -> mContext.getString(R.string.meal_wrong_short);
+            default -> status;
+        };
+    }
+
+    private int statusIndex(String status) {
+        if (Constants.WARNING_MEAL.equals(status)) {
+            return 1;
+        }
+        if (Constants.WRONG_MEAL.equals(status)) {
+            return 2;
+        }
+        return 0;
+    }
+
+    private String statusFromLabel(String label) {
+        if (mContext.getString(R.string.meal_warning_short).equals(label)) {
+            return Constants.WARNING_MEAL;
+        }
+        if (mContext.getString(R.string.meal_wrong_short).equals(label)) {
+            return Constants.WRONG_MEAL;
+        }
+        return Constants.CORRECT_MEAL;
+    }
+
+    /**
+     * A regular meal is one of the four daily slots; any other meal name is an
+     * irregular ("different") meal, whose observation is required.
+     */
+    private boolean isRegularMeal(String meal) {
+        return Constants.BREAKFAST.equals(meal) || Constants.LUNCH.equals(meal)
+                || Constants.TEA.equals(meal) || Constants.DINNER.equals(meal);
+    }
+
+    private void showEditRecordDialog(MealRecord record, Runnable refresh) {
+        List<String> options = List.of(
+                mContext.getString(R.string.meal_correct_short),
+                mContext.getString(R.string.meal_warning_short),
+                mContext.getString(R.string.meal_wrong_short));
+
+        CardRecordDialog.showEditOptionTextDialog(
+                mContext,
+                R.string.meal_record_edit_title,
+                options,
+                statusIndex(record.status()),
+                R.string.add_an_observation,
+                record.observation() == null ? "" : record.observation(),
+                (statusLabel, observation) -> {
+                    if (statusLabel == null) {
+                        return Constants.MEAL_SELECTION_REQUIRED;
+                    }
+
+                    // Irregular meals keep the observation required, the same
+                    // rule the save dialog applies when they are logged
+                    if (!isRegularMeal(record.meal()) && observation.isEmpty()) {
+                        return Constants.CUSTOM_MEAL_OBSERVATION_REQUIRED;
+                    }
+
+                    // The timestamp is kept, so the meal stays in its place of
+                    // the list after the edit
+                    mMealRepository.updateMeal(record.id(), statusFromLabel(statusLabel),
+                            observation, record.timestamp());
+                    refresh.run();
+                    return null;
+                });
+    }
+
+    private void confirmDeleteRecord(MealRecord record, Runnable refresh) {
+        CardRecordDialog.confirmRemove(
+                mContext,
+                R.string.meal_record_delete_title,
+                mContext.getString(R.string.meal_record_delete_message,
+                        mealDisplayName(record),
+                        Common.getHourFromTimestamp(String.valueOf(record.timestamp()))),
+                () -> {
+                    mMealRepository.deleteMeal(record.id());
+                    refresh.run();
+                });
     }
 
     public void closeDb() {
