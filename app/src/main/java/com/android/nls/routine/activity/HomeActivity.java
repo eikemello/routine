@@ -10,6 +10,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowInsetsControllerCompat;
 import com.android.nls.routine.R;
+import com.android.nls.routine.cardhistory.DynamicCardHistoryService;
 import com.android.nls.routine.model.CardSpending;
 import com.android.nls.routine.model.ExpenseCardSummary;
 import com.android.nls.routine.model.ExpenseRecord;
@@ -39,6 +40,7 @@ public class HomeActivity extends AppCompatActivity {
     private HomeCardWaterService mHomeCardWaterService;
     private HomeCardExpenseService mHomeCardExpenseService;
     private HomeCardMealService mHomeCardMealService;
+    private DynamicCardHistoryService mDynamicCardHistoryService;
     private TrackerRepository mTrackerRepository;
     private MealRepository mMealRepository;
     private HistoryService mHistoryService;
@@ -66,6 +68,7 @@ public class HomeActivity extends AppCompatActivity {
         mHomeCardWaterService = new HomeCardWaterService(this);
         mHomeCardExpenseService = new HomeCardExpenseService(this);
         mHomeCardMealService = new HomeCardMealService(this);
+        mDynamicCardHistoryService = new DynamicCardHistoryService(this);
         mTrackerRepository = new TrackerRepository(this);
         mMealRepository = new MealRepository(this);
         mHomeService = new HomeService(this);
@@ -314,6 +317,12 @@ public class HomeActivity extends AppCompatActivity {
             renderTrackerProgress();
         });
 
+        card.findViewById(R.id.btnWorkoutHistory).setOnClickListener(v ->
+                mDynamicCardHistoryService.showDailyHistoryDialog(tracker, () -> {
+                    refreshSimpleCard(TrackerType.WORKOUT, txtWorkoutStatus, btnCompleteWorkout);
+                    renderTrackerProgress();
+                }));
+
         return card;
     }
 
@@ -340,6 +349,12 @@ public class HomeActivity extends AppCompatActivity {
             updateStatusCard(txtMedicationStatus, btnMarkMedicationTaken, updatedRecord);
             renderTrackerProgress();
         });
+
+        card.findViewById(R.id.btnMedicationHistory).setOnClickListener(v ->
+                mDynamicCardHistoryService.showDailyHistoryDialog(tracker, () -> {
+                    refreshSimpleCard(TrackerType.MEDICATION, txtMedicationStatus, btnMarkMedicationTaken);
+                    renderTrackerProgress();
+                }));
 
         return card;
     }
@@ -376,6 +391,12 @@ public class HomeActivity extends AppCompatActivity {
             renderTrackerProgress();
         });
 
+        card.findViewById(R.id.btnSupplementHistory).setOnClickListener(v ->
+                mDynamicCardHistoryService.showDailyHistoryDialog(tracker, () -> {
+                    refreshSimpleCard(TrackerType.SUPPLEMENT, txtSupplementStatus, btnMarkSupplementTaken);
+                    renderTrackerProgress();
+                }));
+
         return card;
     }
 
@@ -394,6 +415,15 @@ public class HomeActivity extends AppCompatActivity {
             txtStatus.setTextColor(getColor(R.color.white));
             btnAction.setVisibility(View.VISIBLE);
         }
+    }
+
+    /**
+     * Repaints a simple card (workout, medication or supplement) with the record
+     * of the day, so the card behind the history panel shows the same status the
+     * panel just changed.
+     */
+    private void refreshSimpleCard(TrackerType type, TextView txtStatus, MaterialButton btnAction) {
+        updateStatusCard(txtStatus, btnAction, mDynamicCardHistoryService.getTodayRecord(type));
     }
 
     private void renderTrackerProgress() {
@@ -446,6 +476,7 @@ public class HomeActivity extends AppCompatActivity {
         mHomeCardWaterService.closeDb();
         mHomeCardExpenseService.closeDb();
         mHomeCardMealService.closeDb();
+        mDynamicCardHistoryService.closeDb();
         mTrackerRepository.closeDb();
         mMealRepository.closeDb();
         mHistoryService.closeDb();

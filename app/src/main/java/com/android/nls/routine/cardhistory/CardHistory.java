@@ -1,4 +1,4 @@
-package com.android.nls.routine.service;
+package com.android.nls.routine.cardhistory;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
@@ -10,7 +10,8 @@ import java.util.List;
  * Every card answers with the same pieces - the panel texts and the row colors
  * plus the rows stored for the period the card tracks - so the panel is written
  * once, in the renderer, and a new card only adds an implementation of this
- * contract. Water and expenses are the current ones.
+ * contract. Water, meals, expenses and the simple cards (workout, medication,
+ * supplement) are the current ones.
  */
 public interface CardHistory {
 

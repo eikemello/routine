@@ -162,6 +162,21 @@ public class TrackerRepository {
     }
 
     /**
+     * Removes one tracker record by its id, so the routine is no longer marked
+     * on that day and can be marked again from its card.
+     */
+    public void deleteTrackerRecord(long rowId) {
+        String selection = BaseColumns._ID + " = ?";
+        int rows = mSqliteDatabase.delete(Constants.TABLE_NAME_TRACKER_RECORDS, selection,
+                new String[]{String.valueOf(rowId)});
+        Log.d(TAG, "Deleted tracker record ID " + rowId + ". Rows: " + rows);
+
+        if (rows == 0) {
+            Log.e(TAG, "Failed to delete tracker record ID " + rowId);
+        }
+    }
+
+    /**
      * Returns all tracker records for a given type within the given time range,
      * ordered by timestamp ascending.
      */
