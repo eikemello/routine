@@ -12,8 +12,12 @@
         android:padding="16dp">
 
         <LinearLayout
+            android:id="@+id/btnWorkoutHistory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center_vertical">
 
             <ImageView
@@ -46,6 +50,16 @@
                     android:layout_marginBottom="4dp"
                     android:text="@string/not_completed" />
             </LinearLayout>
+
+            <ImageView
+                android:id="@+id/imgWorkoutHistoryChevron"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="8dp"
+                android:contentDescription="@string/workout_history"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_chevron_right"
+                app:tint="@color/text_tertiary" />
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
