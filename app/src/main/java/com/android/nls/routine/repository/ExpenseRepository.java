@@ -44,14 +44,15 @@ public class ExpenseRepository {
         }
     }
 
-    public void updateExpense(int id, double amount) {
+    public void updateExpense(int id, double amount, String bank) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(Constants.COLUMN_NAME_EXPENSE_VALUE, amount);
+        contentValues.put(Constants.COLUMN_NAME_BANK_NAME, bank);
 
         String selection = BaseColumns._ID + " = ?";
         int rows = mSqliteDatabase.update(Constants.TABLE_NAME_EXPENSE_TEST, contentValues, selection,
                 new String[]{String.valueOf(id)});
-        Log.d(TAG, "Updated expense record ID " + id + " to " + amount + ". Rows: " + rows);
+        Log.d(TAG, "Updated expense record ID " + id + " to " + amount + " from " + bank + ". Rows: " + rows);
 
         if (rows == 0) {
             Log.e(TAG, "Failed to update expense record ID " + id);

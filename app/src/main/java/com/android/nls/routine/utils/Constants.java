@@ -15,6 +15,7 @@ public class Constants {
     public static final String CARD_LAST_FOUR_INVALID_TEXT = "Please enter the last four digits!";
     public static final String CARD_CLOSING_DAY_INVALID_TEXT = "Please enter a valid closing day (1-31)!";
     public static final String EXPENSE_INVALID_VALUE = "Please enter a valid expense value!";
+    public static final String EXPENSE_BANK_REQUIRED = "Please select a bank!";
     public static final List<String> GREETINGS = Arrays.asList("Good morning", "Good afternoon", "Good night");
     public static final double DEFAULT_DAILY_WATER = 2500;
 
@@ -75,6 +76,8 @@ public class Constants {
     public static final String BANK_XP = "xp";
     public static final List<String> KNOWN_BANKS = Arrays.asList(
             BANK_BRADESCO, BANK_INTER, BANK_ITAU, BANK_NUBANK, BANK_XP);
+    public static final List<String> KNOWN_BANK_LABELS = Arrays.asList(
+            "Bradesco", "Inter", "Itau", "Nubank", "XP");
 
     //Trackers
     public static final String TABLE_NAME_TRACKERS = "TRACKERS";

@@ -127,30 +127,64 @@ public class HomeCardExpenseService implements CardHistory {
                     Common.getHourFromTimestamp(String.valueOf(record.timestamp())),
                     mContext.getString(R.string.expense_record_amount, record.amount()),
                     record.bank(),
-                    () -> showEditRecordDialog(record, refresh),
+                    () -> showExpenseDialog(record, refresh),
                     () -> confirmDeleteRecord(record, refresh)));
         }
 
         return new CardHistory.Panel(rows, mContext.getString(R.string.expense_sum, total));
     }
 
-    private void showEditRecordDialog(ExpenseRecord record, Runnable refresh) {
-        CardRecordDialog.showEditAmountDialog(
+    private void showExpenseDialog(ExpenseRecord record, Runnable refresh) {
+        List<String> banks = getBankOptions(record);
+        int checkedIndex = record == null ? 0 : Math.max(0, banks.indexOf(record.bank()));
+
+        CardRecordDialog.showEditOptionAmountDialog(
                 mContext,
-                R.string.expense_record_edit_title,
+                record == null ? R.string.expense_add_title : R.string.expense_record_edit_title,
+                banks,
+                checkedIndex,
                 R.string.expense_record_amount_hint,
-                String.valueOf(record.amount()),
+                record == null ? "" : String.valueOf(record.amount()),
                 InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL,
-                amount -> {
+                (bank, amount) -> {
+                    if (bank == null) {
+                        return Constants.EXPENSE_BANK_REQUIRED;
+                    }
+
                     double value = parseAmount(amount);
                     if (value <= 0) {
                         return Constants.EXPENSE_INVALID_VALUE;
                     }
 
-                    mExpenseRepository.updateExpense(record.id(), value);
+                    if (record == null) {
+                        saveExpenseTest(new Expense(value, null, bank, System.currentTimeMillis()));
+                    } else {
+                        mExpenseRepository.updateExpense(record.id(), value, bank);
+                    }
+
                     refresh.run();
                     return null;
                 });
+    }
+
+    private List<String> getBankOptions(ExpenseRecord record) {
+        List<String> banks = new ArrayList<>();
+
+        for (CreditCard card : mCardRepository.getCards()) {
+            if (!banks.contains(card.bankName())) {
+                banks.add(card.bankName());
+            }
+        }
+
+        if (banks.isEmpty()) {
+            banks.addAll(Constants.KNOWN_BANK_LABELS);
+        }
+
+        if (record != null && record.bank() != null && !record.bank().isBlank() && !banks.contains(record.bank())) {
+            banks.add(record.bank());
+        }
+
+        return banks;
     }
 
     private void confirmDeleteRecord(ExpenseRecord record, Runnable refresh) {
@@ -200,6 +234,11 @@ public class HomeCardExpenseService implements CardHistory {
 
     public double getMonthlyLimitValue() {
         return mConfigRepository.getMonthlyLimitValue();
+    }
+
+    @Override
+    public CardHistory.AddAction getHistoryAddAction(Runnable refresh) {
+        return new CardHistory.AddAction(R.string.expense_add_new, () -> showExpenseDialog(null, refresh));
     }
 
     @Override
