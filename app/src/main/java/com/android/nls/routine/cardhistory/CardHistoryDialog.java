@@ -12,16 +12,18 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.content.res.AppCompatResources;
 import com.android.nls.routine.R;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 /**
  * Central renderer of the history panels opened from a home card. The panel is
- * the same for every card - the dialog_background chrome, the empty state, the
- * height-capped scrolling list, the total line and one shared row per record -
- * so it lives here once and each card only answers through {@link CardHistory}.
- * A card that allows editing or removing a record keeps its panel in sync by
- * calling the refresh handle it receives in
- * {@link CardHistory#getHistoryPanel(Runnable)}.
+ * the same for every card - the dialog_background chrome, the optional add
+ * action under the title, the empty state, the height-capped scrolling list, the
+ * total line and one shared row per record - so it lives here once and each card
+ * only answers through {@link CardHistory}. A card that allows adding, editing
+ * or removing a record keeps its panel in sync by calling the refresh handle it
+ * receives in {@link CardHistory#getHistoryPanel(Runnable)} and
+ * {@link CardHistory#getHistoryAddAction(Runnable)}.
  */
 public class CardHistoryDialog {
 
@@ -106,6 +108,8 @@ public class CardHistoryDialog {
         txtEmpty.setVisibility(hasRecords ? View.GONE : View.VISIBLE);
         txtTotal.setVisibility(hasTotal ? View.VISIBLE : View.GONE);
         txtTotal.setText(hasTotal ? panel.totalText() : null);
+
+        bindAddAction();
     }
 
     /**
@@ -152,5 +156,24 @@ public class CardHistoryDialog {
         }
 
         button.setOnClickListener(v -> action.run());
+    }
+
+    /**
+     * Draws the add action the card offers right under the title of the panel -
+     * "Add new expense", in the expenses - or keeps the button hidden when the
+     * card cannot add a record by hand.
+     */
+    private void bindAddAction() {
+        MaterialButton button = mPanelView.findViewById(R.id.btnHistoryAdd);
+        CardHistory.AddAction addAction = mCardHistory.getHistoryAddAction(this::refresh);
+
+        if (addAction == null) {
+            button.setVisibility(View.GONE);
+            return;
+        }
+
+        button.setText(addAction.labelRes());
+        button.setOnClickListener(v -> addAction.action().run());
+        button.setVisibility(View.VISIBLE);
     }
 }

@@ -45,10 +45,29 @@ public interface CardHistory {
     Panel getHistoryPanel(Runnable refresh);
 
     /**
+     * Action that adds one record to the period of the card, shown as a button
+     * under the panel title - the "Add new expense" of the expense history, for
+     * instance - or null when the card cannot add a record by hand, which is
+     * what the cards without an editor answer (the default). The given refresh
+     * handle is the same one the rows receive, so a record added by the action
+     * appears in the panel and in the card behind it right away.
+     */
+    default AddAction getHistoryAddAction(Runnable refresh) {
+        return null;
+    }
+
+    /**
      * Everything the panel shows at a given moment: the rows of the period and
      * the text of the total line, or null when the card has no total to show.
      */
     record Panel(List<Row> rows, String totalText) {
+    }
+
+    /**
+     * Add action offered by the card: the label of the button drawn under the
+     * title of the panel and what runs when it is tapped.
+     */
+    record AddAction(@StringRes int labelRes, Runnable action) {
     }
 
     /**
