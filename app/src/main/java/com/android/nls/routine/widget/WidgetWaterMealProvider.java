@@ -195,6 +195,26 @@ public class WidgetWaterMealProvider extends AppWidgetProvider {
             homeCardMealService.closeDb();
         }
 
+        // Expense summary
+        HomeCardExpenseService homeCardExpenseService = new HomeCardExpenseService(context);
+        try {
+            // 1. Last Expense
+            com.android.nls.routine.model.ExpenseRecord lastExpense = homeCardExpenseService.getLastExpenseRecord();
+            String lastExpenseText = context.getString(R.string.widget_expense_no_data);
+            if (lastExpense != null) {
+                lastExpenseText = String.format("%s %.2f", lastExpense.bank(), lastExpense.amount());
+            }
+            views.setTextViewText(R.id.txtWidgetExpenseLast, lastExpenseText);
+
+            // 2. Total Spending for Current Cycle
+            com.android.nls.routine.model.ExpenseCardSummary summary = homeCardExpenseService.getExpenseCardSummary();
+            double totalSpent = summary.totalSpent();
+            views.setTextViewText(R.id.txtWidgetExpenseTotal,
+                    context.getString(R.string.expense_sum, totalSpent));
+        } finally {
+            homeCardExpenseService.closeDb();
+        }
+
         return views;
     }
 

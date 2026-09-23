@@ -69,7 +69,7 @@
     <string name="water_sum">Total: %1$d ml</string>
     <string name="meal_record">%1$s %2$s - %3$s</string>
     <string name="meal_record_with_obs">%1$s %2$s - %3$s : %4$s</string>
-    <string name="expense_sum">Total: $%1$.2f</string>
+    <string name="expense_sum">$%1$.2f</string>
     <string name="history_menu">History</string>
     <string name="legend_good">Good</string>
     <string name="legend_warning">Warning</string>
@@ -130,7 +130,7 @@
     <string name="simple_card_history">Today history</string>
     <string name="no_workout_today">Workout not completed today.</string>
     <string name="no_medication_today">Medication not taken today.</string>
-    <string name="no_supplement_today">Supplement not taken today.</string>
+    <string name="no_supplement_today">Supplement not completed today.</string>
     <string name="no_simple_card_today">Not completed today.</string>
     <string name="simple_card_record_delete_title">Remove record</string>
     <string name="simple_card_record_delete_message">Remove the %1$s record marked at %2$s?</string>
@@ -172,8 +172,11 @@
     <string name="widget_water_preview_button_50" translatable="false">+ 50</string>
     <string name="widget_water_preview_button_100" translatable="false">+ 100</string>
     <string name="widget_water_preview_button_250" translatable="false">+ 250</string>
-    <!-- Meals already logged today against the four daily slots (1/4, 2/4, ...) -->
+    <!-- Meals logged today against the four daily slots (1/4, 2/4, ...) -->
     <string name="widget_meal_count">%1$d/4</string>
     <string name="widget_meal_preview_count" translatable="false">1/4</string>
+    <!-- Expenses summary -->
+    <string name="widget_expense_preview_last" translatable="false">Last: Starbucks</string>
+    <string name="widget_expense_preview_total" translatable="false">$12.50</string>
+    <string name="widget_expense_no_data">No expenses recorded yet</string>
 </resources>
-
