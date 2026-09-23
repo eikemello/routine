@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Status button of the meal widget: the glass background of the home card
+     buttons with the green stroke of the Correct action, so the buttons keep
+     the identity of the home meal card once they fill their row like the
+     water quick-add buttons. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/white_40">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/button_glass" />
+            <corners android:radius="14dp" />
+            <stroke
+                android:width="2dp"
+                android:color="@color/green_dark" />
+        </shape>
+    </item>
+</ripple>

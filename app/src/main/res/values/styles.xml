@@ -263,4 +263,68 @@
         <item name="colorError">@color/red_dark</item>
     </style>
 
+    <!-- ==================== HOME SCREEN WIDGETS ====================
+         The widgets are inflated by the launcher through RemoteViews, which only
+         knows framework views and resolves concrete resources, so these styles
+         avoid Material-only attributes (backgroundTint, cornerRadius, ...).
+         Sized for the compact 2x2 default: it stretches cleanly when resized. -->
+
+    <style name="widgetTotal">
+        <item name="android:textColor">@color/neon_blue</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="widgetGoal">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <!-- The three quick-add buttons: one third of the width each, sharing the
+         leftover height of the widget, with the glass background of the home
+         card buttons. The text auto-shrinks so "+ 250" fits even in the
+         narrow cells of the 2x2 size. -->
+    <style name="widgetButton">
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/widget_button_background</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">1dp</item>
+        <item name="android:paddingEnd">1dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:autoSizeTextType">uniform</item>
+        <item name="android:autoSizeMinTextSize">8sp</item>
+        <item name="android:autoSizeMaxTextSize">13sp</item>
+        <item name="android:autoSizeStepGranularity">0.5sp</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <!-- The meal widget status buttons: a row of three mirroring the water
+         quick-add row (each one a third of the width, stretching with the
+         widget), keeping the identity of the home meal card buttons - glass
+         background with the status stroke and the status label (Correct /
+         Warning / Wrong) instead of the plain white text of the water buttons.
+         The size and auto-sizing text are inherited from widgetButton. -->
+    <style name="widgetButton.Correct" parent="widgetButton">
+        <item name="android:textColor">@color/green_dark</item>
+        <item name="android:background">@drawable/widget_button_correct</item>
+    </style>
+
+    <style name="widgetButton.Warning" parent="widgetButton">
+        <item name="android:textColor">@color/yellow_dark</item>
+        <item name="android:background">@drawable/widget_button_warning</item>
+    </style>
+
+    <style name="widgetButton.Wrong" parent="widgetButton">
+        <item name="android:textColor">@color/red_dark</item>
+        <item name="android:background">@drawable/widget_button_wrong</item>
+    </style>
+
 </resources>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  Definition of the combined water + meal + expense widget.
+
+  How the size works: a launcher places widgets on a grid of cells, so the size
+  is expressed in cells and the launcher translates it to dp.
+  - targetCellWidth/targetCellHeight are the size used by launchers on
+    Android 12+ (4 columns by 3 rows here: the water card on top, the meal
+    card in the middle and the read-only expense card at the bottom — icon
+    alone on the left, with the progress component, the numbers and the
+    button row grouped in the same box on its right for water and meal, the
+    three sections separated by view lines).
+  - minWidth/minHeight are the same size in dp, using the formula launchers rely
+    on (70dp * cells - 30dp): minWidth = 70*4 - 30 = 250dp,
+    minHeight = 70*3 - 30 = 180dp. They are what limits how far the widget can
+    be shrunk when resized. The content needs about 240dp of height, so the
+    3-row target is the smallest that shows all three sections without clipping.
+  - resizeMode allows resizing in both directions. The layout stretches with the
+    cell size (the water and meal sections take the leftover height), so there is
+    only one layout: onAppWidgetOptionsChanged re-reads the values after a resize.
+  - updatePeriodMillis keeps the widget fresh without the app being opened:
+    the launcher asks for an update at most every 30 minutes (the smallest
+    interval allowed), which is also what moves the widget on to the new day
+    after midnight - the water total, the meal segments/count and the expense
+    total all roll over.
+  - previewLayout makes the picker show the real widget instead of an image.
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/widget_water_meal_description"
+    android:initialLayout="@layout/widget_water_meal"
+    android:minWidth="250dp"
+    android:minHeight="180dp"
+    android:previewLayout="@layout/widget_water_meal"
+    android:resizeMode="horizontal|vertical"
+    android:targetCellWidth="4"
+    android:targetCellHeight="3"
+    android:updatePeriodMillis="1800000"
+    android:widgetCategory="home_screen" />
