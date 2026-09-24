@@ -8,6 +8,7 @@ import com.android.nls.routine.parser.BankDetector;
 import com.android.nls.routine.service.HomeCardExpenseService;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
+import com.android.nls.routine.widget.WidgetCombinedProvider;
 
 public class NotificationListener extends NotificationListenerService {
     private static final String TAG = Common.generateTag(NotificationListener.class);
@@ -31,6 +32,7 @@ public class NotificationListener extends NotificationListenerService {
             if (expense != null) {
                 Log.d(Constants.TAG, "Detected expense: " + expense);
                 mHomeCardExpenseService.saveExpenseTest(expense);
+                WidgetCombinedProvider.refresh(this);
             }
         } catch (Exception e) {
             // A single malformed notification must never kill the process:
