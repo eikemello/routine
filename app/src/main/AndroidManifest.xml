@@ -18,7 +18,7 @@
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
 
             <intent-filter>
-                <action android:name="android.service.notification.NotificationListenerService"/>
+                <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
 
@@ -44,16 +44,14 @@
             android:name=".activity.HistoryActivity"
             android:exported="false" />
 
-        <!-- Combined home screen widget: the water card (quick-add buttons, total,
-             and progress) stacked over the meal card (four-slot segments with the
-             meals already logged, the day's x/4 count and the Correct / Warning /
-             Wrong status buttons), all in a single 4x3 widget. Not exported: the
+        <!-- Combined home screen widget: water, meal and expense.
+             All in a single 4x3 widget. Not exported: the
              launcher gets to it through the system (explicit APPWIDGET_UPDATE
              broadcasts) and through this app's own PendingIntents. -->
         <receiver
             android:name=".widget.WidgetCombinedProvider"
             android:exported="false"
-            android:label="@string/widget_water_meal_label">
+            android:label="@string/widget_combined_label">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="com.android.nls.routine.action.widget.ADD_WATER" />
@@ -62,7 +60,7 @@
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_water_meal_info" />
+                android:resource="@xml/widget_combined_info" />
         </receiver>
     </application>
 

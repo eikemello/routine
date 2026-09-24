@@ -25,11 +25,11 @@
   - previewLayout makes the picker show the real widget instead of an image.
 -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:description="@string/widget_water_meal_description"
-    android:initialLayout="@layout/widget_water_meal"
+    android:description="@string/widget_combined_description"
+    android:initialLayout="@layout/widget_combined"
     android:minWidth="250dp"
     android:minHeight="180dp"
-    android:previewLayout="@layout/widget_water_meal"
+    android:previewLayout="@layout/widget_combined"
     android:resizeMode="horizontal|vertical"
     android:targetCellWidth="4"
     android:targetCellHeight="3"

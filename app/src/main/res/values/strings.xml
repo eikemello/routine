@@ -53,7 +53,7 @@
     <string name="weekly_spent_default">Spent: -</string>
     <string name="weekly_meals_default">Meals: -</string>
     <string name="weekly_water_achieved">Water: %1$d out of %2$d days</string>
-    <string name="weekly_spent">Spent: $%1$.2f</string>
+    <string name="weekly_spent">Spent: R$%1$.2f</string>
     <string name="weekly_meals">Meals: %1$d correct, %2$d warning and %3$d wrong</string>
     <string name="previous_month">Previous month</string>
     <string name="next_month">Next month</string>
@@ -69,7 +69,7 @@
     <string name="water_sum">Total: %1$d ml</string>
     <string name="meal_record">%1$s %2$s - %3$s</string>
     <string name="meal_record_with_obs">%1$s %2$s - %3$s : %4$s</string>
-    <string name="expense_sum">$%1$.2f</string>
+    <string name="expense_sum">R$%1$.2f</string>
     <string name="history_menu">History</string>
     <string name="legend_good">Good</string>
     <string name="legend_warning">Warning</string>
@@ -160,9 +160,9 @@
     <string name="gt"><![CDATA[>]]></string>
     <string name="gt2"><![CDATA[<]]></string>
 
-    <!-- Combined water + meal widget (home screen) -->
-    <string name="widget_water_meal_label">Water &amp; Meal</string>
-    <string name="widget_water_meal_description">Add water and log a meal as correct, warning or wrong</string>
+    <!-- Combined water + meal + expense widget (home screen) -->
+    <string name="widget_combined_label">Water &amp; Meal</string>
+    <string name="widget_combined_description">Add water and log a meal as correct, warning or wrong</string>
     <string name="widget_water_total">%1$d</string>
     <string name="widget_water_goal">/%1$.0f ml</string>
     <string name="widget_add_water_amount">+ %1$.0f</string>
@@ -177,6 +177,6 @@
     <string name="widget_meal_preview_count" translatable="false">1/4</string>
     <!-- Expenses summary -->
     <string name="widget_expense_preview_last" translatable="false">Last: Starbucks</string>
-    <string name="widget_expense_preview_total" translatable="false">$12.50</string>
+    <string name="widget_expense_preview_total" translatable="false">R$12.50</string>
     <string name="widget_expense_no_data">No expenses recorded yet</string>
 </resources>

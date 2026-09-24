@@ -133,11 +133,12 @@ public class WidgetCombinedProvider extends AppWidgetProvider {
      * Builds the combined widget RemoteViews: binds the six pending intents
      * (three water quick-add buttons and three meal status buttons) and reads
      * from the database everything that can change: today's water total, goal
-     * and configured button values, plus the meal slots already logged today
-     * (the four segments of the meal header and its "x/4" count).
+     * and configured button values, the meal slots already logged today
+     * (the four segments of the meal header and its "x/4" count), and the
+     * current expense summary (last expense and total spent).
      */
     private static RemoteViews buildRemoteViews(Context context) {
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_water_meal);
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_combined);
 
         // Water buttons
         for (int i = 1; i <= BUTTON_COUNT; i++) {
