@@ -48,8 +48,8 @@ import com.android.nls.routine.utils.Constants;
  * dialogs; updatePeriodMillis (30 min, the smallest interval allowed) also
  * keeps both sections fresh, which is what rolls them over to the new day.
  */
-public class WidgetWaterMealProvider extends AppWidgetProvider {
-    private static final String TAG = Common.generateTag(WidgetWaterMealProvider.class);
+public class WidgetCombinedProvider extends AppWidgetProvider {
+    private static final String TAG = Common.generateTag(WidgetCombinedProvider.class);
 
     // ===== WATER =====
     public static final String ACTION_ADD_WATER = "com.android.nls.routine.action.widget.ADD_WATER";
@@ -120,7 +120,7 @@ public class WidgetWaterMealProvider extends AppWidgetProvider {
 
     public static void refresh(Context context) {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        ComponentName provider = new ComponentName(context, WidgetWaterMealProvider.class);
+        ComponentName provider = new ComponentName(context, WidgetCombinedProvider.class);
 
         if (appWidgetManager.getAppWidgetIds(provider).length == 0) {
             return;
@@ -195,7 +195,7 @@ public class WidgetWaterMealProvider extends AppWidgetProvider {
     }
 
     private static PendingIntent buildAddWaterPendingIntent(Context context, int buttonIndex) {
-        Intent intent = new Intent(context, WidgetWaterMealProvider.class)
+        Intent intent = new Intent(context, WidgetCombinedProvider.class)
                 .setAction(ACTION_ADD_WATER)
                 .putExtra(EXTRA_BUTTON_INDEX, buttonIndex);
 
@@ -235,7 +235,7 @@ public class WidgetWaterMealProvider extends AppWidgetProvider {
      * tapped button, not on the widget id.
      */
     private static PendingIntent buildSaveMealPendingIntent(Context context, int buttonIndex) {
-        Intent intent = new Intent(context, WidgetWaterMealProvider.class)
+        Intent intent = new Intent(context, WidgetCombinedProvider.class)
                 .setAction(ACTION_SAVE_MEAL)
                 .putExtra(EXTRA_MEAL_STATUS, MEAL_STATUSES[buttonIndex - 1]);
 

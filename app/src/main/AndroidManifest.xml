@@ -51,7 +51,7 @@
              launcher gets to it through the system (explicit APPWIDGET_UPDATE
              broadcasts) and through this app's own PendingIntents. -->
         <receiver
-            android:name=".widget.WidgetWaterMealProvider"
+            android:name=".widget.WidgetCombinedProvider"
             android:exported="false"
             android:label="@string/widget_water_meal_label">
             <intent-filter>

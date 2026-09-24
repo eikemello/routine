@@ -29,7 +29,7 @@ import com.android.nls.routine.service.calendar.WeekPreviewRenderer;
 import com.android.nls.routine.utils.BottomNavHelper;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
-import com.android.nls.routine.widget.WidgetWaterMealProvider;
+import com.android.nls.routine.widget.WidgetCombinedProvider;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import java.util.List;
@@ -87,7 +87,7 @@ public class HomeActivity extends AppCompatActivity {
         renderTrackerCards();
         // Covers what happened while the app was away: water added on the widget
         // itself and the day rolling over at midnight
-        WidgetWaterMealProvider.refresh(this);
+        WidgetCombinedProvider.refresh(this);
     }
 
     private void startUIComponents() {
@@ -157,7 +157,7 @@ public class HomeActivity extends AppCompatActivity {
                 mHomeCardWaterService.showDailyHistoryDialog(() -> {
                     renderWaterCard(card);
                     renderTrackerProgress();
-                    WidgetWaterMealProvider.refresh(this);
+                    WidgetCombinedProvider.refresh(this);
                 }));
 
         return card;
@@ -190,7 +190,7 @@ public class HomeActivity extends AppCompatActivity {
         mHomeCardWaterService.addWater(button.getText().toString());
         renderWaterCard(card);
         renderTrackerProgress();
-        WidgetWaterMealProvider.refresh(this);
+        WidgetCombinedProvider.refresh(this);
     }
 
     private View createMealCard(LayoutInflater inflater) {
@@ -222,7 +222,7 @@ public class HomeActivity extends AppCompatActivity {
      */
     private void onMealChanged() {
         renderTrackerProgress();
-        WidgetWaterMealProvider.refresh(this);
+        WidgetCombinedProvider.refresh(this);
     }
 
     private View createExpenseCard(LayoutInflater inflater) {

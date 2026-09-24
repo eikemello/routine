@@ -13,7 +13,7 @@ import com.android.nls.routine.model.CreditCard;
 import com.android.nls.routine.service.ConfigService;
 import com.android.nls.routine.utils.BottomNavHelper;
 import com.android.nls.routine.utils.Constants;
-import com.android.nls.routine.widget.WidgetWaterMealProvider;
+import com.android.nls.routine.widget.WidgetCombinedProvider;
 import java.util.List;
 
 public class ConfigActivity extends AppCompatActivity {
@@ -91,7 +91,7 @@ public class ConfigActivity extends AppCompatActivity {
      * same numbers, so it is repainted once the value is saved.
      */
     private void showConfigDialog(String configKey, TextView valueView) {
-        mConfigService.showAlertDialog(configKey, valueView, () -> WidgetWaterMealProvider.refresh(this));
+        mConfigService.showAlertDialog(configKey, valueView, () -> WidgetCombinedProvider.refresh(this));
     }
 
     private void initFields() {
