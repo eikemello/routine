@@ -8,9 +8,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.RemoteViews;
 import com.android.nls.routine.R;
+import com.android.nls.routine.model.ExpenseWidgetData;
+import com.android.nls.routine.model.MealWidgetData;
+import com.android.nls.routine.model.WaterWidgetData;
 import com.android.nls.routine.service.HomeCardExpenseService;
 import com.android.nls.routine.service.HomeCardMealService;
 import com.android.nls.routine.service.HomeCardWaterService;
@@ -74,7 +76,8 @@ public class WidgetWaterMealProvider extends AppWidgetProvider {
             R.id.btnWidgetWrongMeal
     };
     private static final int MEAL_REQUEST_CODE_OFFSET = 100;
-    /** One segment of the meal header per daily slot, left to right. */
+
+    //  One segment of the meal header per daily slot, left to right
     private static final int[] MEAL_SEGMENT_IDS = {
             R.id.imgWidgetMealSegment1,
             R.id.imgWidgetMealSegment2,
@@ -142,24 +145,17 @@ public class WidgetWaterMealProvider extends AppWidgetProvider {
         }
 
         HomeCardWaterService homeCardWaterService = new HomeCardWaterService(context);
-
         try {
-            double dailyWaterGoal = homeCardWaterService.getDailyWaterGoal();
-            int dailyWaterSum = homeCardWaterService.getDailyWaterSum();
+            WaterWidgetData waterData = homeCardWaterService.getWidgetData(context);
 
-            views.setTextViewText(R.id.txtWidgetWaterDrank,
-                    context.getString(R.string.widget_water_total, dailyWaterSum));
-            views.setTextColor(R.id.txtWidgetWaterDrank,
-                    context.getColor(dailyWaterSum >= dailyWaterGoal ? R.color.green_dark : R.color.neon_blue));
-            views.setTextViewText(R.id.txtWidgetWaterGoal,
-                    context.getString(R.string.widget_water_goal, dailyWaterGoal));
+            views.setTextViewText(R.id.txtWidgetWaterDrank, waterData.totalText());
+            views.setTextColor(R.id.txtWidgetWaterDrank, waterData.totalColor());
+            views.setTextViewText(R.id.txtWidgetWaterGoal, waterData.goalText());
             views.setProgressBar(R.id.progressWidgetWater, PROGRESS_MAX,
-                    getWaterPercentage(dailyWaterSum, dailyWaterGoal), false);
+                    waterData.progressPercentage(), false);
 
             for (int i = 0; i < BUTTON_COUNT; i++) {
-                double amount = getButtonValue(homeCardWaterService, i + 1);
-                views.setTextViewText(WATER_BUTTON_IDS[i],
-                        context.getString(R.string.widget_add_water_amount, amount));
+                views.setTextViewText(WATER_BUTTON_IDS[i], waterData.buttonLabels()[i]);
             }
         } finally {
             homeCardWaterService.closeDb();
@@ -172,25 +168,15 @@ public class WidgetWaterMealProvider extends AppWidgetProvider {
 
         // Meal header: one segment per daily slot and the day's "x/4" count
         HomeCardMealService homeCardMealService = new HomeCardMealService(context);
-
         try {
-            String[] slotStatuses = homeCardMealService.getLoggedMealStatusesToday();
-            int loggedCount = 0;
+            MealWidgetData mealData = homeCardMealService.getWidgetData(context);
 
             for (int i = 0; i < MEAL_SEGMENT_IDS.length; i++) {
-                views.setImageViewResource(MEAL_SEGMENT_IDS[i], getSegmentDrawable(slotStatuses[i]));
-
-                if (slotStatuses[i] != null) {
-                    loggedCount++;
-                }
+                views.setImageViewResource(MEAL_SEGMENT_IDS[i], mealData.segmentDrawables()[i]);
             }
 
-            views.setTextViewText(R.id.txtWidgetMealCount,
-                    context.getString(R.string.widget_meal_count, loggedCount));
-            // The count turns green when all four slots are logged.
-            views.setTextColor(R.id.txtWidgetMealCount,
-                    loggedCount == 4 ? context.getColor(R.color.green_dark)
-                            : context.getColor(R.color.text_secondary));
+            views.setTextViewText(R.id.txtWidgetMealCount, mealData.countText());
+            views.setTextColor(R.id.txtWidgetMealCount, mealData.countColor());
         } finally {
             homeCardMealService.closeDb();
         }
@@ -198,19 +184,9 @@ public class WidgetWaterMealProvider extends AppWidgetProvider {
         // Expense summary
         HomeCardExpenseService homeCardExpenseService = new HomeCardExpenseService(context);
         try {
-            // 1. Last Expense
-            com.android.nls.routine.model.ExpenseRecord lastExpense = homeCardExpenseService.getLastExpenseRecord();
-            String lastExpenseText = context.getString(R.string.widget_expense_no_data);
-            if (lastExpense != null) {
-                lastExpenseText = String.format("%s %.2f", lastExpense.bank(), lastExpense.amount());
-            }
-            views.setTextViewText(R.id.txtWidgetExpenseLast, lastExpenseText);
-
-            // 2. Total Spending for Current Cycle
-            com.android.nls.routine.model.ExpenseCardSummary summary = homeCardExpenseService.getExpenseCardSummary();
-            double totalSpent = summary.totalSpent();
-            views.setTextViewText(R.id.txtWidgetExpenseTotal,
-                    context.getString(R.string.expense_sum, totalSpent));
+            ExpenseWidgetData expenseData = homeCardExpenseService.getWidgetData(context);
+            views.setTextViewText(R.id.txtWidgetExpenseLast, expenseData.lastExpenseText());
+            views.setTextViewText(R.id.txtWidgetExpenseTotal, expenseData.totalSpentText());
         } finally {
             homeCardExpenseService.closeDb();
         }
@@ -218,18 +194,6 @@ public class WidgetWaterMealProvider extends AppWidgetProvider {
         return views;
     }
 
-    private static int getWaterPercentage(int dailyWaterSum, double dailyWaterGoal) {
-        if (dailyWaterGoal <= 0) {
-            return 0;
-        }
-        return (int) Math.min(PROGRESS_MAX, Math.round((dailyWaterSum * PROGRESS_MAX) / dailyWaterGoal));
-    }
-
-    /**
-     * One pending intent per water button (the request code is the button index), so
-     * each button keeps its own amount. Any widget instance can share it, since
-     * adding water only depends on the button, not on the widget id.
-     */
     private static PendingIntent buildAddWaterPendingIntent(Context context, int buttonIndex) {
         Intent intent = new Intent(context, WidgetWaterMealProvider.class)
                 .setAction(ACTION_ADD_WATER)
@@ -239,7 +203,7 @@ public class WidgetWaterMealProvider extends AppWidgetProvider {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
-    /** Adds the amount configured for the tapped water button and repaints the widgets. */
+    //Adds the amount configured for the tapped water button and repaints the widgets
     private static void addWater(Context context, int buttonIndex) {
         if (buttonIndex < 1 || buttonIndex > BUTTON_COUNT) {
             Log.e(TAG, "Unknown water widget button: " + buttonIndex);
@@ -249,7 +213,12 @@ public class WidgetWaterMealProvider extends AppWidgetProvider {
         HomeCardWaterService homeCardWaterService = new HomeCardWaterService(context);
 
         try {
-            int amount = (int) getButtonValue(homeCardWaterService, buttonIndex);
+            double amount = switch (buttonIndex) {
+                case 1 -> homeCardWaterService.getDefaultValueBtn1();
+                case 2 -> homeCardWaterService.getDefaultValueBtn2();
+                case 3  -> homeCardWaterService.getDefaultValueBtn3();
+                default -> throw new IllegalStateException("Unexpected value: " + buttonIndex);
+            };
             homeCardWaterService.addWater(String.valueOf(amount));
             Log.d(TAG, "Added " + amount + "ml from widget button " + buttonIndex);
         } finally {
@@ -257,15 +226,6 @@ public class WidgetWaterMealProvider extends AppWidgetProvider {
         }
 
         refresh(context);
-    }
-
-    /** The configured value of a quick-add water button (1, 2 or 3). */
-    private static double getButtonValue(HomeCardWaterService homeCardWaterService, int buttonIndex) {
-        return switch (buttonIndex) {
-            case 1 -> homeCardWaterService.getDefaultValueBtn1();
-            case 2 -> homeCardWaterService.getDefaultValueBtn2();
-            default -> homeCardWaterService.getDefaultValueBtn3();
-        };
     }
 
     /**
@@ -302,23 +262,6 @@ public class WidgetWaterMealProvider extends AppWidgetProvider {
         }
 
         refresh(context);
-    }
-
-    /**
-     * Drawable of a meal header segment: filled with the status color of the
-     * logged meal, or the empty track while the slot has no meal yet.
-     */
-    private static int getSegmentDrawable(String mealStatus) {
-        if (mealStatus == null) {
-            return R.drawable.progress_segment_background;
-        }
-
-        return switch (mealStatus) {
-            case Constants.CORRECT_MEAL -> R.drawable.widget_meal_segment_correct;
-            case Constants.WARNING_MEAL -> R.drawable.widget_meal_segment_warning;
-            case Constants.WRONG_MEAL -> R.drawable.widget_meal_segment_wrong;
-            default -> R.drawable.progress_segment_background;
-        };
     }
 
     private static boolean isKnownStatus(String mealStatus) {

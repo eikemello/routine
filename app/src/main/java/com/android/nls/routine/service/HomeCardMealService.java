@@ -14,6 +14,7 @@ import com.android.nls.routine.cardhistory.CardHistory;
 import com.android.nls.routine.cardhistory.CardHistoryDialog;
 import com.android.nls.routine.cardhistory.CardRecordDialog;
 import com.android.nls.routine.model.MealRecord;
+import com.android.nls.routine.model.MealWidgetData;
 import com.android.nls.routine.repository.MealRepository;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
@@ -399,29 +400,30 @@ public class HomeCardMealService implements CardHistory {
                 mContext.getString(R.string.meal_history_sum, correct, warning, wrong));
     }
 
-    @Override
-    public int getHistoryTitleRes() {
-        return R.string.meal_history;
-    }
+    public MealWidgetData getWidgetData(Context context) {
+        String[] statuses = getLoggedMealStatusesToday();
+        int loggedCount = 0;
+        int[] drawables = new int[REGULAR_MEALS.length];
 
-    @Override
-    public int getHistoryEmptyTextRes() {
-        return R.string.no_meals_today;
-    }
+        for (int i = 0; i < statuses.length; i++) {
+            String status = statuses[i];
+            if (status == null) {
+                drawables[i] = R.drawable.progress_segment_background;
+            } else {
+                loggedCount++;
+                drawables[i] = switch (status) {
+                    case Constants.CORRECT_MEAL -> R.drawable.widget_meal_segment_correct;
+                    case Constants.WARNING_MEAL -> R.drawable.widget_meal_segment_warning;
+                    case Constants.WRONG_MEAL -> R.drawable.widget_meal_segment_wrong;
+                    default -> R.drawable.progress_segment_background;
+                };
+            }
+        }
 
-    @Override
-    public int getHistoryIconRes() {
-        return R.drawable.ic_meal;
-    }
+        String countText = context.getString(R.string.widget_meal_count, loggedCount);
+        int countColor = loggedCount == 4 ? context.getColor(R.color.green_dark) : context.getColor(R.color.text_secondary);
 
-    @Override
-    public int getHistoryIconTintRes() {
-        return R.color.neon_green_40;
-    }
-
-    @Override
-    public int getHistoryValueColorRes() {
-        return R.color.green_dark;
+        return new MealWidgetData(drawables, countText, countColor);
     }
 
     public List<MealRecord> getDailyMealRecords() {
@@ -532,6 +534,32 @@ public class HomeCardMealService implements CardHistory {
                     mMealRepository.deleteMeal(record.id());
                     refresh.run();
                 });
+    }
+
+
+    @Override
+    public int getHistoryTitleRes() {
+        return R.string.meal_history;
+    }
+
+    @Override
+    public int getHistoryEmptyTextRes() {
+        return R.string.no_meals_today;
+    }
+
+    @Override
+    public int getHistoryIconRes() {
+        return R.drawable.ic_meal;
+    }
+
+    @Override
+    public int getHistoryIconTintRes() {
+        return R.color.neon_green_40;
+    }
+
+    @Override
+    public int getHistoryValueColorRes() {
+        return R.color.green_dark;
     }
 
     public void closeDb() {
