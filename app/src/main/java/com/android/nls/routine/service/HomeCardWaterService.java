@@ -9,6 +9,7 @@ import com.android.nls.routine.cardhistory.CardHistory;
 import com.android.nls.routine.cardhistory.CardHistoryDialog;
 import com.android.nls.routine.cardhistory.CardRecordDialog;
 import com.android.nls.routine.model.WaterRecord;
+import com.android.nls.routine.model.WaterWidgetData;
 import com.android.nls.routine.repository.ConfigRepository;
 import com.android.nls.routine.repository.WaterRepository;
 import com.android.nls.routine.utils.Common;
@@ -30,7 +31,7 @@ public class HomeCardWaterService implements CardHistory {
     }
 
     public void addWater(String amount) {
-        int parsedAmount = Integer.parseInt(amount.replace("+", "").trim());
+        int parsedAmount = (int) Double.parseDouble(amount.replace("+", "").trim());
 
         long newRowId = mWaterRepository.insertWater(parsedAmount, System.currentTimeMillis());
 
@@ -103,29 +104,26 @@ public class HomeCardWaterService implements CardHistory {
         new CardHistoryDialog(mContext, this).show(onChanged);
     }
 
-    @Override
-    public int getHistoryTitleRes() {
-        return R.string.water_history;
-    }
+    public WaterWidgetData getWidgetData(Context context) {
+        int dailyWaterSum = getDailyWaterSum();
+        double dailyWaterGoal = getDailyWaterGoal();
 
-    @Override
-    public int getHistoryEmptyTextRes() {
-        return R.string.no_water_records_today;
-    }
+        String totalText = context.getString(R.string.widget_water_total, dailyWaterSum);
+        int totalColor = dailyWaterSum >= dailyWaterGoal ? context.getColor(R.color.green_dark) : context.getColor(R.color.neon_blue);
+        String goalText = context.getString(R.string.widget_water_goal, dailyWaterGoal);
 
-    @Override
-    public int getHistoryIconRes() {
-        return R.drawable.ic_water;
-    }
+        int progressPercentage = 0;
+        if (dailyWaterGoal > 0) {
+            progressPercentage = (int) Math.min(100, Math.round((dailyWaterSum * 100.0) / dailyWaterGoal));
+        }
 
-    @Override
-    public int getHistoryIconTintRes() {
-        return R.color.neon_blue_40;
-    }
+        String[] buttonLabels = {
+                context.getString(R.string.widget_add_water_amount, getDefaultValueBtn1()),
+                context.getString(R.string.widget_add_water_amount, getDefaultValueBtn2()),
+                context.getString(R.string.widget_add_water_amount, getDefaultValueBtn3())
+        };
 
-    @Override
-    public int getHistoryValueColorRes() {
-        return R.color.neon_blue;
+        return new WaterWidgetData(totalText, totalColor, goalText, progressPercentage, buttonLabels);
     }
 
     /**
@@ -178,7 +176,9 @@ public class HomeCardWaterService implements CardHistory {
                 });
     }
 
-    /** Asks before removing an insertion, then refreshes the panel. */
+    /**
+     * Asks before removing an insertion, then refreshes the panel.
+     */
     private void confirmDeleteRecord(WaterRecord record, Runnable refresh) {
         CardRecordDialog.confirmRemove(
                 mContext,
@@ -192,6 +192,31 @@ public class HomeCardWaterService implements CardHistory {
 
     private boolean checkAmount(String value) {
         return !value.isEmpty() && value.matches("\\d+") && value.length() <= 6;
+    }
+
+    @Override
+    public int getHistoryTitleRes() {
+        return R.string.water_history;
+    }
+
+    @Override
+    public int getHistoryEmptyTextRes() {
+        return R.string.no_water_records_today;
+    }
+
+    @Override
+    public int getHistoryIconRes() {
+        return R.drawable.ic_water;
+    }
+
+    @Override
+    public int getHistoryIconTintRes() {
+        return R.color.neon_blue_40;
+    }
+
+    @Override
+    public int getHistoryValueColorRes() {
+        return R.color.neon_blue;
     }
 
     public void closeDb() {

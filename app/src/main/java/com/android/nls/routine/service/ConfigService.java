@@ -40,6 +40,15 @@ public class ConfigService {
     }
 
     public void showAlertDialog(String buttonClicked, TextView textView) {
+        showAlertDialog(buttonClicked, textView, null);
+    }
+
+    /**
+     * Same dialog, notifying {@code onSaved} once the value is stored. The water
+     * widget reads the goal and the three button values from the config, so it
+     * is repainted through this handle after a change.
+     */
+    public void showAlertDialog(String buttonClicked, TextView textView, Runnable onSaved) {
         String title;
         Consumer<String> saveAction;
         int maxLength = 6;
@@ -70,7 +79,7 @@ public class ConfigService {
             default:
                 return;
         }
-        showSaveDialog(title, view, etValue, saveAction, maxLength);
+        showSaveDialog(title, view, etValue, saveAction, maxLength, onSaved);
     }
 
     private void setDailyWater(String value, TextView txtDailyWater) {
@@ -93,7 +102,8 @@ public class ConfigService {
         saveConfigValue(Constants.COLUMN_NAME_MONTHLY_LIMIT, value, txtMonthlyLimit, R.string.total_expense_value_init);
     }
 
-    private void showSaveDialog(String title, View view, TextInputEditText etValue, Consumer<String> saveAction, int maxLength) {
+    private void showSaveDialog(String title, View view, TextInputEditText etValue, Consumer<String> saveAction,
+                                int maxLength, Runnable onSaved) {
         TextInputLayout txtInputError = view.findViewById(R.id.txtInputError);
         txtInputError.setError(null);
 
@@ -114,6 +124,9 @@ public class ConfigService {
             if (checkFieldValue(value, maxLength)) {
                 saveAction.accept(value.toString().trim());
                 dialog.dismiss();
+                if (onSaved != null) {
+                    onSaved.run();
+                }
             } else {
                 setFieldError(txtInputError);
             }

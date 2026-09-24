@@ -29,6 +29,7 @@ import com.android.nls.routine.service.calendar.WeekPreviewRenderer;
 import com.android.nls.routine.utils.BottomNavHelper;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
+import com.android.nls.routine.widget.WidgetCombinedProvider;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import java.util.List;
@@ -84,6 +85,9 @@ public class HomeActivity extends AppCompatActivity {
         initFields();
         renderTrackerProgress();
         renderTrackerCards();
+        // Covers what happened while the app was away: water added on the widget
+        // itself and the day rolling over at midnight
+        WidgetCombinedProvider.refresh(this);
     }
 
     private void startUIComponents() {
@@ -153,6 +157,7 @@ public class HomeActivity extends AppCompatActivity {
                 mHomeCardWaterService.showDailyHistoryDialog(() -> {
                     renderWaterCard(card);
                     renderTrackerProgress();
+                    WidgetCombinedProvider.refresh(this);
                 }));
 
         return card;
@@ -185,6 +190,7 @@ public class HomeActivity extends AppCompatActivity {
         mHomeCardWaterService.addWater(button.getText().toString());
         renderWaterCard(card);
         renderTrackerProgress();
+        WidgetCombinedProvider.refresh(this);
     }
 
     private View createMealCard(LayoutInflater inflater) {
@@ -195,18 +201,28 @@ public class HomeActivity extends AppCompatActivity {
         MaterialButton btnWrongMeal = card.findViewById(R.id.btnWrongMeal);
 
         btnCorrectMeal.setOnClickListener(v ->
-                mHomeCardMealService.showAlertDialog(Constants.CORRECT_MEAL, this::renderTrackerProgress));
+                mHomeCardMealService.showAlertDialog(Constants.CORRECT_MEAL, this::onMealChanged));
 
         btnWarningMeal.setOnClickListener(v ->
-                mHomeCardMealService.showAlertDialog(Constants.WARNING_MEAL, this::renderTrackerProgress));
+                mHomeCardMealService.showAlertDialog(Constants.WARNING_MEAL, this::onMealChanged));
 
         btnWrongMeal.setOnClickListener(v ->
-                mHomeCardMealService.showAlertDialog(Constants.WRONG_MEAL, this::renderTrackerProgress));
+                mHomeCardMealService.showAlertDialog(Constants.WRONG_MEAL, this::onMealChanged));
 
         card.findViewById(R.id.btnMealHistory).setOnClickListener(v ->
-                mHomeCardMealService.showDailyHistoryDialog(this::renderTrackerProgress));
+                mHomeCardMealService.showDailyHistoryDialog(this::onMealChanged));
 
         return card;
+    }
+
+    /**
+     * Repaints the progress strip and the home screen widget after a meal was
+     * saved, edited or removed, so the widget's segments and "x/4" count show
+     * the same meals as the card behind it.
+     */
+    private void onMealChanged() {
+        renderTrackerProgress();
+        WidgetCombinedProvider.refresh(this);
     }
 
     private View createExpenseCard(LayoutInflater inflater) {

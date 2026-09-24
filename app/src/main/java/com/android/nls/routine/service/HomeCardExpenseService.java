@@ -11,6 +11,7 @@ import com.android.nls.routine.model.CreditCard;
 import com.android.nls.routine.model.Expense;
 import com.android.nls.routine.model.ExpenseCardSummary;
 import com.android.nls.routine.model.ExpenseRecord;
+import com.android.nls.routine.model.ExpenseWidgetData;
 import com.android.nls.routine.repository.CardRepository;
 import com.android.nls.routine.repository.ConfigRepository;
 import com.android.nls.routine.repository.ExpenseRepository;
@@ -231,6 +232,21 @@ public class HomeCardExpenseService implements CardHistory {
         }
         return 1;
     }
+
+    public ExpenseWidgetData getWidgetData(Context context) {
+        ExpenseRecord lastExpense = getLastExpenseRecord();
+        String lastExpenseText = context.getString(R.string.widget_expense_no_data);
+        if (lastExpense != null) {
+            lastExpenseText = String.format("%s %.2f", lastExpense.bank(), lastExpense.amount());
+        }
+
+        ExpenseCardSummary summary = getExpenseCardSummary();
+        double totalSpent = summary.totalSpent();
+        String totalSpentText = context.getString(R.string.expense_sum, totalSpent);
+
+        return new ExpenseWidgetData(lastExpenseText, totalSpentText);
+    }
+
 
     public double getMonthlyLimitValue() {
         return mConfigRepository.getMonthlyLimitValue();

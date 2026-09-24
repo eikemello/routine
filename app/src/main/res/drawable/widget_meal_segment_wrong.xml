@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Filled state of a meal slot segment of the widget: same height and corner
+     radius as the empty one (progress_segment_background), painted with the
+     status color of the logged meal by the provider. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/red_dark" />
+    <corners android:radius="4dp" />
+</shape>

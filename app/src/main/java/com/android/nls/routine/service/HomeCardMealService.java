@@ -14,6 +14,7 @@ import com.android.nls.routine.cardhistory.CardHistory;
 import com.android.nls.routine.cardhistory.CardHistoryDialog;
 import com.android.nls.routine.cardhistory.CardRecordDialog;
 import com.android.nls.routine.model.MealRecord;
+import com.android.nls.routine.model.MealWidgetData;
 import com.android.nls.routine.repository.MealRepository;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
@@ -27,6 +28,11 @@ import java.util.List;
 
 public class HomeCardMealService implements CardHistory {
     private static final String TAG = Common.generateTag(HomeCardMealService.class);
+
+    /** The four regular daily slots, in the order the widget shows them. */
+    private static final String[] REGULAR_MEALS = {
+            Constants.BREAKFAST, Constants.LUNCH, Constants.TEA, Constants.DINNER
+    };
     private final Context mContext;
     private final MealRepository mMealRepository;
 
@@ -56,6 +62,64 @@ public class HomeCardMealService implements CardHistory {
         setupDifferentMealInput(view);
 
         showSaveDialog(title, view, buttonClicked, onSaved);
+    }
+
+    /**
+     * Logs a meal straight from the widget, without the dialog: the slot is
+     * the one matching the current time of day (the same the dialog
+     * pre-selects) and the status is the widget button that was tapped.
+     * A regular meal is unique per day, so a slot already logged today is
+     * updated in place - its observation is kept, since there is no dialog to
+     * ask the update the way the home card does.
+     */
+    public void saveQuickMeal(String mealStatus) {
+        String meal = getDefaultMealName();
+        long existingMealId = mMealRepository.getMealIdForToday(meal);
+
+        if (existingMealId != -1) {
+            String observation = "";
+            for (MealRecord record : mMealRepository.getMealRecords(
+                    Common.getStartOfDayInMillis(), Common.getEndOfDayInMillis())) {
+                if (record.id() == existingMealId) {
+                    observation = record.observation() == null ? "" : record.observation();
+                    break;
+                }
+            }
+            mMealRepository.updateMeal(existingMealId, mealStatus, observation, System.currentTimeMillis());
+        } else {
+            mMealRepository.insertMeal(meal, mealStatus, "", System.currentTimeMillis());
+        }
+
+        Log.d(TAG, "Quick meal " + meal + " saved as " + mealStatus);
+    }
+
+    /**
+     * Status of each of the four regular meal slots for today (Breakfast,
+     * Lunch, Tea and Dinner, in that order), null when the slot was not logged
+     * yet. Irregular ("different") meals are ignored, the same rule the home
+     * progress uses: they do not count toward the 4 regular slots. Used by the
+     * widget to paint its four segments and the day's "x/4" count.
+     */
+    public String[] getLoggedMealStatusesToday() {
+        String[] statuses = new String[REGULAR_MEALS.length];
+
+        for (MealRecord record : mMealRepository.getMealRecords(
+                Common.getStartOfDayInMillis(), Common.getEndOfDayInMillis())) {
+            if (Constants.OTHER_MEAL.equals(record.status())) {
+                continue; // irregular meals don't count toward the 4 regular ones
+            }
+
+            for (int i = 0; i < REGULAR_MEALS.length; i++) {
+                if (REGULAR_MEALS[i].equals(record.meal())) {
+                    // Records come ordered by timestamp and a regular slot is
+                    // unique per day, so the last match is the current one
+                    statuses[i] = record.status();
+                    break;
+                }
+            }
+        }
+
+        return statuses;
     }
 
     private void saveMealWithCheck(String mealStatus, String currentMeal, String value, Runnable onSaved) {
@@ -221,21 +285,31 @@ public class HomeCardMealService implements CardHistory {
     }
 
     /**
-     * Returns the meal button matching the current time of day:
-     * Breakfast (5h-10h), Lunch (11h-15h), Tea (16h-19h), Dinner otherwise.
+     * The meal slot matching the current time of day: Breakfast (5h-10h),
+     * Lunch (11h-15h), Tea (16h-19h), Dinner otherwise. The meal dialog
+     * pre-selects it and the widget quick buttons log into it directly.
      */
-    private RadioButton getDefaultMealButton(RadioButton rbBreakfast, RadioButton rbLunch,
-                                             RadioButton rbTea, RadioButton rbDinner) {
+    public String getDefaultMealName() {
         int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
 
         if (hour >= 5 && hour <= 10) {
-            return rbBreakfast;
+            return Constants.BREAKFAST;
         } else if (hour >= 11 && hour <= 15) {
-            return rbLunch;
+            return Constants.LUNCH;
         } else if (hour >= 16 && hour < 20) {
-            return rbTea;
+            return Constants.TEA;
         }
-        return rbDinner;
+        return Constants.DINNER;
+    }
+
+    private RadioButton getDefaultMealButton(RadioButton rbBreakfast, RadioButton rbLunch,
+                                             RadioButton rbTea, RadioButton rbDinner) {
+        return switch (getDefaultMealName()) {
+            case Constants.BREAKFAST -> rbBreakfast;
+            case Constants.LUNCH -> rbLunch;
+            case Constants.TEA -> rbTea;
+            default -> rbDinner;
+        };
     }
 
     /**
@@ -326,29 +400,30 @@ public class HomeCardMealService implements CardHistory {
                 mContext.getString(R.string.meal_history_sum, correct, warning, wrong));
     }
 
-    @Override
-    public int getHistoryTitleRes() {
-        return R.string.meal_history;
-    }
+    public MealWidgetData getWidgetData(Context context) {
+        String[] statuses = getLoggedMealStatusesToday();
+        int loggedCount = 0;
+        int[] drawables = new int[REGULAR_MEALS.length];
 
-    @Override
-    public int getHistoryEmptyTextRes() {
-        return R.string.no_meals_today;
-    }
+        for (int i = 0; i < statuses.length; i++) {
+            String status = statuses[i];
+            if (status == null) {
+                drawables[i] = R.drawable.progress_segment_background;
+            } else {
+                loggedCount++;
+                drawables[i] = switch (status) {
+                    case Constants.CORRECT_MEAL -> R.drawable.widget_meal_segment_correct;
+                    case Constants.WARNING_MEAL -> R.drawable.widget_meal_segment_warning;
+                    case Constants.WRONG_MEAL -> R.drawable.widget_meal_segment_wrong;
+                    default -> R.drawable.progress_segment_background;
+                };
+            }
+        }
 
-    @Override
-    public int getHistoryIconRes() {
-        return R.drawable.ic_meal;
-    }
+        String countText = context.getString(R.string.widget_meal_count, loggedCount);
+        int countColor = loggedCount == 4 ? context.getColor(R.color.green_dark) : context.getColor(R.color.text_secondary);
 
-    @Override
-    public int getHistoryIconTintRes() {
-        return R.color.neon_green_40;
-    }
-
-    @Override
-    public int getHistoryValueColorRes() {
-        return R.color.green_dark;
+        return new MealWidgetData(drawables, countText, countColor);
     }
 
     public List<MealRecord> getDailyMealRecords() {
@@ -459,6 +534,32 @@ public class HomeCardMealService implements CardHistory {
                     mMealRepository.deleteMeal(record.id());
                     refresh.run();
                 });
+    }
+
+
+    @Override
+    public int getHistoryTitleRes() {
+        return R.string.meal_history;
+    }
+
+    @Override
+    public int getHistoryEmptyTextRes() {
+        return R.string.no_meals_today;
+    }
+
+    @Override
+    public int getHistoryIconRes() {
+        return R.drawable.ic_meal;
+    }
+
+    @Override
+    public int getHistoryIconTintRes() {
+        return R.color.neon_green_40;
+    }
+
+    @Override
+    public int getHistoryValueColorRes() {
+        return R.color.green_dark;
     }
 
     public void closeDb() {
