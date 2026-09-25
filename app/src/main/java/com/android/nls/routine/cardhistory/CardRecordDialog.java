@@ -93,6 +93,76 @@ public final class CardRecordDialog {
         });
     }
 
+    /** Saves the text typed in the editor of a record. */
+    @FunctionalInterface
+    public interface TextSaver {
+        /**
+         * @param text text typed by the user, already trimmed
+         * @return the error to display - keeping the editor open - or null when
+         *         the text was accepted and stored
+         */
+        String save(String text);
+    }
+
+    /**
+     * Opens the editor of a record whose value is a free text - the
+     * observation of a meal, for instance - above an explanation of why the
+     * editor is being shown, when there is one (the meal logged on the widget
+     * whose description is still missing, for instance). The dialog closes as
+     * soon as the given saver accepts the typed text; while the saver refuses
+     * it, the returned message is shown inside the field.
+     *
+     * @param inputType keyboard accepted by the field, e.g. with the first
+     *                  letter of each sentence in capitals
+     */
+    public static void showEditTextDialog(Context context,
+                                          @StringRes int titleRes,
+                                          String message,
+                                          @StringRes int hintRes,
+                                          String initialText,
+                                          int inputType,
+                                          TextSaver saver) {
+        View view = LayoutInflater.from(context).inflate(R.layout.dialog_config_default_values, new FrameLayout(context), false);
+        TextInputLayout txtInputError = view.findViewById(R.id.txtInputError);
+        TextInputEditText etValue = view.findViewById(R.id.etValue);
+
+        txtInputError.setHint(context.getString(hintRes));
+        txtInputError.setError(null);
+        etValue.setInputType(inputType);
+        // A description can run long, so the field wraps up to three lines -
+        // the same the observation field of the save dialog allows
+        etValue.setSingleLine(false);
+        etValue.setMaxLines(3);
+        etValue.setText(initialText);
+
+        AlertDialog dialog = new MaterialAlertDialogBuilder(context)
+                .setTitle(titleRes)
+                .setMessage(message)
+                .setView(view)
+                .setPositiveButton(context.getString(R.string.save_label), null)
+                .setNegativeButton(context.getString(R.string.cancel_label), null)
+                .setCancelable(true)
+                .show();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(AppCompatResources.getDrawable(context, R.drawable.dialog_background));
+        }
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            Editable value = etValue.getText();
+            String error = saver.save(value == null ? "" : value.toString().trim());
+
+            if (error != null) {
+                // The card refused the text, so the editor stays open with
+                // the reason written under the field
+                txtInputError.setError(error);
+                return;
+            }
+
+            dialog.dismiss();
+        });
+    }
+
     /**
      * Asks before removing a record and runs the given action once the user
      * confirms it. The caller is the one that removes the record and refreshes

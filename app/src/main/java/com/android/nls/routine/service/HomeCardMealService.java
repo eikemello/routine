@@ -2,6 +2,7 @@ package com.android.nls.routine.service;
 
 import android.content.Context;
 import android.text.Editable;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +25,9 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class HomeCardMealService implements CardHistory {
     private static final String TAG = Common.generateTag(HomeCardMealService.class);
@@ -35,6 +38,11 @@ public class HomeCardMealService implements CardHistory {
     };
     private final Context mContext;
     private final MealRepository mMealRepository;
+    /**
+     * Meals whose missing description was already offered in this visit to the
+     * screen, so the prompt is not repeated on every resume for the same meal.
+     */
+    private final Set<Long> mOfferedMissingObservationIds = new HashSet<>();
 
     public HomeCardMealService(Context context) {
         mContext = context;
@@ -65,15 +73,16 @@ public class HomeCardMealService implements CardHistory {
     }
 
     /**
-     * Logs a meal straight from the widget, without the dialog: the slot is
-     * the one matching the current time of day (the same the dialog
-     * pre-selects) and the status is the widget button that was tapped.
-     * A regular meal is unique per day, so a slot already logged today is
-     * updated in place - its observation is kept, since there is no dialog to
-     * ask the update the way the home card does.
+     * Logs a meal straight from the widget, without the dialog, for the given
+     * regular slot: the status is the chooser button that was tapped. A
+     * regular meal is unique per day, so a slot already logged today is
+     * updated in place. Since the widget cannot ask for an observation, a
+     * warning/wrong meal with no description of its own is marked with
+     * {@link Constants#WIDGET_MEAL_OBSERVATION}: the home screen reads the
+     * marker when the app is opened and offers to describe the meal, the same
+     * the dialog would have done.
      */
-    public void saveQuickMeal(String mealStatus) {
-        String meal = getDefaultMealName();
+    public void saveQuickMeal(String mealStatus, String meal) {
         long existingMealId = mMealRepository.getMealIdForToday(meal);
 
         if (existingMealId != -1) {
@@ -81,16 +90,91 @@ public class HomeCardMealService implements CardHistory {
             for (MealRecord record : mMealRepository.getMealRecords(
                     Common.getStartOfDayInMillis(), Common.getEndOfDayInMillis())) {
                 if (record.id() == existingMealId) {
-                    observation = record.observation() == null ? "" : record.observation();
+                    observation = observationText(record.observation());
                     break;
                 }
             }
-            mMealRepository.updateMeal(existingMealId, mealStatus, observation, System.currentTimeMillis());
+            mMealRepository.updateMeal(existingMealId, mealStatus,
+                    widgetObservation(mealStatus, observation), System.currentTimeMillis());
         } else {
-            mMealRepository.insertMeal(meal, mealStatus, "", System.currentTimeMillis());
+            mMealRepository.insertMeal(meal, mealStatus,
+                    widgetObservation(mealStatus, ""), System.currentTimeMillis());
         }
 
         Log.d(TAG, "Quick meal " + meal + " saved as " + mealStatus);
+    }
+
+    /**
+     * Offers to describe the meals logged from the widget as warning/wrong
+     * without a description: each of them is still marked with
+     * {@link Constants#WIDGET_MEAL_OBSERVATION}, since the widget cannot ask
+     * for an observation the way the home card does. Called when the home
+     * screen comes back to the front, so a meal logged on the widget while the
+     * app was away is covered too; the meals are asked one at a time and a meal
+     * is offered only once per visit to the screen (whatever the answer was) -
+     * a meal left for later ("not now") shows no marker in its history panel,
+     * where it can also be described.
+     */
+    public void showMissingObservationPrompt(Runnable onSaved) {
+        List<MealRecord> missingRecords = new ArrayList<>();
+        for (MealRecord record : getDailyMealRecords()) {
+            if (needsObservationFromWidget(record) && !mOfferedMissingObservationIds.contains(record.id())) {
+                missingRecords.add(record);
+            }
+        }
+
+        if (missingRecords.isEmpty()) {
+            return;
+        }
+
+        for (MealRecord record : missingRecords) {
+            mOfferedMissingObservationIds.add(record.id());
+        }
+
+        showMissingObservationDialog(missingRecords, 0, onSaved);
+    }
+
+    /** True when the meal was logged from the widget as warning/wrong and was not described yet. */
+    private boolean needsObservationFromWidget(MealRecord record) {
+        boolean warningOrWrong = Constants.WARNING_MEAL.equals(record.status())
+                || Constants.WRONG_MEAL.equals(record.status());
+        return warningOrWrong && Constants.WIDGET_MEAL_OBSERVATION.equals(record.observation());
+    }
+
+    /**
+     * Asks for the description of the meal in the given position of the list
+     * and, once it is saved, moves on to the next one; leaving it for later
+     * ("not now") drops the remaining meals of this visit.
+     */
+    private void showMissingObservationDialog(List<MealRecord> records, int index, Runnable onSaved) {
+        if (index >= records.size()) {
+            return;
+        }
+
+        MealRecord record = records.get(index);
+
+        CardRecordDialog.showEditTextDialog(
+                mContext,
+                R.string.meal_observation_missing_title,
+                getString(R.string.meal_observation_missing_message,
+                        mealDisplayName(record), statusLabel(record.status())),
+                R.string.add_an_observation,
+                "",
+                // The field is a description, the same the save dialog asks
+                // for: sentences start with a capital letter
+                InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES,
+                observation -> {
+                    if (observation.isEmpty()) {
+                        return Constants.MEAL_OBSERVATION_REQUIRED;
+                    }
+
+                    // The meal keeps its status and its time: only the
+                    // description the widget could not ask for is added
+                    mMealRepository.updateMeal(record.id(), record.status(), observation, record.timestamp());
+                    onSaved.run();
+                    showMissingObservationDialog(records, index + 1, onSaved);
+                    return null;
+                });
     }
 
     /**
@@ -98,8 +182,8 @@ public class HomeCardMealService implements CardHistory {
      * Lunch, Tea and Dinner, in that order), null when the slot was not logged
      * yet. Irregular ("different") meals are ignored, the same rule the home
      * progress uses: they do not count toward the 4 regular slots. Used by the
-     * widget to count the four slots already logged and to tell whether the
-     * slot of the current time of day is one of them.
+     * widget to count the four slots already logged and to color the four meal
+     * buttons with the status already saved.
      */
     public String[] getLoggedMealStatusesToday() {
         String[] statuses = new String[REGULAR_MEALS.length];
@@ -139,9 +223,7 @@ public class HomeCardMealService implements CardHistory {
                                 onSaved.run();
                             }
                         })
-                        .setNegativeButton(R.string.cancel_label, (dialog, which) -> {
-                            dialog.dismiss();
-                        })
+                        .setNegativeButton(R.string.cancel_label, (dialog, which) -> dialog.dismiss())
                         .setCancelable(true)
                         .show()
                         .getWindow().setBackgroundDrawable(AppCompatResources.getDrawable(mContext, R.drawable.dialog_background));
@@ -402,36 +484,25 @@ public class HomeCardMealService implements CardHistory {
     }
 
     /**
-     * Everything the widget needs to paint the meal section: the meal slot of
-     * the current time of day - the slot the quick buttons log into -, whether
-     * that slot was already logged today (the check shown beside the name), the
-     * day's "x/4" count of regular meals already logged and the completed line
-     * ("4 meals added") shown instead of the header and the buttons once all
-     * four slots are logged.
+     * Everything the widget needs to paint the meal section: whether the four
+     * regular meals are logged (the section then collapses to the completed
+     * line), that line ("4 meals added") and the per-slot statuses that color
+     * the four meal buttons.
      */
     public MealWidgetData getWidgetData(Context context) {
-        String currentMeal = getDefaultMealName();
         String[] statuses = getLoggedMealStatusesToday();
         int loggedCount = 0;
-        boolean currentMealLogged = false;
 
-        for (int i = 0; i < statuses.length; i++) {
-            if (statuses[i] != null) {
+        for (String status : statuses) {
+            if (status != null) {
                 loggedCount++;
-
-                if (REGULAR_MEALS[i].equals(currentMeal)) {
-                    currentMealLogged = true;
-                }
             }
         }
 
         boolean allMealsLogged = loggedCount == REGULAR_MEALS.length;
-        String countText = context.getString(R.string.widget_meal_count, loggedCount);
-        int countColor = allMealsLogged ? context.getColor(R.color.green_dark) : context.getColor(R.color.text_secondary);
         String completedText = context.getString(R.string.widget_meals_completed);
 
-        return new MealWidgetData(mealDisplayName(currentMeal), currentMealLogged, countText, countColor,
-                allMealsLogged, completedText);
+        return new MealWidgetData(allMealsLogged, completedText, statuses);
     }
 
     public List<MealRecord> getDailyMealRecords() {
@@ -455,11 +526,39 @@ public class HomeCardMealService implements CardHistory {
         };
     }
 
+    /**
+     * The observation as text for the editors and for the note of a record:
+     * null and the widget marker both read as empty, so a meal marked by the
+     * widget looks like a meal with no observation - the marker is a note to
+     * the app, not to the user.
+     */
+    private String observationText(String observation) {
+        if (observation == null || Constants.WIDGET_MEAL_OBSERVATION.equals(observation)) {
+            return "";
+        }
+        return observation;
+    }
+
+    /**
+     * Observation stored for a meal logged from the widget: the widget has no
+     * dialog to ask for one, so a warning/wrong meal still without a
+     * description is marked with {@link Constants#WIDGET_MEAL_OBSERVATION},
+     * which the home screen later offers to replace. A description already
+     * written is kept and a correct meal drops the marker, since a correct
+     * meal has nothing to describe.
+     */
+    private String widgetObservation(String mealStatus, String observation) {
+        if (Constants.WARNING_MEAL.equals(mealStatus) || Constants.WRONG_MEAL.equals(mealStatus)) {
+            return observation.isBlank() ? Constants.WIDGET_MEAL_OBSERVATION : observation;
+        }
+        return observation;
+    }
+
     /** The observation of a meal, shown wrapping under its status when there is one. */
     private String mealNote(MealRecord record) {
-        String observation = record.observation();
+        String observation = observationText(record.observation());
 
-        if (observation != null && !observation.isBlank()) {
+        if (!observation.isBlank()) {
             return observation;
         }
         return null;
@@ -515,7 +614,7 @@ public class HomeCardMealService implements CardHistory {
                 options,
                 statusIndex(record.status()),
                 R.string.add_an_observation,
-                record.observation() == null ? "" : record.observation(),
+                observationText(record.observation()),
                 (statusLabel, observation) -> {
                     if (statusLabel == null) {
                         return Constants.MEAL_SELECTION_REQUIRED;

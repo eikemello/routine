@@ -2,13 +2,17 @@
   Combined home screen widget: the water card on top of the meal card, so both
   can be used without opening the app. Each section copies the cards of the
   home screen: the icon alone on the left, with the progress component, the
-  numbers (today's total against the goal, or the meal slot of the current
-  time of day - with a small check once it is logged - and the day's "x/4"
-  count) and the three buttons grouped in the same box on its right, and a
-  view line separating the two functionalities. Once a section is completed -
-  the daily water goal reached, or the four regular meals logged - the
-  provider hides the progress component and the buttons and shows a compact
-  completed line with a check instead.
+  numbers (today's total against the daily goal) and the buttons grouped in
+  the same box on its right, and a view line separating the two
+  functionalities. Once a section is completed - the daily water goal reached,
+  or the four regular meals logged - the provider hides the progress component
+  and the buttons and shows a compact completed line with a check instead.
+
+  The meal row shows one button per regular slot, gray while the slot is empty
+  and tinted with the status color of the meal already logged today; tapping
+  one swaps the row to the Correct / Warning / Wrong chooser of that slot,
+  which returns to the four buttons once a status is chosen. A tap always logs
+  the tapped slot, never the slot of the current time of day.
 
   It is rendered through RemoteViews, so it only uses framework views and the
   concrete color resources of the app (no Material components): a widget is
@@ -164,9 +168,11 @@
 
     <!-- ===================== MEAL SECTION ===================== -->
     <!-- Copy of the home meal card, with the same pattern as the water section:
-         the icon alone on the left and, in the box on its right, the meal slot
-         of the current time of day (with a small check once it is logged), the
-         day's "x/4" count and the three status buttons. -->
+         the icon alone on the left and, in the box on its right, the button
+         row: the four meal slots normally (gray, or the status color once
+         logged), the Correct / Warning / Wrong chooser for the tapped slot
+         while it is being logged. A tap always logs the tapped slot, never the
+         slot of the current time of day. -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -185,65 +191,67 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <RelativeLayout
-                android:id="@+id/layoutWidgetMealCurrent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <!-- Current meal based on time of day, with a small check right
-                     after the name once that slot is already logged today, and
-                     the day's "x/4" count on the right. The provider toggles
-                     the check visibility. -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/txtWidgetCurrentMeal"
-                            style="@style/widgetTotal"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/widget_current_meal_preview" />
-
-                        <ImageView
-                            android:id="@+id/imgWidgetCurrentMealCheck"
-                            android:layout_width="14dp"
-                            android:layout_height="14dp"
-                            android:layout_marginStart="4dp"
-                            android:contentDescription="@string/widget_meal_added"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/ic_check" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/txtWidgetMealCount"
-                        style="@style/widgetTotal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/widget_meal_preview_count" />
-                </LinearLayout>
-            </RelativeLayout>
-
+            <!-- The four regular meal slots, one button each: gray while the
+                 slot is empty, tinted with the status color of the meal already
+                 logged today (the provider swaps the colors). Tapping one
+                 switches the row to the status chooser below. -->
             <LinearLayout
-                android:id="@+id/layoutWidgetMealButtons"
+                android:id="@+id/layoutWidgetMealMeals"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/btnWidgetMealBreakfast"
+                    style="@style/widgetButton.Meal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="4dp"
+                    android:contentDescription="@string/breakfast"
+                    android:text="@string/breakfast" />
+
+                <TextView
+                    android:id="@+id/btnWidgetMealLunch"
+                    style="@style/widgetButton.Meal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="4dp"
+                    android:contentDescription="@string/lunch"
+                    android:text="@string/lunch" />
+
+                <TextView
+                    android:id="@+id/btnWidgetMealTea"
+                    style="@style/widgetButton.Meal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="4dp"
+                    android:contentDescription="@string/tea"
+                    android:text="@string/tea" />
+
+                <TextView
+                    android:id="@+id/btnWidgetMealDinner"
+                    style="@style/widgetButton.Meal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:contentDescription="@string/dinner"
+                    android:text="@string/dinner" />
+            </LinearLayout>
+
+            <!-- Status chooser: replaces the meal buttons for the tapped slot
+                 and is hidden again once a status is saved -->
+            <LinearLayout
+                android:id="@+id/layoutWidgetMealStatuses"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone" >
 
                 <TextView
                     android:id="@+id/btnWidgetCorrectMeal"

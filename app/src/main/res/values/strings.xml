@@ -141,6 +141,8 @@
     <string name="not_allowed">Not allowed</string>
     <string name="other">Other</string>
     <string name="add_an_observation">you can add an observation</string>
+    <string name="meal_observation_missing_title">Meal without description</string>
+    <string name="meal_observation_missing_message">You saved %1$s as %2$s from the widget without a description. Do you want to add one now?</string>
     <string name="add_different_meal">Add different meal</string>
     <string name="different_meal_name">meal name</string>
     <string name="score_percentage_good">%1$d%% Good</string>
@@ -160,9 +162,6 @@
     <string name="gt2"><![CDATA[<]]></string>
 
     <!-- Widget -->
-    <string name="widget_current_meal">Now: %1$s</string>
-    <string name="widget_current_meal_preview" translatable="false">Now: Lunch</string>
-    <string name="widget_meal_added">Meal already added</string>
     <string name="widget_combined_label">Water &amp; Meal</string>
     <string name="widget_combined_description">Add water and log a meal as correct, warning or wrong</string>
     <string name="widget_water_total">%1$d</string>
@@ -175,8 +174,6 @@
     <string name="widget_water_preview_button_50" translatable="false">+ 50</string>
     <string name="widget_water_preview_button_100" translatable="false">+ 100</string>
     <string name="widget_water_preview_button_250" translatable="false">+ 250</string>
-    <string name="widget_meal_count">%1$d/4</string>
-    <string name="widget_meal_preview_count" translatable="false">1/4</string>
     <string name="widget_meals_completed">4 meals added</string>
     <string name="widget_expense_preview_last" translatable="false">Last: Starbucks</string>
     <string name="widget_expense_preview_total" translatable="false">R$12.50</string>

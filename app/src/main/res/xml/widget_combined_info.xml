@@ -8,8 +8,9 @@
     card in the middle and the read-only expense card at the bottom — icon
     alone on the left, with the progress component, the numbers and the
     button row grouped in the same box on its right for water and meal, the
-    three sections separated by view lines; a completed section collapses to a
-    compact line with a check).
+    three sections separated by view lines; the meal row swaps between the four
+    slot buttons and the Correct / Warning / Wrong chooser, and a completed
+    section collapses to a compact line with a check).
   - minWidth/minHeight are the same size in dp, using the formula launchers rely
     on (70dp * cells - 30dp): minWidth = 70*4 - 30 = 250dp,
     minHeight = 70*3 - 30 = 180dp. They are what limits how far the widget can
