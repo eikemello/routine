@@ -2,9 +2,10 @@
   Combined home screen widget: the water card on top of the meal card, so both
   can be used without opening the app. Each section copies the cards of the
   home screen: the icon alone on the left, with the progress component, the
-  numbers (today's total against the goal, or the four-slot segments and the
-  day's "x/4" count) and the three buttons grouped in the same box on its
-  right, and a view line separating the two functionalities.
+  numbers (today's total against the goal, or the meal slot of the current
+  time of day - with a small check once it is logged - and the day's "x/4"
+  count) and the three buttons grouped in the same box on its right, and a
+  view line separating the two functionalities.
 
   It is rendered through RemoteViews, so it only uses framework views and the
   concrete color resources of the app (no Material components): a widget is
@@ -128,8 +129,9 @@
 
     <!-- ===================== MEAL SECTION ===================== -->
     <!-- Copy of the home meal card, with the same pattern as the water section:
-         the icon alone on the left, the four segments with the day's "x/4"
-         count and the three status buttons in the box on its right. -->
+         the icon alone on the left and, in the box on its right, the meal slot
+         of the current time of day (with a small check once it is logged), the
+         day's "x/4" count and the three status buttons. -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -156,68 +158,48 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <!-- One segment per daily slot (Breakfast, Lunch, Tea, Dinner, left to
-                     right): translucent until the slot is logged, then filled with the
-                     status color of that meal. The provider swaps the drawable of every
-                     segment, so the sources here are only the preview starting state. -->
+                <!-- Current meal based on time of day, with a small check right
+                     after the name once that slot is already logged today, and
+                     the day's "x/4" count on the right. The provider toggles
+                     the check visibility. -->
                 <LinearLayout
-                    android:layout_width="317dp"
-                    android:layout_height="6dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_toStartOf="@+id/txtWidgetMealCount"
-                    android:orientation="horizontal"
-                    android:weightSum="4">
-
-                    <ImageView
-                        android:id="@+id/imgWidgetMealSegment1"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginEnd="2dp"
-                        android:layout_weight="1"
-                        android:contentDescription="@string/breakfast"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/widget_meal_segment_correct" />
-
-                    <ImageView
-                        android:id="@+id/imgWidgetMealSegment2"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginEnd="2dp"
-                        android:layout_weight="1"
-                        android:contentDescription="@string/lunch"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/progress_segment_background" />
-
-                    <ImageView
-                        android:id="@+id/imgWidgetMealSegment3"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginEnd="2dp"
-                        android:layout_weight="1"
-                        android:contentDescription="@string/tea"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/progress_segment_background" />
-
-                    <ImageView
-                        android:id="@+id/imgWidgetMealSegment4"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:contentDescription="@string/dinner"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/progress_segment_background" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/txtWidgetMealCount"
-                    style="@style/widgetTotal"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginTop="4dp"
-                    android:text="@string/widget_meal_preview_count" />
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/txtWidgetCurrentMeal"
+                            style="@style/widgetTotal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/widget_current_meal_preview" />
+
+                        <ImageView
+                            android:id="@+id/imgWidgetCurrentMealCheck"
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:layout_marginStart="4dp"
+                            android:contentDescription="@string/widget_meal_added"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_check" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/txtWidgetMealCount"
+                        style="@style/widgetTotal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/widget_meal_preview_count" />
+                </LinearLayout>
             </RelativeLayout>
 
             <LinearLayout

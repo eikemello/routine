@@ -161,6 +161,11 @@
     <string name="gt2"><![CDATA[<]]></string>
 
     <!-- Combined water + meal + expense widget (home screen) -->
+    <string name="widget_current_meal">Now: %1$s</string>
+    <!-- Sample value, only used to preview the widget in the launcher picker -->
+    <string name="widget_current_meal_preview" translatable="false">Now: Lunch</string>
+    <!-- Check shown after the current meal once its slot is already logged -->
+    <string name="widget_meal_added">Meal already added</string>
     <string name="widget_combined_label">Water &amp; Meal</string>
     <string name="widget_combined_description">Add water and log a meal as correct, warning or wrong</string>
     <string name="widget_water_total">%1$d</string>

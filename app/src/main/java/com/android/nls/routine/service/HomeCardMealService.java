@@ -98,7 +98,8 @@ public class HomeCardMealService implements CardHistory {
      * Lunch, Tea and Dinner, in that order), null when the slot was not logged
      * yet. Irregular ("different") meals are ignored, the same rule the home
      * progress uses: they do not count toward the 4 regular slots. Used by the
-     * widget to paint its four segments and the day's "x/4" count.
+     * widget to count the four slots already logged and to tell whether the
+     * slot of the current time of day is one of them.
      */
     public String[] getLoggedMealStatusesToday() {
         String[] statuses = new String[REGULAR_MEALS.length];
@@ -400,30 +401,32 @@ public class HomeCardMealService implements CardHistory {
                 mContext.getString(R.string.meal_history_sum, correct, warning, wrong));
     }
 
+    /**
+     * Everything the widget needs to paint the meal header: the meal slot of
+     * the current time of day - the slot the quick buttons log into -, whether
+     * that slot was already logged today (the check shown beside the name) and
+     * the day's "x/4" count of regular meals already logged.
+     */
     public MealWidgetData getWidgetData(Context context) {
+        String currentMeal = getDefaultMealName();
         String[] statuses = getLoggedMealStatusesToday();
         int loggedCount = 0;
-        int[] drawables = new int[REGULAR_MEALS.length];
+        boolean currentMealLogged = false;
 
         for (int i = 0; i < statuses.length; i++) {
-            String status = statuses[i];
-            if (status == null) {
-                drawables[i] = R.drawable.progress_segment_background;
-            } else {
+            if (statuses[i] != null) {
                 loggedCount++;
-                drawables[i] = switch (status) {
-                    case Constants.CORRECT_MEAL -> R.drawable.widget_meal_segment_correct;
-                    case Constants.WARNING_MEAL -> R.drawable.widget_meal_segment_warning;
-                    case Constants.WRONG_MEAL -> R.drawable.widget_meal_segment_wrong;
-                    default -> R.drawable.progress_segment_background;
-                };
+
+                if (REGULAR_MEALS[i].equals(currentMeal)) {
+                    currentMealLogged = true;
+                }
             }
         }
 
         String countText = context.getString(R.string.widget_meal_count, loggedCount);
         int countColor = loggedCount == 4 ? context.getColor(R.color.green_dark) : context.getColor(R.color.text_secondary);
 
-        return new MealWidgetData(drawables, countText, countColor);
+        return new MealWidgetData(mealDisplayName(currentMeal), currentMealLogged, countText, countColor);
     }
 
     public List<MealRecord> getDailyMealRecords() {
@@ -433,12 +436,17 @@ public class HomeCardMealService implements CardHistory {
     }
 
     private String mealDisplayName(MealRecord record) {
-        return switch (record.meal()) {
+        return mealDisplayName(record.meal());
+    }
+
+    /** Display name of a meal slot, localized for the four regular ones. */
+    private String mealDisplayName(String meal) {
+        return switch (meal) {
             case Constants.BREAKFAST -> mContext.getString(R.string.breakfast);
             case Constants.LUNCH -> mContext.getString(R.string.lunch);
             case Constants.TEA -> mContext.getString(R.string.tea);
             case Constants.DINNER -> mContext.getString(R.string.dinner);
-            default -> record.meal();
+            default -> meal;
         };
     }
 

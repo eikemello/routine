@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.RemoteViews;
 import com.android.nls.routine.R;
 import com.android.nls.routine.model.ExpenseWidgetData;
@@ -22,11 +23,13 @@ import com.android.nls.routine.utils.Constants;
 /**
  * Combined home screen widget: the water card (three quick-add buttons with the
  * configured values, today's total against the daily goal, progress bar) stacked
- * on top of the meal card (the meal icon, one segment per daily slot with the
- * meals already logged, the day's "x/4" count and the Correct / Warning / Wrong
- * status buttons) and the expenses card on top (a read-only summary: icon, the
- * last expense description and the total spent so far this cycle), all in a
- * single widget so they can be seen without opening the app.
+ * on top of the meal card (the meal icon, the meal slot of the current time of
+ * day - the slot the quick buttons log into - with a small check once it is
+ * logged, the day's "x/4" count and the Correct / Warning / Wrong status
+ * buttons) and the expenses card on top (a
+ * read-only summary: icon, the last expense description and the total spent so
+ * far this cycle), all in a single widget so they can be seen without opening
+ * the app.
  * <p>
  * The three sections keep the same pattern: the icon alone on the left, with the
  * progress component, the numbers and the button row grouped in the same box on
@@ -77,14 +80,6 @@ public class WidgetCombinedProvider extends AppWidgetProvider {
     };
     private static final int MEAL_REQUEST_CODE_OFFSET = 100;
 
-    //  One segment of the meal header per daily slot, left to right
-    private static final int[] MEAL_SEGMENT_IDS = {
-            R.id.imgWidgetMealSegment1,
-            R.id.imgWidgetMealSegment2,
-            R.id.imgWidgetMealSegment3,
-            R.id.imgWidgetMealSegment4
-    };
-
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         for (int appWidgetId : appWidgetIds) {
@@ -133,9 +128,10 @@ public class WidgetCombinedProvider extends AppWidgetProvider {
      * Builds the combined widget RemoteViews: binds the six pending intents
      * (three water quick-add buttons and three meal status buttons) and reads
      * from the database everything that can change: today's water total, goal
-     * and configured button values, the meal slots already logged today
-     * (the four segments of the meal header and its "x/4" count), and the
-     * current expense summary (last expense and total spent).
+     * and configured button values, the meal slot of the current time of day
+     * (with the check that tells whether it is already logged) and the day's
+     * "x/4" count of slots already logged, and the current expense summary
+     * (last expense and total spent).
      */
     private static RemoteViews buildRemoteViews(Context context) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_combined);
@@ -167,14 +163,15 @@ public class WidgetCombinedProvider extends AppWidgetProvider {
             views.setOnClickPendingIntent(MEAL_BUTTON_IDS[i - 1], buildSaveMealPendingIntent(context, i));
         }
 
-        // Meal header: one segment per daily slot and the day's "x/4" count
+        // Meal header: the current meal based on time of day and the day's "x/4" count
         HomeCardMealService homeCardMealService = new HomeCardMealService(context);
         try {
             MealWidgetData mealData = homeCardMealService.getWidgetData(context);
 
-            for (int i = 0; i < MEAL_SEGMENT_IDS.length; i++) {
-                views.setImageViewResource(MEAL_SEGMENT_IDS[i], mealData.segmentDrawables()[i]);
-            }
+            views.setTextViewText(R.id.txtWidgetCurrentMeal, context.getString(R.string.widget_current_meal, mealData.currentMealName()));
+            // Small check after the meal name once the slot is already logged
+            views.setViewVisibility(R.id.imgWidgetCurrentMealCheck,
+                    mealData.currentMealLogged() ? View.VISIBLE : View.INVISIBLE);
 
             views.setTextViewText(R.id.txtWidgetMealCount, mealData.countText());
             views.setTextColor(R.id.txtWidgetMealCount, mealData.countColor());
