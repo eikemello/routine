@@ -7,5 +7,7 @@ public record MealWidgetData(
     String currentMealName,
     boolean currentMealLogged,
     String countText,
-    int countColor
+    int countColor,
+    boolean allMealsLogged,
+    String completedText
 ) {}

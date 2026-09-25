@@ -107,10 +107,12 @@ public class HomeCardWaterService implements CardHistory {
     public WaterWidgetData getWidgetData(Context context) {
         int dailyWaterSum = getDailyWaterSum();
         double dailyWaterGoal = getDailyWaterGoal();
+        boolean goalReached = dailyWaterGoal > 0 && dailyWaterSum >= dailyWaterGoal;
 
         String totalText = context.getString(R.string.widget_water_total, dailyWaterSum);
-        int totalColor = dailyWaterSum >= dailyWaterGoal ? context.getColor(R.color.green_dark) : context.getColor(R.color.neon_blue);
+        int totalColor = goalReached ? context.getColor(R.color.green_dark) : context.getColor(R.color.neon_blue);
         String goalText = context.getString(R.string.widget_water_goal, dailyWaterGoal);
+        String completedText = context.getString(R.string.widget_water_completed, dailyWaterGoal);
 
         int progressPercentage = 0;
         if (dailyWaterGoal > 0) {
@@ -123,7 +125,8 @@ public class HomeCardWaterService implements CardHistory {
                 context.getString(R.string.widget_add_water_amount, getDefaultValueBtn3())
         };
 
-        return new WaterWidgetData(totalText, totalColor, goalText, progressPercentage, buttonLabels);
+        return new WaterWidgetData(totalText, totalColor, goalText, progressPercentage,
+                goalReached, completedText, buttonLabels);
     }
 
     /**

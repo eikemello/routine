@@ -31,6 +31,11 @@ import com.android.nls.routine.utils.Constants;
  * far this cycle), all in a single widget so they can be seen without opening
  * the app.
  * <p>
+ * A completed section collapses: once the daily water goal is reached or the
+ * four regular meals are logged, its progress component and buttons are hidden
+ * and a compact line with a check takes their place ("3000 ml completed",
+ * "4 meals added"), so the widget keeps only what still needs attention.
+ * <p>
  * The three sections keep the same pattern: the icon alone on the left, with the
  * progress component, the numbers and the button row grouped in the same box on
  * its right, the water and meal sections separated from each other and the meal
@@ -131,7 +136,8 @@ public class WidgetCombinedProvider extends AppWidgetProvider {
      * and configured button values, the meal slot of the current time of day
      * (with the check that tells whether it is already logged) and the day's
      * "x/4" count of slots already logged, and the current expense summary
-     * (last expense and total spent).
+     * (last expense and total spent). The water and meal sections are also
+     * switched here between their normal and completed states.
      */
     private static RemoteViews buildRemoteViews(Context context) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_combined);
@@ -144,15 +150,25 @@ public class WidgetCombinedProvider extends AppWidgetProvider {
         HomeCardWaterService homeCardWaterService = new HomeCardWaterService(context);
         try {
             WaterWidgetData waterData = homeCardWaterService.getWidgetData(context);
+            boolean waterCompleted = waterData.goalReached();
 
-            views.setTextViewText(R.id.txtWidgetWaterDrank, waterData.totalText());
-            views.setTextColor(R.id.txtWidgetWaterDrank, waterData.totalColor());
-            views.setTextViewText(R.id.txtWidgetWaterGoal, waterData.goalText());
-            views.setProgressBar(R.id.progressWidgetWater, PROGRESS_MAX,
-                    waterData.progressPercentage(), false);
+            // The section collapses to the completed line once the goal is reached
+            views.setViewVisibility(R.id.layoutWidgetWaterProgress, waterCompleted ? View.GONE : View.VISIBLE);
+            views.setViewVisibility(R.id.layoutWidgetWaterButtons, waterCompleted ? View.GONE : View.VISIBLE);
+            views.setViewVisibility(R.id.layoutWidgetWaterCompleted, waterCompleted ? View.VISIBLE : View.GONE);
 
-            for (int i = 0; i < BUTTON_COUNT; i++) {
-                views.setTextViewText(WATER_BUTTON_IDS[i], waterData.buttonLabels()[i]);
+            if (waterCompleted) {
+                views.setTextViewText(R.id.txtWidgetWaterCompleted, waterData.completedText());
+            } else {
+                views.setTextViewText(R.id.txtWidgetWaterDrank, waterData.totalText());
+                views.setTextColor(R.id.txtWidgetWaterDrank, waterData.totalColor());
+                views.setTextViewText(R.id.txtWidgetWaterGoal, waterData.goalText());
+                views.setProgressBar(R.id.progressWidgetWater, PROGRESS_MAX,
+                        waterData.progressPercentage(), false);
+
+                for (int i = 0; i < BUTTON_COUNT; i++) {
+                    views.setTextViewText(WATER_BUTTON_IDS[i], waterData.buttonLabels()[i]);
+                }
             }
         } finally {
             homeCardWaterService.closeDb();
@@ -167,14 +183,24 @@ public class WidgetCombinedProvider extends AppWidgetProvider {
         HomeCardMealService homeCardMealService = new HomeCardMealService(context);
         try {
             MealWidgetData mealData = homeCardMealService.getWidgetData(context);
+            boolean mealsCompleted = mealData.allMealsLogged();
 
-            views.setTextViewText(R.id.txtWidgetCurrentMeal, context.getString(R.string.widget_current_meal, mealData.currentMealName()));
-            // Small check after the meal name once the slot is already logged
-            views.setViewVisibility(R.id.imgWidgetCurrentMealCheck,
-                    mealData.currentMealLogged() ? View.VISIBLE : View.INVISIBLE);
+            // The section collapses to the completed line once the four slots are logged
+            views.setViewVisibility(R.id.layoutWidgetMealCurrent, mealsCompleted ? View.GONE : View.VISIBLE);
+            views.setViewVisibility(R.id.layoutWidgetMealButtons, mealsCompleted ? View.GONE : View.VISIBLE);
+            views.setViewVisibility(R.id.layoutWidgetMealCompleted, mealsCompleted ? View.VISIBLE : View.GONE);
 
-            views.setTextViewText(R.id.txtWidgetMealCount, mealData.countText());
-            views.setTextColor(R.id.txtWidgetMealCount, mealData.countColor());
+            if (mealsCompleted) {
+                views.setTextViewText(R.id.txtWidgetMealCompleted, mealData.completedText());
+            } else {
+                views.setTextViewText(R.id.txtWidgetCurrentMeal, context.getString(R.string.widget_current_meal, mealData.currentMealName()));
+                // Small check after the meal name once the slot is already logged
+                views.setViewVisibility(R.id.imgWidgetCurrentMealCheck,
+                        mealData.currentMealLogged() ? View.VISIBLE : View.INVISIBLE);
+
+                views.setTextViewText(R.id.txtWidgetMealCount, mealData.countText());
+                views.setTextColor(R.id.txtWidgetMealCount, mealData.countColor());
+            }
         } finally {
             homeCardMealService.closeDb();
         }

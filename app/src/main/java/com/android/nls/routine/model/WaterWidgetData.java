@@ -8,5 +8,7 @@ public record WaterWidgetData(
     int totalColor,
     String goalText,
     int progressPercentage,
+    boolean goalReached,
+    String completedText,
     String[] buttonLabels
 ) {}

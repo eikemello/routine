@@ -402,10 +402,12 @@ public class HomeCardMealService implements CardHistory {
     }
 
     /**
-     * Everything the widget needs to paint the meal header: the meal slot of
+     * Everything the widget needs to paint the meal section: the meal slot of
      * the current time of day - the slot the quick buttons log into -, whether
-     * that slot was already logged today (the check shown beside the name) and
-     * the day's "x/4" count of regular meals already logged.
+     * that slot was already logged today (the check shown beside the name), the
+     * day's "x/4" count of regular meals already logged and the completed line
+     * ("4 meals added") shown instead of the header and the buttons once all
+     * four slots are logged.
      */
     public MealWidgetData getWidgetData(Context context) {
         String currentMeal = getDefaultMealName();
@@ -423,10 +425,13 @@ public class HomeCardMealService implements CardHistory {
             }
         }
 
+        boolean allMealsLogged = loggedCount == REGULAR_MEALS.length;
         String countText = context.getString(R.string.widget_meal_count, loggedCount);
-        int countColor = loggedCount == 4 ? context.getColor(R.color.green_dark) : context.getColor(R.color.text_secondary);
+        int countColor = allMealsLogged ? context.getColor(R.color.green_dark) : context.getColor(R.color.text_secondary);
+        String completedText = context.getString(R.string.widget_meals_completed);
 
-        return new MealWidgetData(mealDisplayName(currentMeal), currentMealLogged, countText, countColor);
+        return new MealWidgetData(mealDisplayName(currentMeal), currentMealLogged, countText, countColor,
+                allMealsLogged, completedText);
     }
 
     public List<MealRecord> getDailyMealRecords() {

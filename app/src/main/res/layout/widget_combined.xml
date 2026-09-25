@@ -5,7 +5,10 @@
   numbers (today's total against the goal, or the meal slot of the current
   time of day - with a small check once it is logged - and the day's "x/4"
   count) and the three buttons grouped in the same box on its right, and a
-  view line separating the two functionalities.
+  view line separating the two functionalities. Once a section is completed -
+  the daily water goal reached, or the four regular meals logged - the
+  provider hides the progress component and the buttons and shows a compact
+  completed line with a check instead.
 
   It is rendered through RemoteViews, so it only uses framework views and the
   concrete color resources of the app (no Material components): a widget is
@@ -48,6 +51,7 @@
             android:orientation="vertical">
 
             <RelativeLayout
+                android:id="@+id/layoutWidgetWaterProgress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -84,6 +88,7 @@
             </RelativeLayout>
 
             <LinearLayout
+                android:id="@+id/layoutWidgetWaterButtons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -115,6 +120,36 @@
                     android:contentDescription="@string/add_water"
                     android:text="@string/widget_water_preview_button_250" />
             </LinearLayout>
+        </LinearLayout>
+
+        <!-- Completed state: the provider hides the progress component and the
+             buttons and shows this line instead once the daily goal is
+             reached. center_vertical keeps it centered against the 48dp icon
+             when the box on the left is hidden. -->
+        <LinearLayout
+            android:id="@+id/layoutWidgetWaterCompleted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/txtWidgetWaterCompleted"
+                style="@style/widgetTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/widget_water_preview_completed" />
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_marginStart="4dp"
+                android:contentDescription="@string/completed"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_check" />
         </LinearLayout>
     </LinearLayout>
 
@@ -155,6 +190,7 @@
             android:orientation="vertical">
 
             <RelativeLayout
+                android:id="@+id/layoutWidgetMealCurrent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -203,6 +239,7 @@
             </RelativeLayout>
 
             <LinearLayout
+                android:id="@+id/layoutWidgetMealButtons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -234,6 +271,36 @@
                     android:contentDescription="@string/wrong_meal"
                     android:text="@string/wrong_meal" />
             </LinearLayout>
+        </LinearLayout>
+
+        <!-- Completed state: the provider hides the current meal header and the
+             status buttons and shows this line instead once the four regular
+             meals are logged. center_vertical keeps it centered against the
+             48dp icon when the box on the left is hidden. -->
+        <LinearLayout
+            android:id="@+id/layoutWidgetMealCompleted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/txtWidgetMealCompleted"
+                style="@style/widgetTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/widget_meals_completed" />
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_marginStart="4dp"
+                android:contentDescription="@string/completed"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_check" />
         </LinearLayout>
     </LinearLayout>
 
