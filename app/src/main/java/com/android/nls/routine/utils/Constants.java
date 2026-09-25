@@ -11,6 +11,7 @@ public class Constants {
     public static final String MEAL_SELECTION_REQUIRED = "Please select a meal option!";
     public static final String CUSTOM_MEAL_INVALID_TEXT = "Please enter the meal name!";
     public static final String CUSTOM_MEAL_OBSERVATION_REQUIRED = "Please enter an observation for irregular meals!";
+    public static final String MEAL_OBSERVATION_REQUIRED = "Please enter an observation!";
     public static final String CARD_BANK_INVALID_TEXT = "Please enter the bank name!";
     public static final String CARD_LAST_FOUR_INVALID_TEXT = "Please enter the last four digits!";
     public static final String CARD_CLOSING_DAY_INVALID_TEXT = "Please enter a valid closing day (1-31)!";
@@ -63,6 +64,14 @@ public class Constants {
     public static final String WARNING_MEAL = "WARNING_MEAL";
     public static final String WRONG_MEAL = "WRONG_MEAL";
     public static final String OTHER_MEAL = "OTHER_MEAL";
+    /**
+     * Observation stored when a warning/wrong meal is logged from the widget:
+     * the widget has no dialog to ask for a description, so the meal is marked
+     * with this value and the home screen offers to describe it when the app
+     * is opened. The marker is never shown as a note - it reads as an empty
+     * observation everywhere else.
+     */
+    public static final String WIDGET_MEAL_OBSERVATION = "WIDGET";
     public static final String BREAKFAST = "Breakfast";
     public static final String LUNCH = "Lunch";
     public static final String TEA = "Tea";

@@ -88,6 +88,10 @@ public class HomeActivity extends AppCompatActivity {
         // Covers what happened while the app was away: water added on the widget
         // itself and the day rolling over at midnight
         WidgetCombinedProvider.refresh(this);
+        // Warning/wrong meals logged on the widget carry no description - there
+        // is no dialog there to ask for one -, so the card offers to describe
+        // them the moment the screen comes back to the front
+        mHomeCardMealService.showMissingObservationPrompt(this::onMealChanged);
     }
 
     private void startUIComponents() {

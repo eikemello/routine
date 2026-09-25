@@ -53,7 +53,7 @@
     <string name="weekly_spent_default">Spent: -</string>
     <string name="weekly_meals_default">Meals: -</string>
     <string name="weekly_water_achieved">Water: %1$d out of %2$d days</string>
-    <string name="weekly_spent">Spent: $%1$.2f</string>
+    <string name="weekly_spent">Spent: R$%1$.2f</string>
     <string name="weekly_meals">Meals: %1$d correct, %2$d warning and %3$d wrong</string>
     <string name="previous_month">Previous month</string>
     <string name="next_month">Next month</string>
@@ -69,7 +69,7 @@
     <string name="water_sum">Total: %1$d ml</string>
     <string name="meal_record">%1$s %2$s - %3$s</string>
     <string name="meal_record_with_obs">%1$s %2$s - %3$s : %4$s</string>
-    <string name="expense_sum">$%1$.2f</string>
+    <string name="expense_sum">R$%1$.2f</string>
     <string name="history_menu">History</string>
     <string name="legend_good">Good</string>
     <string name="legend_warning">Warning</string>
@@ -123,7 +123,6 @@
     <string name="meal_record_edit_title">Edit meal</string>
     <string name="meal_record_delete_title">Remove meal</string>
     <string name="meal_record_delete_message">Remove this %1$s meal logged at %2$s?</string>
-    <!-- Histories of the simple cards (workout, medication, supplement): one value per day -->
     <string name="workout_history">Today workout history</string>
     <string name="medication_history">Today medication history</string>
     <string name="supplement_history">Today supplement history</string>
@@ -142,6 +141,8 @@
     <string name="not_allowed">Not allowed</string>
     <string name="other">Other</string>
     <string name="add_an_observation">you can add an observation</string>
+    <string name="meal_observation_missing_title">Meal without description</string>
+    <string name="meal_observation_missing_message">You saved %1$s as %2$s from the widget without a description. Do you want to add one now?</string>
     <string name="add_different_meal">Add different meal</string>
     <string name="different_meal_name">meal name</string>
     <string name="score_percentage_good">%1$d%% Good</string>
@@ -160,23 +161,21 @@
     <string name="gt"><![CDATA[>]]></string>
     <string name="gt2"><![CDATA[<]]></string>
 
-    <!-- Combined water + meal widget (home screen) -->
-    <string name="widget_water_meal_label">Water &amp; Meal</string>
-    <string name="widget_water_meal_description">Add water and log a meal as correct, warning or wrong</string>
+    <!-- Widget -->
+    <string name="widget_combined_label">Water &amp; Meal</string>
+    <string name="widget_combined_description">Add water and log a meal as correct, warning or wrong</string>
     <string name="widget_water_total">%1$d</string>
     <string name="widget_water_goal">/%1$.0f ml</string>
+    <string name="widget_water_completed">%1$.0f ml completed</string>
     <string name="widget_add_water_amount">+ %1$.0f</string>
-    <!-- Sample values, only used to preview the widget in the launcher picker -->
     <string name="widget_water_preview_total" translatable="false">1250</string>
     <string name="widget_water_preview_goal" translatable="false">/2500 ml</string>
+    <string name="widget_water_preview_completed" translatable="false">3000 ml completed</string>
     <string name="widget_water_preview_button_50" translatable="false">+ 50</string>
     <string name="widget_water_preview_button_100" translatable="false">+ 100</string>
     <string name="widget_water_preview_button_250" translatable="false">+ 250</string>
-    <!-- Meals logged today against the four daily slots (1/4, 2/4, ...) -->
-    <string name="widget_meal_count">%1$d/4</string>
-    <string name="widget_meal_preview_count" translatable="false">1/4</string>
-    <!-- Expenses summary -->
+    <string name="widget_meals_completed">4 meals added</string>
     <string name="widget_expense_preview_last" translatable="false">Last: Starbucks</string>
-    <string name="widget_expense_preview_total" translatable="false">$12.50</string>
+    <string name="widget_expense_preview_total" translatable="false">R$12.50</string>
     <string name="widget_expense_no_data">No expenses recorded yet</string>
 </resources>

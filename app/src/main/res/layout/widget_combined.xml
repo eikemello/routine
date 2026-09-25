@@ -2,9 +2,17 @@
   Combined home screen widget: the water card on top of the meal card, so both
   can be used without opening the app. Each section copies the cards of the
   home screen: the icon alone on the left, with the progress component, the
-  numbers (today's total against the goal, or the four-slot segments and the
-  day's "x/4" count) and the three buttons grouped in the same box on its
-  right, and a view line separating the two functionalities.
+  numbers (today's total against the daily goal) and the buttons grouped in
+  the same box on its right, and a view line separating the two
+  functionalities. Once a section is completed - the daily water goal reached,
+  or the four regular meals logged - the provider hides the progress component
+  and the buttons and shows a compact completed line with a check instead.
+
+  The meal row shows one button per regular slot, gray while the slot is empty
+  and tinted with the status color of the meal already logged today; tapping
+  one swaps the row to the Correct / Warning / Wrong chooser of that slot,
+  which returns to the four buttons once a status is chosen. A tap always logs
+  the tapped slot, never the slot of the current time of day.
 
   It is rendered through RemoteViews, so it only uses framework views and the
   concrete color resources of the app (no Material components): a widget is
@@ -47,6 +55,7 @@
             android:orientation="vertical">
 
             <RelativeLayout
+                android:id="@+id/layoutWidgetWaterProgress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -83,6 +92,7 @@
             </RelativeLayout>
 
             <LinearLayout
+                android:id="@+id/layoutWidgetWaterButtons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -115,6 +125,36 @@
                     android:text="@string/widget_water_preview_button_250" />
             </LinearLayout>
         </LinearLayout>
+
+        <!-- Completed state: the provider hides the progress component and the
+             buttons and shows this line instead once the daily goal is
+             reached. center_vertical keeps it centered against the 48dp icon
+             when the box on the left is hidden. -->
+        <LinearLayout
+            android:id="@+id/layoutWidgetWaterCompleted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/txtWidgetWaterCompleted"
+                style="@style/widgetTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/widget_water_preview_completed" />
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_marginStart="4dp"
+                android:contentDescription="@string/completed"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_check" />
+        </LinearLayout>
     </LinearLayout>
 
     <!-- View line separating the two functionalities: water above, meals below.
@@ -128,8 +168,11 @@
 
     <!-- ===================== MEAL SECTION ===================== -->
     <!-- Copy of the home meal card, with the same pattern as the water section:
-         the icon alone on the left, the four segments with the day's "x/4"
-         count and the three status buttons in the box on its right. -->
+         the icon alone on the left and, in the box on its right, the button
+         row: the four meal slots normally (gray, or the status color once
+         logged), the Correct / Warning / Wrong chooser for the tapped slot
+         while it is being logged. A tap always logs the tapped slot, never the
+         slot of the current time of day. -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -148,83 +191,67 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <!-- One segment per daily slot (Breakfast, Lunch, Tea, Dinner, left to
-                     right): translucent until the slot is logged, then filled with the
-                     status color of that meal. The provider swaps the drawable of every
-                     segment, so the sources here are only the preview starting state. -->
-                <LinearLayout
-                    android:layout_width="317dp"
-                    android:layout_height="6dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_toStartOf="@+id/txtWidgetMealCount"
-                    android:orientation="horizontal"
-                    android:weightSum="4">
-
-                    <ImageView
-                        android:id="@+id/imgWidgetMealSegment1"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginEnd="2dp"
-                        android:layout_weight="1"
-                        android:contentDescription="@string/breakfast"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/widget_meal_segment_correct" />
-
-                    <ImageView
-                        android:id="@+id/imgWidgetMealSegment2"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginEnd="2dp"
-                        android:layout_weight="1"
-                        android:contentDescription="@string/lunch"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/progress_segment_background" />
-
-                    <ImageView
-                        android:id="@+id/imgWidgetMealSegment3"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginEnd="2dp"
-                        android:layout_weight="1"
-                        android:contentDescription="@string/tea"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/progress_segment_background" />
-
-                    <ImageView
-                        android:id="@+id/imgWidgetMealSegment4"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:contentDescription="@string/dinner"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/progress_segment_background" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/txtWidgetMealCount"
-                    style="@style/widgetTotal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginTop="4dp"
-                    android:text="@string/widget_meal_preview_count" />
-            </RelativeLayout>
-
+            <!-- The four regular meal slots, one button each: gray while the
+                 slot is empty, tinted with the status color of the meal already
+                 logged today (the provider swaps the colors). Tapping one
+                 switches the row to the status chooser below. -->
             <LinearLayout
+                android:id="@+id/layoutWidgetMealMeals"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/btnWidgetMealBreakfast"
+                    style="@style/widgetButton.Meal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="4dp"
+                    android:contentDescription="@string/breakfast"
+                    android:text="@string/breakfast" />
+
+                <TextView
+                    android:id="@+id/btnWidgetMealLunch"
+                    style="@style/widgetButton.Meal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="4dp"
+                    android:contentDescription="@string/lunch"
+                    android:text="@string/lunch" />
+
+                <TextView
+                    android:id="@+id/btnWidgetMealTea"
+                    style="@style/widgetButton.Meal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="4dp"
+                    android:contentDescription="@string/tea"
+                    android:text="@string/tea" />
+
+                <TextView
+                    android:id="@+id/btnWidgetMealDinner"
+                    style="@style/widgetButton.Meal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:contentDescription="@string/dinner"
+                    android:text="@string/dinner" />
+            </LinearLayout>
+
+            <!-- Status chooser: replaces the meal buttons for the tapped slot
+                 and is hidden again once a status is saved -->
+            <LinearLayout
+                android:id="@+id/layoutWidgetMealStatuses"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone" >
 
                 <TextView
                     android:id="@+id/btnWidgetCorrectMeal"
@@ -252,6 +279,36 @@
                     android:contentDescription="@string/wrong_meal"
                     android:text="@string/wrong_meal" />
             </LinearLayout>
+        </LinearLayout>
+
+        <!-- Completed state: the provider hides the current meal header and the
+             status buttons and shows this line instead once the four regular
+             meals are logged. center_vertical keeps it centered against the
+             48dp icon when the box on the left is hidden. -->
+        <LinearLayout
+            android:id="@+id/layoutWidgetMealCompleted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/txtWidgetMealCompleted"
+                style="@style/widgetTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/widget_meals_completed" />
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_marginStart="4dp"
+                android:contentDescription="@string/completed"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_check" />
         </LinearLayout>
     </LinearLayout>
 
