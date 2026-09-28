@@ -1,6 +1,6 @@
 # Routine — one app to track your water, meals, workouts and spending
 
-**Rotta** is an Android app for tracking daily habits and health: water intake, meal quality, workout/medication/supplement routines, and expenses. It listens to bank notifications (Nubank, Itaú, Bradesco, XP, Inter) to automatically record expenses, lets you log each meal with a quality status, and summarizes your performance with a weighted daily score on a history calendar.
+**Rotta** is an Android app for tracking daily habits and health: water intake, meal quality, workout/medication/supplement routines, and expenses. It listens to bank notifications (Nubank, Itaú, Bradesco, XP, Inter, BTG) to automatically record expenses, lets you log each meal with a quality status, and summarizes your performance with a weighted daily score on a history calendar.
 
 ## Features
 
@@ -29,7 +29,7 @@
 
 ### 💳 Automatic Expense Tracking
 - **Notification Listener Service** detects bank notifications and automatically records expenses
-- Supported banks: **Nubank**, **Itaú**, **Bradesco**, **XP**, **Inter**
+- Supported banks: **Nubank**, **Itaú**, **Bradesco**, **XP**, **Inter**, **BTG**
 - **Multiple credit cards**: configure bank name, last four digits and the statement closing day for each card
 - Spending is measured **per card inside its own statement cycle** (the cycle that started on the card's closing day)
 - When no card is configured, a single global cycle is used (fallback closing day configurable)
@@ -129,3 +129,4 @@ The app requires **Notification Access** to detect bank expense notifications. I
 | Bradesco | `bradesco` |
 | XP | `xp` |
 | Inter | `inter` |
+| BTG | `btg` |

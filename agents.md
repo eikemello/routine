@@ -30,7 +30,7 @@ The app also features a history calendar that visually summarizes daily performa
 - `com.android.nls.routine.database`: `DatabaseHelper` (schema v6, singleton with reference counting).
 - `com.android.nls.routine.listener`: `NotificationListener` — the background `NotificationListenerService`.
 - `com.android.nls.routine.model`: Java record POJOs (`WaterRecord`, `MealRecord`, `ExpenseRecord`, `TrackerRecord`, `Tracker`, `TrackerType` enum, `CreditCard`, `CardSpending`, `ExpenseCardSummary`, `WeeklySummary`, `DayDetails`, `DayStatus`, `DayStatusInfo`).
-- `com.android.nls.routine.parser`: `BankDetector`, `NotificationTextExtractor`, and the `Parser` interface with one implementation per bank (Nubank, Itaú, Bradesco, XP, Inter).
+- `com.android.nls.routine.parser`: `BankDetector`, `NotificationTextExtractor`, and the `Parser` interface with one implementation per bank (Nubank, Itaú, Bradesco, XP, Inter, BTG).
 - `com.android.nls.routine.repository`: DAO layer — `WaterRepository`, `MealRepository`, `ExpenseRepository`, `ConfigRepository`, `TrackerRepository`, `CardRepository`.
 - `com.android.nls.routine.service`: Business logic — `HomeService`, the home card services (`HomeCardWaterService`, `HomeCardMealService`, `HomeCardExpenseService`), `HistoryService` and `ConfigService`; the calendar pieces live in `service.calendar` and the card history panel in `cardhistory`.
 - `com.android.nls.routine.cardhistory`: Everything a home card needs to open its history panel — `CardHistory` (the contract each card implements), `CardHistoryDialog` (the shared panel renderer), `CardRecordDialog` (the per-record edit/remove dialogs), `DynamicCardHistory` (the single `CardHistory` implementation that answers for the simple cards) and `DynamicCardHistoryService` (the service that backs them).
@@ -53,7 +53,7 @@ The app also features a history calendar that visually summarizes daily performa
 - **`DatabaseHelper`**: Manages the "Routine" SQLite database (schema **v6**). A singleton obtained via `getInstance()` with a **reference-counting scheme**: each repository calls `acquire()` in its constructor and must call `release()` in its `closeDb()`; the database is closed (and the instance nulled) only when the last holder releases. `onUpgrade` applies migrations in order, guarded by version checks.
 - **`NotificationListener`**: The background service that intercepts bank notifications and delegates to `BankDetector`.
 - **`BankDetector`**: Matches the notification package against the known bank identifiers and dispatches to the right `Parser` implementation.
-- **`Parser` & implementations**: Handle the regex/text extraction for Nubank, Itaú, Bradesco, XP, and Inter (`NotificationTextExtractor` pulls the raw text out of the `StatusBarNotification`).
+- **`Parser` & implementations**: Handle the regex/text extraction for Nubank, Itaú, Bradesco, XP, Inter, and BTG (`NotificationTextExtractor` pulls the raw text out of the `StatusBarNotification`: title, collapsed text, the expanded `bigText` and the inbox `textLines`, skipping repeated fragments, so a message that only exists in the expanded view is still parsed). Every parser reads the amount with the same pattern - the Brazilian thousand separator included (`R$ 1.234,56`) - and ignores the notifications that are not credit card spending (`estorno`, `cancelada`, `débito`); the parsing rules live in a package-private `parseText()` so they can be unit tested.
 - **`DayScore`**: The central scoring logic (see [Calendar Scoring System](#calendar-scoring-system)). Provides `compute()` (returns a `DayStatus`), `computePercentage()`, and `getBreakdown()` (human-readable score explanation).
 - **`HistoryService`**: Aggregates weekly/monthly summaries and per-day statuses for a date range (`getDayStatusesForRange()`), with a small **LRU cache** for day details.
 - **`HistoryCalendarRenderer` / `DayDetailsRenderer` / `HistoryContext`**: Render the week/month calendar grid (cell colors, selection outline, navigation) and the per-tracker day-details grid; `HistoryContext` bundles the shared history state.
@@ -120,7 +120,7 @@ The same inputs also produce a human-readable breakdown via `DayScore.getBreakdo
 4.  **UI**: Use Material Components and ensure compatibility with the current theme. Keep screen-building logic in renderer-style classes when it grows (see `service.calendar`).
 
 ### When fixing bugs:
-- **Bank Parsing**: If a bank changes its notification format, update the corresponding `Parser` implementation (e.g., `NubankParser`).
+- **Bank Parsing**: If a bank changes its notification format, update the corresponding `Parser` implementation (e.g., `NubankParser`) and its test in `app/src/test/java/com/android/nls/routine/parser` (every parser exposes a package-private `parseText()` for that).
 - **Database**: Since the app uses manual SQL queries, always verify the column names against `Constants` and `DatabaseHelper`.
 - **Dates**: Use the helpers in `Common` (`getStartOfDayInMillis`, `getStartOfWeekInMillis`, `getStartOfExpenseCycleInMillis`, ...). Week calculations explicitly compute Monday and do **not** use `Calendar.set(DAY_OF_WEEK, MONDAY)` because it is locale-dependent.
 

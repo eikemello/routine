@@ -78,15 +78,16 @@ public class Constants {
     public static final String DINNER = "Dinner";
 
     //Bank Detector
+    public static final String BANK_BTG = "btg";
     public static final String BANK_BRADESCO = "bradesco";
     public static final String BANK_INTER = "inter";
     public static final String BANK_ITAU = "itau";
     public static final String BANK_NUBANK = "nubank";
     public static final String BANK_XP = "xp";
     public static final List<String> KNOWN_BANKS = Arrays.asList(
-            BANK_BRADESCO, BANK_INTER, BANK_ITAU, BANK_NUBANK, BANK_XP);
+            BANK_BTG, BANK_BRADESCO, BANK_INTER, BANK_ITAU, BANK_NUBANK, BANK_XP);
     public static final List<String> KNOWN_BANK_LABELS = Arrays.asList(
-            "Bradesco", "Inter", "Itau", "Nubank", "XP");
+            "BTG", "Bradesco", "Inter", "Itau", "Nubank", "XP");
 
     //Trackers
     public static final String TABLE_NAME_TRACKERS = "TRACKERS";
