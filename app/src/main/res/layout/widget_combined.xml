@@ -324,10 +324,12 @@
     <!-- ===================== EXPENSE SECTION ===================== -->
     <!-- Copy of the home expense card, but read-only: the icon alone on the
          left and, in the box on its right, the last expense (bank and value)
-         over the total spent this cycle. The eye at the right end toggles
-         whether those values are shown: while hidden the provider paints the
-         masked text in their place, a state kept in the config so it survives
-         every repaint. -->
+         over the total spent this cycle. The eye button at the right end
+         toggles whether those values are shown: while hidden the provider
+         paints the masked text in their place, a state kept in the config so
+         it survives every repaint. The icon rides inside a 48dp box (like the
+         icon alone on the left) because the box is the tap area, which is what
+         makes the eye comfortable to hit on the launcher. -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -376,18 +378,30 @@
                     android:textColor="@color/yellow_dark"
                     android:text="@string/widget_expense_preview_total" />
 
-                <ImageView
+                <!-- The button is the box, not the icon: the icon alone would
+                     leave a tap area smaller than the recommended 48dp. -->
+                <LinearLayout
                     android:id="@+id/btnWidgetExpenseToggle"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="4dp"
+                    android:layout_marginStart="8dp"
                     android:background="@drawable/widget_button_background"
+                    android:clickable="true"
                     android:contentDescription="@string/widget_expense_hide"
-                    android:padding="8dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_eye" />
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/imgWidgetExpenseToggleIcon"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:contentDescription="@string/widget_expense_hide"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_eye" />
+                </LinearLayout>
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>

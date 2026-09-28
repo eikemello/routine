@@ -247,7 +247,7 @@ public class WidgetCombinedProvider extends AppWidgetProvider {
             ExpenseWidgetData expenseData = homeCardExpenseService.getWidgetData(context);
             views.setTextViewText(R.id.txtWidgetExpenseLast, expenseData.lastExpenseText());
             views.setTextViewText(R.id.txtWidgetExpenseTotal, expenseData.totalSpentText());
-            views.setImageViewResource(R.id.btnWidgetExpenseToggle,
+            views.setImageViewResource(R.id.imgWidgetExpenseToggleIcon,
                     expenseData.hidden() ? R.drawable.ic_eye_off : R.drawable.ic_eye);
             views.setContentDescription(R.id.btnWidgetExpenseToggle, context.getString(
                     expenseData.hidden() ? R.string.widget_expense_show : R.string.widget_expense_hide));
