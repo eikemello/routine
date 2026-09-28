@@ -41,6 +41,13 @@ public class BankDetector {
             return new InterParser().parse(sbn);
         }
 
+        Log.d(TAG, "Before BTG check : " + pkg);
+
+        if (pkg.contains(Constants.BANK_BTG) || pkg.contains("pactual")) {
+            Log.d(TAG, "btg pkg detect for > " + pkg);
+            return new BtgParser().parse(sbn);
+        }
+
         return null;
     }
 }

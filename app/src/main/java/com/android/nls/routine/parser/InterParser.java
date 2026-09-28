@@ -9,12 +9,32 @@ import java.util.regex.Pattern;
 public class InterParser implements Parser {
     private static final String BANK_NAME = "Inter";
     private static final String PURCHASE_KEYWORD = "compra";
-    private static final Pattern AMOUNT_PATTERN = Pattern.compile("R\\$\\s*([0-9]+(?:[.,][0-9]{1,2})?)");
+    /**
+     * The amount may carry the Brazilian thousand separator ("R$ 1.234,56"),
+     * so the grouped digits are matched before the plain value alternative
+     * ("R$ 45,90").
+     */
+    private static final Pattern AMOUNT_PATTERN =
+            Pattern.compile("R\\$\\s*([0-9]{1,3}(?:\\.[0-9]{3})+(?:,[0-9]{1,2})?|[0-9]+(?:,[0-9]{1,2})?)", Pattern.CASE_INSENSITIVE);
+    /**
+     * A reversed ("estorno"), cancelled ("compra cancelada") or debit ("compra
+     * no débito") purchase is not credit card spending, so those notifications
+     * are ignored instead of corrupting the card totals.
+     */
+    private static final Pattern IGNORED_PATTERN =
+            Pattern.compile("estorno|cancelad|d[ée]bito", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 
     @Override
     public Expense parse(StatusBarNotification sbn) {
-        String text = NotificationTextExtractor.extractText(sbn);
-        if (!text.toLowerCase().contains(PURCHASE_KEYWORD)) {
+        return parseText(NotificationTextExtractor.extractText(sbn), sbn.getPostTime());
+    }
+
+    /**
+     * Parses the text extracted from the notification. Kept apart from the
+     * notification plumbing so the parsing rules can be unit tested.
+     */
+    Expense parseText(String text, long postTime) {
+        if (text == null || !text.toLowerCase().contains(PURCHASE_KEYWORD)) {
             return null;
         }
 
@@ -23,10 +43,14 @@ public class InterParser implements Parser {
             return null;
         }
 
+        if (IGNORED_PATTERN.matcher(text).find()) {
+            return null;
+        }
+
         double amount = parseAmount(Objects.requireNonNull(matcher.group(1)));
         String description = extractDescription(text);
 
-        return new Expense(amount, description, BANK_NAME, sbn.getPostTime());
+        return new Expense(amount, description, BANK_NAME, postTime);
     }
 
     private String extractDescription(String text) {
@@ -43,6 +67,8 @@ public class InterParser implements Parser {
     }
 
     private double parseAmount(String raw) {
-        return Double.parseDouble(raw.replace(",", "."));
+        // Every dot is a thousand separator ("R$ 1.234,56"); only the comma is
+        // the decimal separator.
+        return Double.parseDouble(raw.replace(".", "").replace(",", "."));
     }
 }
