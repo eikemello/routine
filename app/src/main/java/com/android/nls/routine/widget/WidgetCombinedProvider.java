@@ -28,8 +28,8 @@ import com.android.nls.routine.utils.Constants;
  * gray while the slot is empty, tinted with the status color of the meal
  * already logged today) and the expenses card on top (a
  * read-only summary: icon, the last expense description and the total spent so
- * far this cycle), all in a single widget so they can be seen without opening
- * the app.
+ * far this cycle, plus the eye that hides them behind the masked text), all in
+ * a single widget so they can be seen without opening the app.
  * <p>
  * A completed section collapses: once the daily water goal is reached or the
  * four regular meals are logged, its progress component and buttons are hidden
@@ -40,8 +40,10 @@ import com.android.nls.routine.utils.Constants;
  * progress component, the numbers and the button row grouped in the same box on
  * its right, the water and meal sections separated from each other and the meal
  * and expenses sections separated from each other by a view line. The expenses
- * card has no buttons at all - it does not log, edit or remove expenses (there is
- * no PendingIntent for it), it just reads the current expense totals each time and
+ * card has no button that logs, edits or removes an expense - its only control
+ * is the eye, which flips the hiding of the bank name and of the amounts
+ * (masked text while hidden), a flag kept in the config so it survives every
+ * repaint. It just reads the current expense totals each time and
  * repaints so the widget stays in sync with the home card behind it.
  * <p>
  * A widget is rendered through RemoteViews, so a button cannot have a click
@@ -104,6 +106,10 @@ public class WidgetCombinedProvider extends AppWidgetProvider {
     /** No meal slot chosen: the row shows the four meal buttons. */
     private static final int NO_MEAL_SELECTED = -1;
 
+    // ===== EXPENSE =====
+    public static final String ACTION_TOGGLE_EXPENSE_VISIBILITY =
+            "com.android.nls.routine.action.widget.TOGGLE_EXPENSE_VISIBILITY";
+
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         for (int appWidgetId : appWidgetIds) {
@@ -142,6 +148,11 @@ public class WidgetCombinedProvider extends AppWidgetProvider {
             return;
         }
 
+        if (ACTION_TOGGLE_EXPENSE_VISIBILITY.equals(action)) {
+            toggleExpenseVisibility(context);
+            return;
+        }
+
         super.onReceive(context, intent);
     }
 
@@ -166,10 +177,11 @@ public class WidgetCombinedProvider extends AppWidgetProvider {
      * widget id) and reads from the database everything that can change:
      * today's water total, goal and configured button values, the status of
      * each meal slot already logged, and the current expense summary (last
-     * expense and total spent). The water and
-     * meal sections are also switched here between their normal and completed
-     * states, and the meal row between the four meal buttons and the status
-     * chooser of selectedMealIndex (-1 when none).
+     * expense and total spent, or the masked text while the eye of the section
+     * keeps them hidden). The water and meal sections are also switched here
+     * between their normal and completed states, and the meal row between the
+     * four meal buttons and the status chooser of selectedMealIndex (-1 when
+     * none).
      */
     private static RemoteViews buildRemoteViews(Context context, int appWidgetId, int selectedMealIndex) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_combined);
@@ -229,12 +241,18 @@ public class WidgetCombinedProvider extends AppWidgetProvider {
             homeCardMealService.closeDb();
         }
 
-        // Expense summary
+        // Expense summary: the values (masked while they are hidden) and the eye
         HomeCardExpenseService homeCardExpenseService = new HomeCardExpenseService(context);
         try {
             ExpenseWidgetData expenseData = homeCardExpenseService.getWidgetData(context);
             views.setTextViewText(R.id.txtWidgetExpenseLast, expenseData.lastExpenseText());
             views.setTextViewText(R.id.txtWidgetExpenseTotal, expenseData.totalSpentText());
+            views.setImageViewResource(R.id.btnWidgetExpenseToggle,
+                    expenseData.hidden() ? R.drawable.ic_eye_off : R.drawable.ic_eye);
+            views.setContentDescription(R.id.btnWidgetExpenseToggle, context.getString(
+                    expenseData.hidden() ? R.string.widget_expense_show : R.string.widget_expense_hide));
+            views.setOnClickPendingIntent(R.id.btnWidgetExpenseToggle,
+                    buildToggleExpenseVisibilityPendingIntent(context));
         } finally {
             homeCardExpenseService.closeDb();
         }
@@ -413,5 +431,39 @@ public class WidgetCombinedProvider extends AppWidgetProvider {
             }
         }
         return true;
+    }
+
+    /**
+     * One pending intent per widget for the eye of the expense section: tapping
+     * it flips the hiding of the values and repaints the widgets, which is what
+     * swaps the bank name and the amounts for the masked text. The data URI
+     * keeps it apart from the other widget actions.
+     */
+    private static PendingIntent buildToggleExpenseVisibilityPendingIntent(Context context) {
+        Intent intent = new Intent(context, WidgetCombinedProvider.class)
+                .setAction(ACTION_TOGGLE_EXPENSE_VISIBILITY)
+                .setData(Uri.parse("routine://widget/expense/visibility"));
+
+        return PendingIntent.getBroadcast(context, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+    }
+
+    /**
+     * Flips the hiding of the expense values (the eye) and repaints the widgets
+     * - hidden reads as the masked text instead of the bank name and the
+     * amounts. The state lives in the config, so it survives every repaint,
+     * unlike the meal chooser, which lasts a single repaint.
+     */
+    private static void toggleExpenseVisibility(Context context) {
+        HomeCardExpenseService homeCardExpenseService = new HomeCardExpenseService(context);
+
+        try {
+            homeCardExpenseService.toggleWidgetExpenseHidden();
+            Log.d(TAG, "Toggled the expense values of the widget");
+        } finally {
+            homeCardExpenseService.closeDb();
+        }
+
+        refresh(context);
     }
 }

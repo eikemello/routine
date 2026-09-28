@@ -72,6 +72,21 @@ public class ConfigRepository {
         return getConfigValue(Constants.COLUMN_NAME_CARD_STATEMENT_CLOSING, Constants.DEFAULT_CARD_STATEMENT_CLOSING);
     }
 
+    /**
+     * Whether the widget shows the masked text instead of the expense values
+     * (the eye of the expense section). Stored as "1" while hidden, so a row
+     * that never toggled it - or a null column after the v7 migration - reads
+     * as visible.
+     */
+    public boolean isWidgetExpenseHidden() {
+        return getConfigValue(Constants.COLUMN_NAME_WIDGET_EXPENSE_HIDDEN,
+                Constants.DEFAULT_WIDGET_EXPENSE_HIDDEN) > 0;
+    }
+
+    public void saveWidgetExpenseHidden(boolean hidden) {
+        saveConfigValue(Constants.COLUMN_NAME_WIDGET_EXPENSE_HIDDEN, hidden ? "1" : "0");
+    }
+
     public double getConfigValue(String columnName, double defaultValue) {
         String query = "SELECT " + columnName +
                 " FROM " + Constants.TABLE_NAME_USER_CONFIG;

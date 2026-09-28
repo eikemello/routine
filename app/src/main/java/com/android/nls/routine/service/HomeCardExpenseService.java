@@ -111,6 +111,19 @@ public class HomeCardExpenseService implements CardHistory {
         return mExpenseRepository.getLastExpenseRecord();
     }
 
+    /**
+     * Whether the widget is showing the masked text instead of the bank name
+     * and the amounts (the eye of the expense section).
+     */
+    public boolean isWidgetExpenseHidden() {
+        return mConfigRepository.isWidgetExpenseHidden();
+    }
+
+    /** Flips the hiding of the expense values on the widget: the eye toggle. */
+    public void toggleWidgetExpenseHidden() {
+        mConfigRepository.saveWidgetExpenseHidden(!isWidgetExpenseHidden());
+    }
+
     public void showDailyHistoryDialog(Runnable onChanged) {
         new CardHistoryDialog(mContext, this).show(onChanged);
     }
@@ -233,6 +246,12 @@ public class HomeCardExpenseService implements CardHistory {
         return 1;
     }
 
+    /**
+     * Everything the widget needs to paint the expense section: the last
+     * expense (bank and value), the total spent this cycle and whether the
+     * values are hidden (the eye). While hidden both texts are the masked
+     * symbol, so the bank name and the amounts never reach the widget.
+     */
     public ExpenseWidgetData getWidgetData(Context context) {
         ExpenseRecord lastExpense = getLastExpenseRecord();
         String lastExpenseText = context.getString(R.string.widget_expense_no_data);
@@ -244,7 +263,14 @@ public class HomeCardExpenseService implements CardHistory {
         double totalSpent = summary.totalSpent();
         String totalSpentText = context.getString(R.string.expense_sum, totalSpent);
 
-        return new ExpenseWidgetData(lastExpenseText, totalSpentText);
+        boolean hidden = isWidgetExpenseHidden();
+        if (hidden) {
+            String hiddenText = context.getString(R.string.widget_expense_hidden);
+            lastExpenseText = hiddenText;
+            totalSpentText = hiddenText;
+        }
+
+        return new ExpenseWidgetData(lastExpenseText, totalSpentText, hidden);
     }
 
 
