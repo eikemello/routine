@@ -181,4 +181,9 @@
     <string name="widget_expense_hidden">••••••</string>
     <string name="widget_expense_hide">Hide expense values</string>
     <string name="widget_expense_show">Show expense values</string>
+    <string name="widget_tracker_label">Routines</string>
+    <string name="widget_tracker_description">Mark your workout, medication and supplement for the day</string>
+    <string name="widget_tracker_done">Done</string>
+    <string name="widget_tracker_mark_done">Mark %1$s as done</string>
+    <string name="widget_tracker_mark_undone">Mark %1$s as not done</string>
 </resources>

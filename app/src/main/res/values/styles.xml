@@ -335,4 +335,16 @@
         <item name="android:background">@drawable/widget_button_wrong</item>
     </style>
 
+    <!-- The done control of the routines widget: the glass background of the
+         widget buttons, filling the width of the tile under the routine name.
+         While the routine is open the provider shows the label ("Done"); once
+         the day is marked it hides the label and shows the green check inside
+         the same box. The size and auto-sizing text are inherited from
+         widgetButton (the weight is dropped: the label sits in a frame). -->
+    <style name="widgetButton.TrackerDone" parent="widgetButton">
+        <item name="android:layout_weight">0</item>
+        <item name="android:minHeight">28dp</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
 </resources>

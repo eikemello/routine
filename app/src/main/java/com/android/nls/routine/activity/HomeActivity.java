@@ -30,6 +30,7 @@ import com.android.nls.routine.utils.BottomNavHelper;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 import com.android.nls.routine.widget.WidgetCombinedProvider;
+import com.android.nls.routine.widget.WidgetTrackerProvider;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import java.util.List;
@@ -85,9 +86,16 @@ public class HomeActivity extends AppCompatActivity {
         initFields();
         renderTrackerProgress();
         renderTrackerCards();
+
         // Covers what happened while the app was away: water added on the widget
         // itself and the day rolling over at midnight
         WidgetCombinedProvider.refresh(this);
+
+        // The routines widget mirrors the same day from the launcher: it is
+        // repainted on the same occasions, so its tiles never show a routine
+        // marked here as open or the other way around
+        WidgetTrackerProvider.refresh(this);
+
         // Warning/wrong meals logged on the widget carry no description - there
         // is no dialog there to ask for one -, so the card offers to describe
         // them the moment the screen comes back to the front
@@ -335,12 +343,14 @@ public class HomeActivity extends AppCompatActivity {
             TrackerRecord updatedRecord = mTrackerRepository.getTrackerRecordForDay(TrackerType.WORKOUT, System.currentTimeMillis());
             updateStatusCard(txtWorkoutStatus, btnCompleteWorkout, updatedRecord);
             renderTrackerProgress();
+            WidgetTrackerProvider.refresh(this);
         });
 
         card.findViewById(R.id.btnWorkoutHistory).setOnClickListener(v ->
                 mDynamicCardHistoryService.showDailyHistoryDialog(tracker, () -> {
                     refreshSimpleCard(TrackerType.WORKOUT, txtWorkoutStatus, btnCompleteWorkout);
                     renderTrackerProgress();
+                    WidgetTrackerProvider.refresh(this);
                 }));
 
         return card;
@@ -368,12 +378,14 @@ public class HomeActivity extends AppCompatActivity {
             TrackerRecord updatedRecord = mTrackerRepository.getTrackerRecordForDay(TrackerType.MEDICATION, System.currentTimeMillis());
             updateStatusCard(txtMedicationStatus, btnMarkMedicationTaken, updatedRecord);
             renderTrackerProgress();
+            WidgetTrackerProvider.refresh(this);
         });
 
         card.findViewById(R.id.btnMedicationHistory).setOnClickListener(v ->
                 mDynamicCardHistoryService.showDailyHistoryDialog(tracker, () -> {
                     refreshSimpleCard(TrackerType.MEDICATION, txtMedicationStatus, btnMarkMedicationTaken);
                     renderTrackerProgress();
+                    WidgetTrackerProvider.refresh(this);
                 }));
 
         return card;
@@ -409,12 +421,14 @@ public class HomeActivity extends AppCompatActivity {
             TrackerRecord updatedRecord = mTrackerRepository.getTrackerRecordForDay(TrackerType.SUPPLEMENT, System.currentTimeMillis());
             updateStatusCard(txtSupplementStatus, btnMarkSupplementTaken, updatedRecord);
             renderTrackerProgress();
+            WidgetTrackerProvider.refresh(this);
         });
 
         card.findViewById(R.id.btnSupplementHistory).setOnClickListener(v ->
                 mDynamicCardHistoryService.showDailyHistoryDialog(tracker, () -> {
                     refreshSimpleCard(TrackerType.SUPPLEMENT, txtSupplementStatus, btnMarkSupplementTaken);
                     renderTrackerProgress();
+                    WidgetTrackerProvider.refresh(this);
                 }));
 
         return card;

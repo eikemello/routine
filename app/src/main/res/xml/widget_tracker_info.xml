@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  Definition of the routines widget: one tile per enabled routine tracker
+  (workout, medication and supplement), one per row, each one marking the day
+  done or not done in place - the same toggle of the home cards, straight from
+  the launcher.
+
+  How the size works: a launcher places widgets on a grid of cells, so the size
+  is expressed in cells and the launcher translates it to dp.
+  - targetCellWidth/targetCellHeight are the size used by launchers on
+    Android 12+ (2 columns by 3 rows here: one row per routine, a row for
+    each of the three routines of the app).
+  - minWidth/minHeight are the same size in dp, using the formula launchers rely
+    on (70dp * cells - 30dp): minWidth = 70*2 - 30 = 110dp,
+    minHeight = 70*3 - 30 = 180dp.
+  - minResizeWidth/minResizeHeight are the floor of a resize: 2 columns by 2
+    rows, the smallest size where the name still fits beside the icon box;
+    below that the text would be cut again.
+  - resizeMode allows resizing in both directions. The card of tiles hugs its
+    rows and centers in the cell (a hidden routine collapses with its row, see
+    the layout), so a bigger cell just adds room around it.
+  - updatePeriodMillis keeps the tiles on the day shown: the launcher asks for an
+    update at most every 30 minutes (the smallest interval allowed), which is
+    also what rolls the widget over to the new day after midnight.
+  - previewLayout makes the picker show the real widget instead of an image.
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/widget_tracker_description"
+    android:initialLayout="@layout/widget_tracker"
+    android:minHeight="180dp"
+    android:minResizeHeight="110dp"
+    android:minResizeWidth="110dp"
+    android:minWidth="110dp"
+    android:previewLayout="@layout/widget_tracker"
+    android:resizeMode="horizontal|vertical"
+    android:targetCellHeight="3"
+    android:targetCellWidth="2"
+    android:updatePeriodMillis="1800000"
+    android:widgetCategory="home_screen" />

@@ -27,11 +27,11 @@
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widgetWaterMealRoot"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/widget_background"
     android:orientation="vertical"
-    android:padding="10dp">
+    android:padding="12dp">
 
     <!-- ===================== WATER SECTION ===================== -->
     <!-- Copy of the home water card: the icon alone on the left, everything
