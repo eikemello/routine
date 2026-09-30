@@ -9,7 +9,8 @@
     alone on the left, with the progress component, the numbers and the
     button row grouped in the same box on its right for water and meal, the
     three sections separated by view lines; the meal row swaps between the four
-    slot buttons and the Correct / Warning / Wrong chooser, and a completed
+    slot buttons and the Correct / Warning / Wrong chooser, the expense card
+    shows its values masked while the eye of the section is off, and a completed
     section collapses to a compact line with a check).
   - minWidth/minHeight are the same size in dp, using the formula launchers rely
     on (70dp * cells - 30dp): minWidth = 70*4 - 30 = 250dp,

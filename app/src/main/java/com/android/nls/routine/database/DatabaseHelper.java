@@ -10,7 +10,7 @@ import com.android.nls.routine.utils.Constants;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = Common.generateTag(DatabaseHelper.class);
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 7;
     private static final String DATABASE_NAME = "Routine";
     private static DatabaseHelper sInstance;
     private static int sReferenceCount = 0;
@@ -64,6 +64,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // The app has not been released yet. Migrations are applied in order,
         // each one guarded by a version check.
+        if (oldVersion < 7) {
+            // The flag that keeps the expense values hidden on the widget.
+            // Rows that never toggled it stay null, which reads as visible.
+            db.execSQL("ALTER TABLE " + Constants.TABLE_NAME_USER_CONFIG + " ADD COLUMN " +
+                    Constants.COLUMN_NAME_WIDGET_EXPENSE_HIDDEN + " TEXT");
+        }
     }
 
     private void createIndexes(SQLiteDatabase db) {
@@ -123,7 +129,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         Constants.COLUMN_NAME_BTN_2_ADD_WATER + " TEXT," +
                         Constants.COLUMN_NAME_BTN_3_ADD_WATER + " TEXT," +
                         Constants.COLUMN_NAME_MONTHLY_LIMIT + " TEXT," +
-                        Constants.COLUMN_NAME_CARD_STATEMENT_CLOSING + " TEXT)";
+                        Constants.COLUMN_NAME_CARD_STATEMENT_CLOSING + " TEXT," +
+                        Constants.COLUMN_NAME_WIDGET_EXPENSE_HIDDEN + " TEXT)";
 
         private static final String SQL_CREATE_ENTRIES_EXPENSE_TEST =
                 "CREATE TABLE " + Constants.TABLE_NAME_EXPENSE_TEST + " (" +
