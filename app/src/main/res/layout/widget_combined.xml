@@ -387,7 +387,6 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="8dp"
-                    android:background="@drawable/widget_button_background"
                     android:clickable="true"
                     android:contentDescription="@string/widget_expense_hide"
                     android:focusable="true"
