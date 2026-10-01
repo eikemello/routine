@@ -6,26 +6,24 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <!-- The visible card: it hugs the rows of tiles plus a small padding, so a
-         widget showing fewer routines draws a smaller card and the leftover
-         space stays transparent. Each row holds a single tile, which takes the
-         whole width of the card. -->
-    <LinearLayout
+    <GridLayout
         android:id="@+id/widgetTrackerCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/widget_background"
-        android:gravity="center"
-        android:orientation="vertical"
+        android:columnCount="2"
         android:padding="12dp">
 
         <!-- Tile of the first enabled routine: the tracker in its icon box, the
              configured name beside it and the Done control the provider fills. -->
         <LinearLayout
             android:id="@+id/layoutWidgetTrackerSlot1"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_columnWeight="1"
             android:layout_margin="3dp"
+            android:layout_row="0"
             android:background="@drawable/icon_background"
             android:gravity="center_vertical"
             android:minWidth="125dp"
@@ -95,12 +93,15 @@
             </FrameLayout>
         </LinearLayout>
 
-        <!-- Tile of the second enabled routine -->
+        <!-- Tile of the second enabled routine: the top right cell. -->
         <LinearLayout
             android:id="@+id/layoutWidgetTrackerSlot2"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_columnWeight="1"
             android:layout_margin="3dp"
+            android:layout_row="0"
             android:background="@drawable/icon_background"
             android:gravity="center_vertical"
             android:minWidth="125dp"
@@ -167,12 +168,15 @@
             </FrameLayout>
         </LinearLayout>
 
-        <!-- Tile of the third enabled routine -->
+        <!-- Tile of the third enabled routine: the cell under the first one. -->
         <LinearLayout
             android:id="@+id/layoutWidgetTrackerSlot3"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_columnWeight="1"
             android:layout_margin="3dp"
+            android:layout_row="1"
             android:background="@drawable/icon_background"
             android:gravity="center_vertical"
             android:minWidth="125dp"
@@ -239,5 +243,5 @@
                     android:visibility="gone" />
             </FrameLayout>
         </LinearLayout>
-    </LinearLayout>
+    </GridLayout>
 </LinearLayout>

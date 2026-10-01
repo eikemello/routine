@@ -23,8 +23,8 @@ import java.util.List;
 /**
  * Routines home screen widget: one tile per enabled routine tracker (workout,
  * medication and supplement - the trackers with a simple done/not-done state of
- * the day) stacked one per row, so the routine of the day can be marked
- * without opening the app.
+ * the day) filling a 2x2 grid, two tiles side by side at most and two rows at
+ * most, so the routine of the day can be marked without opening the app.
  * <p>
  * Each tile mirrors the matching home card: the tracker icon in its colored box,
  * the configured name and the Done control under them. While the routine is open
@@ -37,11 +37,13 @@ import java.util.List;
  * panel offer.
  * <p>
  * The tiles follow the enabled trackers, so the widget only shows the routines
- * the user kept on: the slots without a routine stay hidden and their rows
- * collapse with them. Each row holds a single tile, which gives the name beside
- * the icon the whole width of the widget - two tiles per row left too little
- * room for the text, which was cut even after the widget was expanded. The
- * visible card (see the layout) hugs the rows of tiles and a small padding
+ * the user kept on: the slots without a routine stay hidden and their cells
+ * collapse with them. The tiles fill a 2x2 grid, in the order the home screen
+ * shows the routines - first on the top left, second on the top right, third
+ * under the first -, so two routines sit side by side and the grid never grows
+ * past the two rows (with a single routine enabled the lone tile takes the
+ * whole card). The visible card (see the layout) hugs the grid of tiles
+ * and a small padding
  * instead of filling the whole cell, so a widget with fewer routines draws a
  * smaller card centered in the cell - hidden entirely when no routine is
  * enabled at all. Like the combined widget, the provider is
@@ -69,8 +71,9 @@ public class WidgetTrackerProvider extends AppWidgetProvider {
     };
 
     /**
-     * One tile per routine, one per row; the slots without one stay hidden. The
-     * layout carries one slot per routine, so the count follows the routines.
+     * One tile per routine, filling the grid in order; the slots without one
+     * stay hidden. The layout carries one slot per routine, so the count
+     * follows the routines.
      */
     private static final int SLOT_COUNT = ROUTINE_TRACKERS.length;
     private static final int[] SLOT_IDS = {
