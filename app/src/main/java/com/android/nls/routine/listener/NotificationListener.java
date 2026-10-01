@@ -28,7 +28,7 @@ public class NotificationListener extends NotificationListenerService {
         }
 
         try {
-            Expense expense = mBankDetector.detect(sbn);
+            Expense expense = mBankDetector.detect(this, sbn);
             if (expense != null) {
                 Log.d(Constants.TAG, "Detected expense: " + expense);
                 mHomeCardExpenseService.saveExpenseTest(expense);
