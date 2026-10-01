@@ -1,5 +1,6 @@
 package com.android.nls.routine.parser;
 
+import android.content.Context;
 import android.service.notification.StatusBarNotification;
 import com.android.nls.routine.model.Expense;
 import java.util.Objects;
@@ -25,8 +26,8 @@ public class InterParser implements Parser {
             Pattern.compile("estorno|cancelad|d[ée]bito", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 
     @Override
-    public Expense parse(StatusBarNotification sbn) {
-        return parseText(NotificationTextExtractor.extractText(sbn), sbn.getPostTime());
+    public Expense parse(Context context, StatusBarNotification sbn) {
+        return parseText(NotificationTextExtractor.extractText(context, sbn), sbn.getPostTime());
     }
 
     /**
