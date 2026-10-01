@@ -19,6 +19,7 @@ import com.android.nls.routine.model.TrackerType;
 import com.android.nls.routine.repository.TrackerRepository;
 import com.android.nls.routine.utils.BottomNavHelper;
 import com.android.nls.routine.utils.Common;
+import com.android.nls.routine.widget.WidgetTrackerProvider;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
@@ -111,12 +112,17 @@ public class TrackerConfigActivity extends AppCompatActivity {
         checkBox.setChecked(tracker.enabled());
         checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked && requiresConfig(tracker.type())) {
+
                 // Revert checkbox immediately - the tracker should only be enabled
                 // and saved when the user clicks "Save" in the config dialog
                 buttonView.setChecked(false);
                 showTrackerConfigDialog(tracker);
             } else {
                 mTrackerRepository.setTrackerEnabled(tracker.type(), isChecked);
+
+                // The routines widget shows one tile per enabled routine, so it is
+                // repainted every time a tracker is turned on or off
+                WidgetTrackerProvider.refresh(this);
             }
         });
         return checkBox;
@@ -170,6 +176,9 @@ public class TrackerConfigActivity extends AppCompatActivity {
             mTrackerRepository.setTrackerEnabled(tracker.type(), true);
             dialog.dismiss();
             renderTrackerList();
+
+            // A medication/supplement just configured and enabled becomes a tile
+            WidgetTrackerProvider.refresh(this);
         });
     }
 

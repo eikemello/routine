@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widgetTrackerRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <GridLayout
+        android:id="@+id/widgetTrackerCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/widget_background"
+        android:columnCount="2"
+        android:padding="12dp">
+
+        <!-- Tile of the first enabled routine: the tracker in its icon box, the
+             configured name beside it and the Done control the provider fills. -->
+        <LinearLayout
+            android:id="@+id/layoutWidgetTrackerSlot1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_columnWeight="1"
+            android:layout_margin="3dp"
+            android:layout_row="0"
+            android:background="@drawable/icon_background"
+            android:gravity="center_vertical"
+            android:minWidth="125dp"
+            android:orientation="vertical"
+            android:padding="6dp">
+
+            <!-- The icon box and the configured name: the name takes the whole
+                 width left of the icon, so it is not cut. -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imgWidgetTrackerIcon1"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/icon_background_purple"
+                    android:contentDescription="@string/workout"
+                    android:padding="6dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_workout" />
+
+                <TextView
+                    android:id="@+id/txtWidgetTrackerName1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:autoSizeMaxTextSize="10sp"
+                    android:autoSizeMinTextSize="8sp"
+                    android:autoSizeStepGranularity="1sp"
+                    android:ellipsize="end"
+                    android:text="@string/workout"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/btnWidgetTrackerDone1"
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:layout_marginTop="3dp"
+                android:background="@drawable/widget_button_background"
+                android:clickable="true"
+                android:contentDescription="@string/workout"
+                android:focusable="true"
+                android:padding="2dp">
+
+                <TextView
+                    android:id="@+id/txtWidgetTrackerDone1"
+                    style="@style/widgetButton.TrackerDone"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:importantForAccessibility="no"
+                    android:text="@string/widget_tracker_done" />
+
+                <ImageView
+                    android:id="@+id/imgWidgetTrackerCheck1"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_check"
+                    android:visibility="gone" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <!-- Tile of the second enabled routine: the top right cell. -->
+        <LinearLayout
+            android:id="@+id/layoutWidgetTrackerSlot2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_columnWeight="1"
+            android:layout_margin="3dp"
+            android:layout_row="0"
+            android:background="@drawable/icon_background"
+            android:gravity="center_vertical"
+            android:minWidth="125dp"
+            android:orientation="vertical"
+            android:padding="6dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imgWidgetTrackerIcon2"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/icon_background_pink"
+                    android:contentDescription="@string/medication"
+                    android:padding="6dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_medication" />
+
+                <TextView
+                    android:id="@+id/txtWidgetTrackerName2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:autoSizeMaxTextSize="10sp"
+                    android:autoSizeMinTextSize="8sp"
+                    android:autoSizeStepGranularity="1sp"
+                    android:text="@string/medication"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/btnWidgetTrackerDone2"
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:layout_marginTop="3dp"
+                android:background="@drawable/widget_button_background"
+                android:clickable="true"
+                android:contentDescription="@string/medication"
+                android:focusable="true"
+                android:padding="2dp">
+
+                <TextView
+                    android:id="@+id/txtWidgetTrackerDone2"
+                    style="@style/widgetButton.TrackerDone"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:importantForAccessibility="no"
+                    android:text="@string/widget_tracker_done" />
+
+                <ImageView
+                    android:id="@+id/imgWidgetTrackerCheck2"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_check"
+                    android:visibility="gone" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <!-- Tile of the third enabled routine: the cell under the first one. -->
+        <LinearLayout
+            android:id="@+id/layoutWidgetTrackerSlot3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_columnWeight="1"
+            android:layout_margin="3dp"
+            android:layout_row="1"
+            android:background="@drawable/icon_background"
+            android:gravity="center_vertical"
+            android:minWidth="125dp"
+            android:orientation="vertical"
+            android:padding="6dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imgWidgetTrackerIcon3"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/icon_background_cyan"
+                    android:contentDescription="@string/supplement"
+                    android:padding="6dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_supplement" />
+
+                <TextView
+                    android:id="@+id/txtWidgetTrackerName3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:autoSizeMaxTextSize="10sp"
+                    android:autoSizeMinTextSize="8sp"
+                    android:autoSizeStepGranularity="1sp"
+                    android:ellipsize="end"
+                    android:text="@string/supplement"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/btnWidgetTrackerDone3"
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:layout_marginTop="3dp"
+                android:background="@drawable/widget_button_background"
+                android:clickable="true"
+                android:contentDescription="@string/supplement"
+                android:focusable="true"
+                android:padding="2dp">
+
+                <TextView
+                    android:id="@+id/txtWidgetTrackerDone3"
+                    style="@style/widgetButton.TrackerDone"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:importantForAccessibility="no"
+                    android:text="@string/widget_tracker_done" />
+
+                <ImageView
+                    android:id="@+id/imgWidgetTrackerCheck3"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_check"
+                    android:visibility="gone" />
+            </FrameLayout>
+        </LinearLayout>
+    </GridLayout>
+</LinearLayout>

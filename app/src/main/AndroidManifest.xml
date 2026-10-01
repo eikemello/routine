@@ -62,6 +62,26 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_combined_info" />
         </receiver>
+
+        <!-- Routines home screen widget: a 2x3 grid with one tile per enabled
+             routine tracker (workout, medication, supplement), each one marking
+             the day done or not done in place; the tiles of the disabled
+             routines stay hidden. Not exported, like the combined widget: the
+             launcher gets to it through the system (explicit APPWIDGET_UPDATE
+             broadcasts) and through this app's own PendingIntents. -->
+        <receiver
+            android:name=".widget.WidgetTrackerProvider"
+            android:exported="false"
+            android:label="@string/widget_tracker_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.android.nls.routine.action.widget.TOGGLE_TRACKER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_tracker_info" />
+        </receiver>
     </application>
 
 </manifest>
