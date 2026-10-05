@@ -40,8 +40,8 @@
 
                 <ImageView
                     android:id="@+id/imgWidgetTrackerIcon1"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:background="@drawable/icon_background_purple"
                     android:contentDescription="@string/workout"
                     android:padding="6dp"
@@ -116,8 +116,8 @@
 
                 <ImageView
                     android:id="@+id/imgWidgetTrackerIcon2"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:background="@drawable/icon_background_pink"
                     android:contentDescription="@string/medication"
                     android:padding="6dp"
@@ -191,8 +191,8 @@
 
                 <ImageView
                     android:id="@+id/imgWidgetTrackerIcon3"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:background="@drawable/icon_background_cyan"
                     android:contentDescription="@string/supplement"
                     android:padding="6dp"
