@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Value chip of a list row (All data): an opaque white pill tinted at
+     runtime with a soft wash of the status color of the value (Correct /
+     Warning / Wrong, Completed, Enabled, ...) or with the neutral glass of
+     the app when the value carries no status, like the tinted score pill of
+     the History screen. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/white" />
+    <corners android:radius="10dp" />
+</shape>

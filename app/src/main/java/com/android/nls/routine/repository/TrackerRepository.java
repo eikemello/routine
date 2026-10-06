@@ -214,6 +214,42 @@ public class TrackerRepository {
     }
 
     /**
+     * Returns every tracker record (any type) within the given time range,
+     * ordered by timestamp ascending. Used by the All data screen, which lists
+     * the whole table instead of one tracker at a time.
+     */
+    public List<TrackerRecord> getAllTrackerRecords(long start, long end) {
+        List<TrackerRecord> records = new ArrayList<>();
+
+        String query = "SELECT " + Constants.COLUMN_NAME_TRACKER_RECORD_TYPE + "," +
+                Constants.COLUMN_NAME_TRACKER_RECORD_COMPLETED + "," +
+                Constants.COLUMN_NAME_TRACKER_RECORD_NOTE + "," +
+                Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP +
+                " FROM " + Constants.TABLE_NAME_TRACKER_RECORDS +
+                " WHERE " + Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " >= ? AND " +
+                Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " <= ?" +
+                " ORDER BY " + Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " ASC";
+
+        try (Cursor cursor = mSqliteDatabase.rawQuery(query,
+                new String[]{String.valueOf(start), String.valueOf(end)})) {
+            while (cursor.moveToNext()) {
+                TrackerType recordType = toTrackerType(cursor.getString(0));
+                if (recordType == null) {
+                    continue; // skip unknown/corrupted type rows
+                }
+                boolean completed = cursor.getInt(1) == 1;
+                String note = cursor.getString(2);
+                long timestamp = cursor.getLong(3);
+                records.add(new TrackerRecord(0, recordType, completed, note, timestamp));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting all tracker records: " + e.getMessage());
+        }
+
+        return records;
+    }
+
+    /**
      * Returns the tracker completion status per day within the given time range.
      * The map keys are the start-of-day timestamps (local timezone).
      * The inner map keys are tracker types, values are whether they were completed.

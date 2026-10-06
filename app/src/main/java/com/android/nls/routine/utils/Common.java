@@ -103,22 +103,22 @@ public class Common {
     }
 
     public static String getDateFromTimestamp(long timestamp) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d", Locale.ENGLISH);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d", Locale.getDefault());
         return dateFormat.format(new Date(timestamp));
     }
 
     public static String getMonthYearFromTimestamp(long timestamp) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy", Locale.ENGLISH);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
         return dateFormat.format(new Date(timestamp));
     }
 
     public static String getAbbreviatedMonthFromTimestamp(long timestamp) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM", Locale.ENGLISH);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM", Locale.getDefault());
         return dateFormat.format(new Date(timestamp));
     }
 
     public static String getAbbreviatedMonthYearFromTimestamp(long timestamp) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM yyyy", Locale.ENGLISH);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM yyyy", Locale.getDefault());
         return dateFormat.format(new Date(timestamp));
     }
 
@@ -133,8 +133,25 @@ public class Common {
         return timestamp;
     }
 
+    /**
+     * Returns the "HH:mm" time of a timestamp in epoch millis.
+     */
+    public static String getTimeFromTimestamp(long timestamp) {
+        SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        return outputFormat.format(new Date(timestamp));
+    }
+
+    /**
+     * Returns the short day label ("10/06/2026"), used by the All data screen
+     * to group records of every year by day.
+     */
+    public static String getDateWithYearFromTimestamp(long timestamp) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        return dateFormat.format(new Date(timestamp));
+    }
+
     public static String getWeekDay() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d", Locale.ENGLISH);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d", Locale.getDefault());
         return dateFormat.format(new Date());
     }
 
