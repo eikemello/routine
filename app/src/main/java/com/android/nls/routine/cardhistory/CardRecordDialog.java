@@ -5,7 +5,10 @@ import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -25,11 +28,103 @@ import java.util.List;
  * dialog_background, the fields with their error message and the Remove/Save
  * plus Cancel buttons - so it lives here once, beside {@link CardHistoryDialog},
  * and a card only answers with the texts and with what the typed amount means to
- * it (millilitres, currency, ...).
+ * it (millilitres, currency ...)
  */
 public final class CardRecordDialog {
 
     private CardRecordDialog() {
+    }
+
+    /** A label/value pair shown inside the details dialog of an all-data record. */
+    public record DetailField(String label, String value) {}
+
+    /** Callback invoked when the user asks to edit one record of the All data list. */
+    @FunctionalInterface
+    public interface RecordEditor {
+        /** The renderer opens the editor of the tapped record and refreshes the list. */
+        void edit();
+    }
+
+    /** Callback invoked when the user asks to remove one record of the All data list. */
+    @FunctionalInterface
+    public interface RecordRemover {
+        /** The renderer deletes the tapped record and refreshes the list. */
+        void remove();
+    }
+
+    /**
+     * Shows the full data of one record of the All data screen: a scrollable list of
+     * label/value pairs plus an optional Edit and an optional Remove action at the top.
+     * The Edit action is hidden when {@code onEdit} is null; same for Remove with
+     * {@code onRemove}. Closing the dialog goes back to the list unchanged.
+     *
+     * @param titleRes title of the dialog
+     * @param fields   label/value pairs shown in full (the description/note that is
+     *                 ellipsized in the card, for instance)
+     * @param onEdit   callback for the Edit action, or null to hide it
+     * @param onRemove callback for the Remove action, or null to hide it
+     */
+    public static void showRecordDetails(Context context,
+                                         @StringRes int titleRes,
+                                         List<DetailField> fields,
+                                         RecordEditor onEdit,
+                                         RecordRemover onRemove) {
+        View content = LayoutInflater.from(context).inflate(
+                R.layout.dialog_record_details, new FrameLayout(context), false);
+
+        LinearLayout actions = content.findViewById(R.id.rlDetailsActions);
+        TextView btnEdit = content.findViewById(R.id.btnDetailsEdit);
+        TextView btnRemove = content.findViewById(R.id.btnDetailsRemove);
+        ScrollView scroll = content.findViewById(R.id.svDetails);
+        LinearLayout fieldsContainer = content.findViewById(R.id.llDetailsFields);
+
+        // Create the dialog first so the Edit/Remove lambdas below can capture it.
+        AlertDialog dialog = new MaterialAlertDialogBuilder(context)
+                .setTitle(titleRes)
+                .setView(content)
+                .setNegativeButton(context.getString(R.string.close_label), null)
+                .setCancelable(true)
+                .create();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(AppCompatResources.getDrawable(context, R.drawable.dialog_background));
+        }
+
+        // Top action row: Edit / Remove icons only when the caller offers them.
+        boolean hasEdit = onEdit != null;
+        boolean hasRemove = onRemove != null;
+        if (!hasEdit && !hasRemove) {
+            actions.setVisibility(View.GONE);
+        } else {
+            if (hasEdit) {
+                btnEdit.setOnClickListener(v -> {
+                    dialog.dismiss();
+                    onEdit.edit();
+                });
+            } else {
+                btnEdit.setVisibility(View.GONE);
+            }
+            if (hasRemove) {
+                btnRemove.setOnClickListener(v -> {
+                    dialog.dismiss();
+                    onRemove.remove();
+                });
+            } else {
+                btnRemove.setVisibility(View.GONE);
+            }
+        }
+
+        for (DetailField field : fields) {
+            View row = LayoutInflater.from(context).inflate(
+                    R.layout.dialog_record_detail_row, fieldsContainer, false);
+            TextView lbl = row.findViewById(R.id.txtDetailLabel);
+            TextView val = row.findViewById(R.id.txtDetailValue);
+            lbl.setText(field.label());
+            val.setText(field.value());
+            fieldsContainer.addView(row);
+        }
+
+        dialog.show();
     }
 
     /** Saves the amount typed in the editor of a record. */

@@ -46,7 +46,7 @@ public class ConfigActivity extends AppCompatActivity {
 
         startUIComponents();
         setupButtonListeners();
-        BottomNavHelper.setup(this, R.id.nav_config);
+        BottomNavHelper.setup(this, R.id.nav_menu);
     }
 
     @Override

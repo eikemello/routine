@@ -176,6 +176,22 @@ public class TrackerRepository {
         }
     }
 
+    /** Updates the completed state and note of one tracker record by its id. */
+    public void updateTrackerRecord(long rowId, boolean completed, String note) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Constants.COLUMN_NAME_TRACKER_RECORD_COMPLETED, completed ? 1 : 0);
+        contentValues.put(Constants.COLUMN_NAME_TRACKER_RECORD_NOTE, note);
+
+        String selection = BaseColumns._ID + " = ?";
+        int rows = mSqliteDatabase.update(Constants.TABLE_NAME_TRACKER_RECORDS,
+                contentValues, selection, new String[]{String.valueOf(rowId)});
+        Log.d(TAG, "Updated tracker record ID " + rowId + ". Rows: " + rows);
+
+        if (rows == 0) {
+            Log.e(TAG, "Failed to update tracker record ID " + rowId);
+        }
+    }
+
     /**
      * Returns all tracker records for a given type within the given time range,
      * ordered by timestamp ascending.
@@ -208,6 +224,46 @@ public class TrackerRepository {
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting tracker records " + type + ": " + e.getMessage());
+        }
+
+        return records;
+    }
+
+    /**
+     * Returns every tracker record (any type) within the given time range,
+     * ordered by timestamp ascending. Used by the All data screen, which lists
+     * the whole table instead of one tracker at a time.
+     */
+    public List<TrackerRecord> getAllTrackerRecords(long start, long end) {
+        List<TrackerRecord> records = new ArrayList<>();
+
+        // The _ID is required: the All data screen edits and removes a routine
+        // record by its id, so a placeholder id would never match a row.
+        String query = "SELECT " + BaseColumns._ID + "," +
+                Constants.COLUMN_NAME_TRACKER_RECORD_TYPE + "," +
+                Constants.COLUMN_NAME_TRACKER_RECORD_COMPLETED + "," +
+                Constants.COLUMN_NAME_TRACKER_RECORD_NOTE + "," +
+                Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP +
+                " FROM " + Constants.TABLE_NAME_TRACKER_RECORDS +
+                " WHERE " + Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " >= ? AND " +
+                Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " <= ?" +
+                " ORDER BY " + Constants.COLUMN_NAME_TRACKER_RECORD_TIMESTAMP + " ASC";
+
+        try (Cursor cursor = mSqliteDatabase.rawQuery(query,
+                new String[]{String.valueOf(start), String.valueOf(end)})) {
+            while (cursor.moveToNext()) {
+                TrackerType recordType = toTrackerType(cursor.getString(1));
+                if (recordType == null) {
+                    continue; // skip unknown/corrupted type rows
+                }
+                long id = cursor.getLong(0);
+                boolean completed = cursor.getInt(2) == 1;
+                String note = cursor.getString(3);
+                long timestamp = cursor.getLong(4);
+                records.add(new TrackerRecord(id, recordType, completed, note, timestamp));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting all tracker records: " + e.getMessage());
         }
 
         return records;

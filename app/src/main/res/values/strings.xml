@@ -186,4 +186,51 @@
     <string name="widget_tracker_done">Done</string>
     <string name="widget_tracker_mark_done">Mark %1$s as done</string>
     <string name="widget_tracker_mark_undone">Mark %1$s as not done</string>
-</resources>
+
+    <!-- Bottom menu (the former Config tab) -->
+    <string name="menu">Menu</string>
+
+    <!-- All data screen: one single list of every record with a search box
+         and type filter chips on top (the History screen keeps the calendar) -->
+    <string name="all_data">All data</string>
+    <string name="all_data_filter_all">All</string>
+    <string name="all_data_search_hint">Search food, amount, note</string>
+    <string name="all_data_results_count">%1$d results</string>
+    <string name="all_data_no_records">No records yet</string>
+    <string name="all_data_no_matches">No records match your filters</string>
+    <string name="all_data_no_cards">No cards added</string>
+    <string name="all_data_enabled">Enabled</string>
+    <string name="all_data_disabled">Disabled</string>
+    <string name="meals">Meals</string>
+    <string name="routines">Routines</string>
+
+    <!-- All data filter buttons (date range, category and type) -->
+    <string name="all_data_date_range">Date range</string>
+    <string name="all_data_date_all">All dates</string>
+    <string name="all_data_date_today">Today</string>
+    <string name="all_data_date_last_7_days">Last 7 days</string>
+    <string name="all_data_date_last_30_days">Last 30 days</string>
+    <string name="all_data_date_this_month">This month</string>
+    <string name="all_data_date_custom">Custom…</string>
+    <string name="all_data_date_custom_range">%1$s – %2$s</string>
+    <string name="all_data_date_pick_title">Select period</string>
+    <string name="all_data_category">Category</string>
+    <string name="all_data_category_all">All categories</string>
+    <string name="all_data_category_other_meals">Other meals</string>
+    <string name="all_data_category_no_bank">No bank</string>
+    <string name="all_data_type">Type</string>
+    <string name="all_data_type_all">All types</string>
+
+    <!-- Full data popup of an All data record -->
+    <string name="record_details_title">Record details</string>
+    <string name="detail">Detail</string>
+    <string name="value">Value</string>
+    <string name="note">Note</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="description">Description</string>
+
+    <!-- Remove confirmation of an All data record -->
+    <string name="record_remove_title">Remove record</string>
+    <string name="record_remove_message">Remove %1$s?</string>
+</resources>

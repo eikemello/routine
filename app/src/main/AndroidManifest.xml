@@ -43,6 +43,9 @@
         <activity
             android:name=".activity.HistoryActivity"
             android:exported="false" />
+        <activity
+            android:name=".activity.AllDataActivity"
+            android:exported="false" />
 
         <!-- Combined home screen widget: water, meal and expense.
              All in a single 4x3 widget. Not exported: the

@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class Common {
 
@@ -103,22 +104,22 @@ public class Common {
     }
 
     public static String getDateFromTimestamp(long timestamp) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d", Locale.ENGLISH);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d", Locale.getDefault());
         return dateFormat.format(new Date(timestamp));
     }
 
     public static String getMonthYearFromTimestamp(long timestamp) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy", Locale.ENGLISH);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
         return dateFormat.format(new Date(timestamp));
     }
 
     public static String getAbbreviatedMonthFromTimestamp(long timestamp) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM", Locale.ENGLISH);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM", Locale.getDefault());
         return dateFormat.format(new Date(timestamp));
     }
 
     public static String getAbbreviatedMonthYearFromTimestamp(long timestamp) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM yyyy", Locale.ENGLISH);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM yyyy", Locale.getDefault());
         return dateFormat.format(new Date(timestamp));
     }
 
@@ -133,8 +134,25 @@ public class Common {
         return timestamp;
     }
 
+    /**
+     * Returns the "HH:mm" time of a timestamp in epoch millis.
+     */
+    public static String getTimeFromTimestamp(long timestamp) {
+        SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        return outputFormat.format(new Date(timestamp));
+    }
+
+    /**
+     * Returns the short day label ("10/06/2026"), used by the All data screen
+     * to group records of every year by day.
+     */
+    public static String getDateWithYearFromTimestamp(long timestamp) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        return dateFormat.format(new Date(timestamp));
+    }
+
     public static String getWeekDay() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d", Locale.ENGLISH);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d", Locale.getDefault());
         return dateFormat.format(new Date());
     }
 
@@ -149,6 +167,42 @@ public class Common {
         } else {
             return Constants.GREETINGS.get(2);
         }
+    }
+
+    /**
+     * Start of the local day {@code days} days before today (0 is today),
+     * moving by calendar days so a DST change does not shift the result.
+     */
+    public static long getStartOfDayDaysAgoInMillis(int days) {
+        Calendar calendar = new GregorianCalendar();
+        calendar.add(Calendar.DAY_OF_MONTH, -days);
+        return getStartOfDayInMillis(calendar.getTimeInMillis());
+    }
+
+    /** Start of the first local day of the current month. */
+    public static long getStartOfMonthInMillis() {
+        Calendar calendar = new GregorianCalendar();
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        return getStartOfDayInMillis(calendar.getTimeInMillis());
+    }
+
+    /**
+     * Converts a date picked in a MaterialDatePicker - which answers with the
+     * UTC midnight of the chosen day - into the start of that same calendar
+     * day in the local time zone.
+     */
+    public static long getLocalStartOfDayFromUtcDate(long utcMillis) {
+        Calendar utc = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        utc.setTimeInMillis(utcMillis);
+        Calendar local = new GregorianCalendar(
+                utc.get(Calendar.YEAR), utc.get(Calendar.MONTH), utc.get(Calendar.DAY_OF_MONTH));
+        return local.getTimeInMillis();
+    }
+
+    /** Returns the short "dd/MM" label of a timestamp, used by date range buttons. */
+    public static String getDayMonthFromTimestamp(long timestamp) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM", Locale.getDefault());
+        return dateFormat.format(new Date(timestamp));
     }
 
     public static int dpToPx(Context context, int dp) {

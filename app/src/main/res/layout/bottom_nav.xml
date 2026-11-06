@@ -94,26 +94,26 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/nav_config"
+        android:id="@+id/nav_menu"
         style="@style/bottomNavItem"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true">
 
         <ImageView
-            android:id="@+id/nav_config_icon"
+            android:id="@+id/nav_menu_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:contentDescription="@string/config"
-            android:src="@drawable/ic_config"
+            android:contentDescription="@string/menu"
+            android:src="@drawable/ic_menu"
             app:tint="@color/bottom_nav_item_color" />
 
         <TextView
-            android:id="@+id/nav_config_text"
+            android:id="@+id/nav_menu_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="@string/config"
+            android:text="@string/menu"
             android:textColor="@color/bottom_nav_item_color"
             android:textSize="10sp"
             android:textStyle="bold" />
