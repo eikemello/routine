@@ -203,4 +203,34 @@
     <string name="all_data_disabled">Disabled</string>
     <string name="meals">Meals</string>
     <string name="routines">Routines</string>
-</resources>
+
+    <!-- All data filter buttons (date range, category and type) -->
+    <string name="all_data_date_range">Date range</string>
+    <string name="all_data_date_all">All dates</string>
+    <string name="all_data_date_today">Today</string>
+    <string name="all_data_date_last_7_days">Last 7 days</string>
+    <string name="all_data_date_last_30_days">Last 30 days</string>
+    <string name="all_data_date_this_month">This month</string>
+    <string name="all_data_date_custom">Custom…</string>
+    <string name="all_data_date_custom_range">%1$s – %2$s</string>
+    <string name="all_data_date_pick_title">Select period</string>
+    <string name="all_data_category">Category</string>
+    <string name="all_data_category_all">All categories</string>
+    <string name="all_data_category_other_meals">Other meals</string>
+    <string name="all_data_category_no_bank">No bank</string>
+    <string name="all_data_type">Type</string>
+    <string name="all_data_type_all">All types</string>
+
+    <!-- Full data popup of an All data record -->
+    <string name="record_details_title">Record details</string>
+    <string name="detail">Detail</string>
+    <string name="value">Value</string>
+    <string name="note">Note</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="description">Description</string>
+
+    <!-- Remove confirmation of an All data record -->
+    <string name="record_remove_title">Remove record</string>
+    <string name="record_remove_message">Remove %1$s?</string>
+</resources>

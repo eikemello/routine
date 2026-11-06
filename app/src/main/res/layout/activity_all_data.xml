@@ -45,10 +45,13 @@
 
                     <TextView
                         android:id="@+id/txtDateRange"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="Date range"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="@string/all_data_date_range"
                         android:textColor="@color/white"
                         android:textSize="12sp" />
 
@@ -86,10 +89,13 @@
 
                     <TextView
                         android:id="@+id/txtCategory"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="Category"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="@string/all_data_category"
                         android:textColor="@color/white"
                         android:textSize="12sp" />
 
@@ -127,9 +133,13 @@
 
                     <TextView
                         android:id="@+id/txtType"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Type"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="@string/all_data_type"
                         android:textColor="@color/white"
                         android:textSize="12sp" />
 

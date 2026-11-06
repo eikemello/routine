@@ -86,6 +86,36 @@ public class AllDataService {
                 totalWater, totalMeals, totalExpenses, totalRoutines);
     }
 
+    /** Removes one meal record by its database id. */
+    public void deleteMeal(long rowId) {
+        mMealRepository.deleteMeal(rowId);
+    }
+
+    /** Updates one meal record in place, keeping its id and timestamp. */
+    public void updateMeal(long rowId, String status, String observation, long timestamp) {
+        mMealRepository.updateMeal(rowId, status, observation, timestamp);
+    }
+
+    /** Removes one expense record by its database id. */
+    public void deleteExpense(int id) {
+        mExpenseRepository.deleteExpense(id);
+    }
+
+    /** Updates one expense record in place, keeping its id and timestamp. */
+    public void updateExpense(int id, double amount, String bank) {
+        mExpenseRepository.updateExpense(id, amount, bank);
+    }
+
+    /** Removes one tracker record by its database id. */
+    public void deleteTrackerRecord(long rowId) {
+        mTrackerRepository.deleteTrackerRecord(rowId);
+    }
+
+    /** Updates the completed state and note of one tracker record by its database id. */
+    public void updateTrackerRecord(long rowId, boolean completed, String note) {
+        mTrackerRepository.updateTrackerRecord(rowId, completed, note);
+    }
+
     public void closeDb() {
         mWaterRepository.closeDb();
         mMealRepository.closeDb();
