@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A small block drawn straight on the background (All data summary
+     tiles): the card surface with the card corner. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/surface_1" />
+    <corners android:radius="18dp" />
+</shape>

@@ -83,23 +83,23 @@ public class ConfigService {
     }
 
     private void setDailyWater(String value, TextView txtDailyWater) {
-        saveConfigValue(Constants.COLUMN_NAME_DAILY_WATER, value, txtDailyWater, R.string.water_default_value_init);
+        saveConfigValue(Constants.COLUMN_NAME_DAILY_WATER, value, txtDailyWater, R.string.daily_water_ml);
     }
 
     private void setFirstBtnValue(String value, TextView txtDefaultBtn1) {
-        saveConfigValue(Constants.COLUMN_NAME_BTN_1_ADD_WATER, value, txtDefaultBtn1, R.string.water_default_value_init);
+        saveConfigValue(Constants.COLUMN_NAME_BTN_1_ADD_WATER, value, txtDefaultBtn1, R.string.daily_water_ml);
     }
 
     private void setSecondBtnValue(String value, TextView txtDefaultBtn2) {
-        saveConfigValue(Constants.COLUMN_NAME_BTN_2_ADD_WATER, value, txtDefaultBtn2, R.string.water_default_value_init);
+        saveConfigValue(Constants.COLUMN_NAME_BTN_2_ADD_WATER, value, txtDefaultBtn2, R.string.daily_water_ml);
     }
 
     private void setThirdBtnValue(String value, TextView txtDefaultBtn3) {
-        saveConfigValue(Constants.COLUMN_NAME_BTN_3_ADD_WATER, value, txtDefaultBtn3, R.string.water_default_value_init);
+        saveConfigValue(Constants.COLUMN_NAME_BTN_3_ADD_WATER, value, txtDefaultBtn3, R.string.daily_water_ml);
     }
 
     private void setMonthlyLimit(String value, TextView txtMonthlyLimit) {
-        saveConfigValue(Constants.COLUMN_NAME_MONTHLY_LIMIT, value, txtMonthlyLimit, R.string.total_expense_value_init);
+        saveConfigValue(Constants.COLUMN_NAME_MONTHLY_LIMIT, value, txtMonthlyLimit, R.string.expense_sum);
     }
 
     private void showSaveDialog(String title, View view, TextInputEditText etValue, Consumer<String> saveAction,

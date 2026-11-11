@@ -3,23 +3,25 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingBottom="10dp">
+    android:paddingBottom="14dp">
 
     <TextView
         android:id="@+id/txtDetailLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/text_secondary"
-        android:textSize="11sp"
-        android:textStyle="bold"
-        android:textAllCaps="true" />
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.08"
+        android:textAllCaps="true"
+        android:textColor="@color/text_muted"
+        android:textSize="11sp" />
 
     <TextView
         android:id="@+id/txtDetailValue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:includeFontPadding="false"
         android:textColor="@color/text_primary"
-        android:textSize="14sp"
-        android:includeFontPadding="false" />
+        android:textSize="15sp" />
 
 </LinearLayout>

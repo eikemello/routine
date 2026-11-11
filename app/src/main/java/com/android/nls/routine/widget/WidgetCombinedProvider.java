@@ -343,15 +343,15 @@ public class WidgetCombinedProvider extends AppWidgetProvider {
 
             switch (status) {
                 case Constants.CORRECT_MEAL -> {
-                    textColorRes = R.color.green_dark;
+                    textColorRes = R.color.status_good;
                     backgroundRes = R.drawable.widget_button_correct;
                 }
                 case Constants.WARNING_MEAL -> {
-                    textColorRes = R.color.yellow_dark;
+                    textColorRes = R.color.status_warning;
                     backgroundRes = R.drawable.widget_button_warning;
                 }
                 case Constants.WRONG_MEAL -> {
-                    textColorRes = R.color.red_dark;
+                    textColorRes = R.color.status_bad;
                     backgroundRes = R.drawable.widget_button_wrong;
                 }
                 default -> {

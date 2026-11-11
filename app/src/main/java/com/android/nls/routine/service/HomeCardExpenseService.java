@@ -300,12 +300,12 @@ public class HomeCardExpenseService implements CardHistory {
 
     @Override
     public int getHistoryIconTintRes() {
-        return R.color.neon_orange_40;
+        return R.color.text_muted;
     }
 
     @Override
     public int getHistoryValueColorRes() {
-        return R.color.yellow_dark;
+        return R.color.accent;
     }
 
     public void closeDb() {

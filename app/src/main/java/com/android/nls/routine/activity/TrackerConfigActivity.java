@@ -1,6 +1,8 @@
 package com.android.nls.routine.activity;
 
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,8 +22,8 @@ import com.android.nls.routine.repository.TrackerRepository;
 import com.android.nls.routine.utils.BottomNavHelper;
 import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.widget.WidgetTrackerProvider;
-import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import java.util.List;
@@ -60,9 +62,13 @@ public class TrackerConfigActivity extends AppCompatActivity {
             mTrackerListContainer.addView(createTrackerRow(tracker));
 
             if (i < trackers.size() - 1) {
+                // Inset divider: starts after the icon box, like a grouped list
                 View divider = new View(this);
-                divider.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1));
-                divider.setBackgroundColor(getColor(R.color.background));
+                LinearLayout.LayoutParams dividerParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, Common.dpToPx(this, 1));
+                dividerParams.setMarginStart(Common.dpToPx(this, 68));
+                divider.setLayoutParams(dividerParams);
+                divider.setBackgroundColor(getColor(R.color.outline_subtle));
                 mTrackerListContainer.addView(divider);
             }
         }
@@ -70,7 +76,7 @@ public class TrackerConfigActivity extends AppCompatActivity {
 
     private View createTrackerRow(Tracker tracker) {
         LinearLayout row = new LinearLayout(this);
-        row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Common.dpToPx(this, 56)));
+        row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Common.dpToPx(this, 68)));
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(android.view.Gravity.CENTER_VERTICAL);
         row.setPadding(Common.dpToPx(this, 16), 0, Common.dpToPx(this,16), 0);
@@ -83,9 +89,15 @@ public class TrackerConfigActivity extends AppCompatActivity {
             row.setForeground(selectableBackground);
         }
 
-        // Tracker icon
+        // Tracker icon, in the same tonal box and tint as its home card
         ImageView icon = new ImageView(this);
-        icon.setLayoutParams(new LinearLayout.LayoutParams(Common.dpToPx(this, 24), Common.dpToPx(this,24)));
+        icon.setLayoutParams(new LinearLayout.LayoutParams(Common.dpToPx(this, 40), Common.dpToPx(this, 40)));
+        int iconPadding = Common.dpToPx(this, 9);
+        icon.setPadding(iconPadding, iconPadding, iconPadding, iconPadding);
+        // The same neutral icon box every home card uses: trackers are told
+        // apart by icon and name, color is reserved for status.
+        icon.setBackgroundResource(R.drawable.icon_background);
+        icon.setImageTintList(ColorStateList.valueOf(getColor(R.color.accent)));
         icon.setContentDescription(tracker.name());
         icon.setImageResource(getTrackerIconRes(tracker.type()));
 
@@ -95,10 +107,11 @@ public class TrackerConfigActivity extends AppCompatActivity {
         name.setPadding(Common.dpToPx(this, 12), 0, Common.dpToPx(this,12), 0);
         name.setText(tracker.name());
         name.setTextSize(15);
-        name.setTextColor(getColor(R.color.white));
+        name.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+        name.setTextColor(getColor(R.color.text_primary));
 
-        // Checkbox
-        MaterialCheckBox checkBox = getMaterialCheckBox(tracker);
+        // Enable/disable switch
+        MaterialSwitch checkBox = getEnabledSwitch(tracker);
 
         row.addView(icon);
         row.addView(name);
@@ -107,8 +120,8 @@ public class TrackerConfigActivity extends AppCompatActivity {
         return row;
     }
 
-    private MaterialCheckBox getMaterialCheckBox(Tracker tracker) {
-        MaterialCheckBox checkBox = new MaterialCheckBox(this);
+    private MaterialSwitch getEnabledSwitch(Tracker tracker) {
+        MaterialSwitch checkBox = new MaterialSwitch(this);
         checkBox.setChecked(tracker.enabled());
         checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked && requiresConfig(tracker.type())) {

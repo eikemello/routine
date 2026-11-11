@@ -3,6 +3,7 @@ package com.android.nls.routine.service.calendar;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.android.nls.routine.R;
@@ -12,17 +13,19 @@ import com.android.nls.routine.service.HistoryService;
 import com.android.nls.routine.utils.Common;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.Map;
 
 /**
  * Renders the read-only week preview shown on the home screen below the date:
- * seven day-number squares painted with the same score colors used by the
- * history calendar. Days are purely informative (no click handling).
+ * seven columns, each one the weekday initial over a round day-number cell
+ * painted with the same score colors used by the history calendar. Days are
+ * purely informative (no click handling).
  */
 public class WeekPreviewRenderer {
 
-    private static final int CELL_HEIGHT_DP = 40;
-    private static final int CELL_MARGIN_DP = 2;
+    private static final int CELL_SIZE_DP = 38;
+    private static final int LABEL_GAP_DP = 6;
     private final Context mContext;
     private final LinearLayout mContainer;
     private final HistoryService mHistoryService;
@@ -53,7 +56,38 @@ public class WeekPreviewRenderer {
         }
     }
 
-    private TextView createDayCell(Calendar day, Map<Long, DayStatusInfo> dayStatuses, long todayStart) {
+    /** One column of the strip: the weekday initial above the round day cell. */
+    private View createDayCell(Calendar day, Map<Long, DayStatusInfo> dayStatuses, long todayStart) {
+        long dayStart = Common.getStartOfDayInMillis(day.getTimeInMillis());
+
+        LinearLayout column = new LinearLayout(mContext);
+        column.setOrientation(LinearLayout.VERTICAL);
+        column.setGravity(Gravity.CENTER_HORIZONTAL);
+        column.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+
+        TextView label = new TextView(mContext);
+        label.setText(day.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault())
+                .substring(0, 1).toUpperCase(Locale.getDefault()));
+        label.setTextSize(11);
+        label.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+        label.setTextColor(mContext.getColor(dayStart == todayStart ? R.color.text_primary : R.color.text_muted));
+        label.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        // Wrap the letter (a vertical LinearLayout would stretch it to the
+        // column width and draw it at the start), so the column's gravity
+        // centers it over the circle
+        label.setGravity(Gravity.CENTER);
+        label.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        column.addView(label);
+
+        TextView cell = createDayNumber(day, dayStatuses, todayStart);
+        LinearLayout.LayoutParams cellParams = (LinearLayout.LayoutParams) cell.getLayoutParams();
+        cellParams.topMargin = Common.dpToPx(mContext, LABEL_GAP_DP);
+        column.addView(cell);
+        return column;
+    }
+
+    private TextView createDayNumber(Calendar day, Map<Long, DayStatusInfo> dayStatuses, long todayStart) {
         long dayStart = Common.getStartOfDayInMillis(day.getTimeInMillis());
         DayStatusInfo info = dayStatuses.get(dayStart);
         DayStatus status = info != null ? info.status() : DayStatus.NONE;
@@ -61,9 +95,9 @@ public class WeekPreviewRenderer {
         TextView cell = new TextView(mContext);
         cell.setText(String.valueOf(day.get(Calendar.DAY_OF_MONTH)));
         cell.setGravity(Gravity.CENTER);
-        cell.setTextSize(12);
-        cell.setTypeface(Typeface.DEFAULT_BOLD);
-        cell.setTextColor(mContext.getColor(R.color.white));
+        cell.setTextSize(13);
+        cell.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+        cell.setTextColor(mContext.getColor(CalendarCellStyler.textColorFor(status, dayStart > todayStart)));
         // Spoken label for accessibility (the visible text is just the number).
         cell.setContentDescription(Common.getDateFromTimestamp(day.getTimeInMillis()));
         cell.setLayoutParams(createCellParams());
@@ -76,9 +110,9 @@ public class WeekPreviewRenderer {
         return cell;
     }
 
+    /** A square cell, so the round background draws a circle. */
     private LinearLayout.LayoutParams createCellParams() {
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, Common.dpToPx(mContext, CELL_HEIGHT_DP), 1f);
-        params.setMargins(Common.dpToPx(mContext, CELL_MARGIN_DP), 0, Common.dpToPx(mContext, CELL_MARGIN_DP), 0);
-        return params;
+        int size = Common.dpToPx(mContext, CELL_SIZE_DP);
+        return new LinearLayout.LayoutParams(size, size);
     }
 }

@@ -161,11 +161,11 @@ public class HistoryCalendarRenderer {
                 boolean isFutureDay = cellTimestamp > todayStart;
                 child.setSelected(false);
                 CalendarCellStyler.clearOutline((TextView) child);
-                ((TextView) child).setTextColor(mContext.getColor(R.color.white));
                 DayStatusInfo cellInfo = isFutureDay
                         ? null
                         : mDayStatusCache.get(Common.getStartOfDayInMillis(cellTimestamp));
                 DayStatus cellStatus = cellInfo != null ? cellInfo.status() : DayStatus.NONE;
+                ((TextView) child).setTextColor(mContext.getColor(CalendarCellStyler.textColorFor(cellStatus, isFutureDay)));
                 child.setBackgroundResource(CalendarCellStyler.backgroundResourceFor(cellStatus, cellInfo, isFutureDay));
             }
         }
@@ -245,6 +245,7 @@ public class HistoryCalendarRenderer {
                     : mDayStatusCache.get(Common.getStartOfDayInMillis(dayTimestamp));
             DayStatus dayStatus = info != null ? info.status() : DayStatus.NONE;
             dayCell.setBackgroundResource(CalendarCellStyler.backgroundResourceFor(dayStatus, info, isFutureDay));
+            dayCell.setTextColor(mContext.getColor(CalendarCellStyler.textColorFor(dayStatus, isFutureDay)));
 
             dayCell.setClickable(true);
             dayCell.setFocusable(true);
@@ -286,6 +287,7 @@ public class HistoryCalendarRenderer {
                     : mDayStatusCache.get(Common.getStartOfDayInMillis(dayTimestamp));
             DayStatus dayStatus = info != null ? info.status() : DayStatus.NONE;
             dayCell.setBackgroundResource(CalendarCellStyler.backgroundResourceFor(dayStatus, info, isFutureDay));
+            dayCell.setTextColor(mContext.getColor(CalendarCellStyler.textColorFor(dayStatus, isFutureDay)));
 
             dayCell.setClickable(true);
             dayCell.setFocusable(true);

@@ -1,4 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- History screen: the period summary, the calendar and the selected day
+     (its details grid and score breakdown together in one card). Solid
+     surfaces, round day cells and tonal navigation buttons. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -8,24 +11,25 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="85dp"
         android:clipToPadding="false"
         android:fillViewport="true"
+        android:paddingBottom="112dp"
         android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp"
-            android:paddingBottom="20dp">
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
 
             <TextView
-                style="@style/titleTextView"
+                style="@style/screenTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="56dp"
+                android:layout_marginBottom="8dp"
                 android:text="@string/history" />
 
             <!-- Weekly Summary Card -->
@@ -45,7 +49,7 @@
 
                     <TextView
                         android:id="@+id/txtSummaryTitle"
-                        style="@style/titleTextView"
+                        style="@style/sectionLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/weekly_summary" />
@@ -55,7 +59,7 @@
                         style="@style/subTitleTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="10dp"
                         android:text="@string/weekly_water_default" />
 
                     <TextView
@@ -93,7 +97,7 @@
 
                     <TextView
                         android:id="@+id/txtMonthlyTitle"
-                        style="@style/titleTextView"
+                        style="@style/sectionLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/monthly_summary" />
@@ -103,7 +107,7 @@
                         style="@style/subTitleTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="10dp"
                         android:text="@string/weekly_water_default" />
 
                     <TextView
@@ -139,13 +143,13 @@
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="16dp">
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnPrevMonth"
                             style="@style/buttonTextStyle"
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:layout_alignParentStart="true"
                             android:gravity="center"
                             android:insetLeft="0dp"
@@ -154,8 +158,8 @@
                             android:insetBottom="0dp"
                             android:padding="0dp"
                             android:text="@string/gt2"
-                            android:textSize="20sp"
-                            app:cornerRadius="12dp" />
+                            android:textSize="18sp"
+                            app:cornerRadius="20dp" />
 
                         <TextView
                             android:id="@+id/txtMonthYear"
@@ -163,7 +167,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="1dp"
-                            android:layout_marginTop="8dp"
+                            android:layout_marginTop="9dp"
                             android:layout_marginEnd="1dp"
                             android:layout_toStartOf="@+id/btnNextMonth"
                             android:layout_toEndOf="@+id/btnPrevMonth"
@@ -173,8 +177,8 @@
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnNextMonth"
                             style="@style/buttonTextStyle"
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:layout_alignParentEnd="true"
                             android:gravity="center"
                             android:insetLeft="0dp"
@@ -183,15 +187,15 @@
                             android:insetBottom="0dp"
                             android:padding="0dp"
                             android:text="@string/gt"
-                            android:textSize="20sp"
-                            app:cornerRadius="12dp" />
+                            android:textSize="18sp"
+                            app:cornerRadius="20dp" />
                     </RelativeLayout>
 
                     <!-- Day Headers -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginBottom="8dp"
                         android:orientation="horizontal"
                         android:weightSum="7">
 
@@ -256,12 +260,11 @@
                     <!-- Toggle View Button -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnToggleView"
-                        style="@style/buttonTextStyle"
+                        style="@style/buttonTextStyle.Primary"
                         android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:layout_marginTop="12dp"
-                        android:text="@string/month_view"
-                        android:textSize="12sp" />
+                        android:layout_height="44dp"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/month_view" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
             <!-- Day Details Card -->
@@ -286,24 +289,21 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentStart="true"
-                            android:layout_marginStart="4dp"
-                            android:layout_marginTop="12dp"
-                            android:layout_marginEnd="4dp"
-                            android:layout_toStartOf="@+id/txtPrincipalDayScore"
-                            android:textSize="16sp" />
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="8dp"
+                            android:layout_toStartOf="@+id/txtPrincipalDayScore" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/txtPrincipalDayScore"
                             style="@style/buttonTextStyle"
                             android:layout_width="wrap_content"
-                            android:layout_height="48dp"
+                            android:layout_height="34dp"
                             android:layout_alignParentEnd="true"
-                            android:layout_marginEnd="4dp"
-                            android:insetTop="0dp"
-                            android:insetBottom="0dp"
-                            android:minWidth="60dp"
-                            android:textSize="12sp"
-                            app:cornerRadius="10dp" />
+                            android:minWidth="64dp"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:textSize="13sp"
+                            app:cornerRadius="17dp" />
                     </RelativeLayout>
 
                     <TextView
@@ -319,39 +319,41 @@
                         android:id="@+id/dayDetailsGrid"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="-4dp"
                         android:layout_marginTop="12dp"
+                        android:layout_marginEnd="-4dp"
                         android:columnCount="2"
-                        android:useDefaultMargins="true" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Score Breakdown Card -->
-            <com.google.android.material.card.MaterialCardView
-                style="@style/MaterialCardView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
+                        android:useDefaultMargins="false" />
 
                     <View
-                        android:id="@+id/viewScoreStatus"
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_marginEnd="10dp"
-                        android:background="@drawable/calendar_day_background"
-                        android:visibility="gone" />
+                        style="@style/divider"
+                        android:layout_marginTop="12dp" />
 
-                    <TextView
-                        android:id="@+id/txtScoreBreakdown"
-                        android:layout_width="wrap_content"
+                    <!-- Score breakdown of the selected day -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="13sp" />
+                        android:layout_marginTop="12dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:id="@+id/viewScoreStatus"
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/calendar_day_background"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/txtScoreBreakdown"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:lineSpacingExtra="2dp"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp" />
+                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>

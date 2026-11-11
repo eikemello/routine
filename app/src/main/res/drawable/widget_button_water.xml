@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Quick-add water button of the widget: the neutral tonal fill of the home card water buttons. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/white_20">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/accent_deep" />
+            <corners android:radius="14dp" />
+        </shape>
+    </item>
+</ripple>

@@ -1,37 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Screen background: the solid dark base with one soft white glow at the
+     top, so the cards (surface_1) read as raised layers on top of it. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape>
-            <gradient
-                android:type="linear"
-                android:angle="135"
-                android:startColor="@color/background"
-                android:centerColor="@color/background_secondary"
-                android:endColor="@color/gradient_end" />
+            <solid android:color="@color/background" />
         </shape>
     </item>
-    <item android:gravity="top|end">
+    <item android:gravity="top|start">
         <shape android:shape="oval">
             <gradient
                 android:type="radial"
-                android:gradientRadius="400dp"
-                android:startColor="@color/neon_blue_08"
+                android:gradientRadius="320dp"
+                android:startColor="@color/white_08"
                 android:endColor="@android:color/transparent" />
             <size
-                android:width="500dp"
-                android:height="500dp" />
-        </shape>
-    </item>
-    <item android:gravity="bottom|start">
-        <shape android:shape="oval">
-            <gradient
-                android:type="radial"
-                android:gradientRadius="350dp"
-                android:startColor="@color/neon_purple_06"
-                android:endColor="@android:color/transparent" />
-            <size
-                android:width="450dp"
-                android:height="450dp" />
+                android:width="560dp"
+                android:height="440dp" />
         </shape>
     </item>
 </layer-list>

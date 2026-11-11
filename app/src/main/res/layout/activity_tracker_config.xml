@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Trackers screen: the screen title and one grouped list with a row per
+     tracker (icon box, name and the switch that enables it), filled by
+     TrackerConfigActivity. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,26 +10,37 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="85dp"
+        android:clipToPadding="false"
         android:fillViewport="true"
+        android:paddingBottom="112dp"
         android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
 
             <TextView
-                style="@style/titleTextView"
+                style="@style/screenTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="56dp"
                 android:text="@string/trackers" />
 
+            <TextView
+                style="@style/subTitleTextView.Muted"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="20dp"
+                android:text="@string/trackers_screen_subtitle" />
+
             <com.google.android.material.card.MaterialCardView
-                style="@style/MaterialCardView"
+                style="@style/MaterialCardView.Group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -35,7 +49,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="8dp" />
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp" />
 
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>

@@ -3,13 +3,13 @@ package com.android.nls.routine.utils;
 import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
-import android.widget.PopupMenu;
 import com.android.nls.routine.R;
 import com.android.nls.routine.activity.AllDataActivity;
 import com.android.nls.routine.activity.ConfigActivity;
 import com.android.nls.routine.activity.HistoryActivity;
 import com.android.nls.routine.activity.HomeActivity;
 import com.android.nls.routine.activity.TrackerConfigActivity;
+import java.util.List;
 
 public class BottomNavHelper {
 
@@ -32,27 +32,22 @@ public class BottomNavHelper {
         navHome.setOnClickListener(v -> navigate(activity, HomeActivity.class, R.id.nav_home, selectedItemId));
         navTrackers.setOnClickListener(v -> navigate(activity, TrackerConfigActivity.class, R.id.nav_trackers, selectedItemId));
         navHistory.setOnClickListener(v -> navigate(activity, HistoryActivity.class, R.id.nav_history, selectedItemId));
-        navMenu.setOnClickListener(v -> showMenu(activity, navMenu));
+        navMenu.setOnClickListener(v -> showMenu(activity));
     }
 
     /**
-     * Opens the popup of the menu item: it holds the screens that no longer
-     * have a tab of their own - Config and the full data list (All data).
+     * Opens the side menu of the menu item: it holds the screens that no
+     * longer have a tab of their own - Config and the full data list (All
+     * data) - with the screen already open highlighted.
      */
-    private static void showMenu(Activity activity, View anchor) {
-        PopupMenu popup = new PopupMenu(activity, anchor);
-        popup.inflate(R.menu.bottom_nav_options);
-        popup.setOnMenuItemClickListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.menu_config) {
-                return chooseOption(activity, ConfigActivity.class);
-            }
-            if (itemId == R.id.menu_all_data) {
-                return chooseOption(activity, AllDataActivity.class);
-            }
-            return false;
-        });
-        popup.show();
+    private static void showMenu(Activity activity) {
+        SideMenu.show(activity, List.of(
+                new SideMenu.Option(R.drawable.ic_config, R.string.config,
+                        activity instanceof ConfigActivity,
+                        () -> chooseOption(activity, ConfigActivity.class)),
+                new SideMenu.Option(R.drawable.ic_category, R.string.all_data,
+                        activity instanceof AllDataActivity,
+                        () -> chooseOption(activity, AllDataActivity.class))));
     }
 
     /**

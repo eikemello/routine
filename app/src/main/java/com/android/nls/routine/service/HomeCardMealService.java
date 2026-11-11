@@ -666,12 +666,12 @@ public class HomeCardMealService implements CardHistory {
 
     @Override
     public int getHistoryIconTintRes() {
-        return R.color.neon_green_40;
+        return R.color.text_muted;
     }
 
     @Override
     public int getHistoryValueColorRes() {
-        return R.color.green_dark;
+        return R.color.accent;
     }
 
     public void closeDb() {

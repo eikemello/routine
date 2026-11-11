@@ -82,7 +82,7 @@ public class DynamicCardHistory implements CardHistory {
 
     @Override
     public int getHistoryValueColorRes() {
-        return R.color.green_dark;
+        return R.color.accent;
     }
 
     /**
@@ -141,13 +141,13 @@ public class DynamicCardHistory implements CardHistory {
     private SimpleCardResources resources() {
         return switch (mTracker.type()) {
             case WORKOUT -> new SimpleCardResources(R.string.workout_history, R.string.no_workout_today,
-                    R.drawable.ic_workout, R.color.neon_purple_40, R.string.workout);
+                    R.drawable.ic_workout, R.color.text_muted, R.string.workout);
             case MEDICATION -> new SimpleCardResources(R.string.medication_history, R.string.no_medication_today,
-                    R.drawable.ic_medication, R.color.neon_pink_40, R.string.medication);
+                    R.drawable.ic_medication, R.color.text_muted, R.string.medication);
             case SUPPLEMENT -> new SimpleCardResources(R.string.supplement_history, R.string.no_supplement_today,
-                    R.drawable.ic_supplement, R.color.neon_cyan_40, R.string.supplement);
+                    R.drawable.ic_supplement, R.color.text_muted, R.string.supplement);
             default -> new SimpleCardResources(R.string.simple_card_history, R.string.no_simple_card_today,
-                    R.drawable.ic_workout, R.color.neon_purple_40, R.string.workout);
+                    R.drawable.ic_workout, R.color.text_muted, R.string.workout);
         };
     }
 

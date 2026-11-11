@@ -22,11 +22,13 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRemoveCard"
-            style="@style/buttonTextStyle"
+            style="@style/buttonTextStyle.Wrong"
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:layout_height="36dp"
             android:layout_marginEnd="12dp"
             android:minWidth="0dp"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
             android:text="@string/remove_label"
             android:textSize="12sp" />
     </LinearLayout>
@@ -38,12 +40,12 @@
         android:layout_marginTop="8dp"
         android:hint="@string/bank_name"
         app:boxBackgroundColor="@color/surface_input"
-        app:boxCornerRadiusBottomEnd="12dp"
-        app:boxCornerRadiusBottomStart="12dp"
-        app:boxCornerRadiusTopEnd="12dp"
-        app:boxCornerRadiusTopStart="12dp"
-        app:boxStrokeColor="@color/white_30"
-        app:boxStrokeErrorColor="@color/red_dark"
+        app:boxCornerRadiusBottomEnd="14dp"
+        app:boxCornerRadiusBottomStart="14dp"
+        app:boxCornerRadiusTopEnd="14dp"
+        app:boxCornerRadiusTopStart="14dp"
+        app:boxStrokeColor="@color/accent"
+        app:boxStrokeErrorColor="@color/status_bad"
         app:errorEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -62,12 +64,12 @@
         android:layout_marginTop="8dp"
         android:hint="@string/last_four_digits"
         app:boxBackgroundColor="@color/surface_input"
-        app:boxCornerRadiusBottomEnd="12dp"
-        app:boxCornerRadiusBottomStart="12dp"
-        app:boxCornerRadiusTopEnd="12dp"
-        app:boxCornerRadiusTopStart="12dp"
-        app:boxStrokeColor="@color/white_30"
-        app:boxStrokeErrorColor="@color/red_dark"
+        app:boxCornerRadiusBottomEnd="14dp"
+        app:boxCornerRadiusBottomStart="14dp"
+        app:boxCornerRadiusTopEnd="14dp"
+        app:boxCornerRadiusTopStart="14dp"
+        app:boxStrokeColor="@color/accent"
+        app:boxStrokeErrorColor="@color/status_bad"
         app:errorEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -87,12 +89,12 @@
         android:layout_marginTop="8dp"
         android:hint="@string/statement_closing_day"
         app:boxBackgroundColor="@color/surface_input"
-        app:boxCornerRadiusBottomEnd="12dp"
-        app:boxCornerRadiusBottomStart="12dp"
-        app:boxCornerRadiusTopEnd="12dp"
-        app:boxCornerRadiusTopStart="12dp"
-        app:boxStrokeColor="@color/white_30"
-        app:boxStrokeErrorColor="@color/red_dark"
+        app:boxCornerRadiusBottomEnd="14dp"
+        app:boxCornerRadiusBottomStart="14dp"
+        app:boxCornerRadiusTopEnd="14dp"
+        app:boxCornerRadiusTopStart="14dp"
+        app:boxStrokeColor="@color/accent"
+        app:boxStrokeErrorColor="@color/status_bad"
         app:errorEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText

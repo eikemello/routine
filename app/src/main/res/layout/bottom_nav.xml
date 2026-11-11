@@ -7,10 +7,13 @@
     android:layout_gravity="bottom"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
-    android:layout_marginBottom="24dp"
+    android:layout_marginBottom="20dp"
     android:background="@drawable/bottom_nav_background"
     android:baselineAligned="false"
-    android:padding="6dp"
+    android:paddingStart="6dp"
+    android:paddingTop="4dp"
+    android:paddingEnd="6dp"
+    android:paddingBottom="4dp"
     android:gravity="center"
     android:orientation="horizontal"
     android:elevation="12dp">
@@ -24,21 +27,16 @@
 
         <ImageView
             android:id="@+id/nav_home_icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            style="@style/bottomNavIcon"
             android:contentDescription="@string/home"
             android:src="@drawable/ic_home"
             app:tint="@color/bottom_nav_item_color" />
 
         <TextView
             android:id="@+id/nav_home_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            style="@style/bottomNavLabel"
             android:text="@string/home"
-            android:textColor="@color/bottom_nav_item_color"
-            android:textSize="10sp"
-            android:textStyle="bold" />
+            android:textColor="@color/bottom_nav_item_color" />
     </LinearLayout>
 
     <LinearLayout
@@ -50,21 +48,16 @@
 
         <ImageView
             android:id="@+id/nav_trackers_icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            style="@style/bottomNavIcon"
             android:contentDescription="@string/trackers"
             android:src="@drawable/ic_card_track"
             app:tint="@color/bottom_nav_item_color" />
 
         <TextView
             android:id="@+id/nav_trackers_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            style="@style/bottomNavLabel"
             android:text="@string/trackers"
-            android:textColor="@color/bottom_nav_item_color"
-            android:textSize="10sp"
-            android:textStyle="bold" />
+            android:textColor="@color/bottom_nav_item_color" />
     </LinearLayout>
 
     <LinearLayout
@@ -76,21 +69,16 @@
 
         <ImageView
             android:id="@+id/nav_history_icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            style="@style/bottomNavIcon"
             android:contentDescription="@string/history"
             android:src="@drawable/ic_history"
             app:tint="@color/bottom_nav_item_color" />
 
         <TextView
             android:id="@+id/nav_history_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            style="@style/bottomNavLabel"
             android:text="@string/history"
-            android:textColor="@color/bottom_nav_item_color"
-            android:textSize="10sp"
-            android:textStyle="bold" />
+            android:textColor="@color/bottom_nav_item_color" />
     </LinearLayout>
 
     <LinearLayout
@@ -102,20 +90,15 @@
 
         <ImageView
             android:id="@+id/nav_menu_icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            style="@style/bottomNavIcon"
             android:contentDescription="@string/menu"
             android:src="@drawable/ic_menu"
             app:tint="@color/bottom_nav_item_color" />
 
         <TextView
             android:id="@+id/nav_menu_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            style="@style/bottomNavLabel"
             android:text="@string/menu"
-            android:textColor="@color/bottom_nav_item_color"
-            android:textSize="10sp"
-            android:textStyle="bold" />
+            android:textColor="@color/bottom_nav_item_color" />
     </LinearLayout>
 </LinearLayout>
