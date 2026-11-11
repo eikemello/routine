@@ -46,11 +46,11 @@ public class HomeCardWaterService implements CardHistory {
     public void setDailyWaterDrank(TextView txtDailyWaterDrank, double dailyWaterSum, double dailyWaterGoal) {
         txtDailyWaterDrank.setText(mContext.getString(R.string.water_default_value_init, dailyWaterSum));
         if (dailyWaterSum >= dailyWaterGoal) {
-            txtDailyWaterDrank.setTextColor(mContext.getColor(R.color.green_dark));
+            txtDailyWaterDrank.setTextColor(mContext.getColor(R.color.status_good));
         } else {
             // Reset it, otherwise the sum would stay green after an insertion is
             // removed and the daily goal is no longer reached
-            txtDailyWaterDrank.setTextColor(mContext.getColor(R.color.neon_blue));
+            txtDailyWaterDrank.setTextColor(mContext.getColor(R.color.accent));
         }
     }
 
@@ -110,7 +110,7 @@ public class HomeCardWaterService implements CardHistory {
         boolean goalReached = dailyWaterGoal > 0 && dailyWaterSum >= dailyWaterGoal;
 
         String totalText = context.getString(R.string.widget_water_total, dailyWaterSum);
-        int totalColor = goalReached ? context.getColor(R.color.green_dark) : context.getColor(R.color.neon_blue);
+        int totalColor = goalReached ? context.getColor(R.color.status_good) : context.getColor(R.color.accent);
         String goalText = context.getString(R.string.widget_water_goal, dailyWaterGoal);
         String completedText = context.getString(R.string.widget_water_completed, dailyWaterGoal);
 
@@ -214,12 +214,12 @@ public class HomeCardWaterService implements CardHistory {
 
     @Override
     public int getHistoryIconTintRes() {
-        return R.color.neon_blue_40;
+        return R.color.text_muted;
     }
 
     @Override
     public int getHistoryValueColorRes() {
-        return R.color.neon_blue;
+        return R.color.accent;
     }
 
     public void closeDb() {

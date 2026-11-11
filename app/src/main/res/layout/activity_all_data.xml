@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- All data screen: the title, the filter buttons, the search field and
+     the type chips stay fixed on top; the summary tiles and the grouped
+     list scroll under them. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -13,7 +16,14 @@
         android:paddingBottom="6dp"
         android:paddingEnd="16dp"
         android:paddingStart="16dp"
-        android:paddingTop="32dp">
+        android:paddingTop="56dp">
+
+        <TextView
+            style="@style/screenTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="@string/all_data" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -23,25 +33,21 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btnDateRange"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:cardBackgroundColor="@color/white_10"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="0dp">
+                style="@style/filterButton">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="8dp">
+                    android:paddingStart="12dp"
+                    android:paddingEnd="10dp">
 
                     <ImageView
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:src="@drawable/ic_calendar"
-                        app:tint="@color/white" />
+                        app:tint="@color/text_muted" />
 
                     <TextView
                         android:id="@+id/txtDateRange"
@@ -52,7 +58,7 @@
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:text="@string/all_data_date_range"
-                        android:textColor="@color/white"
+                        android:textColor="@color/text_primary"
                         android:textSize="12sp" />
 
                     <ImageView
@@ -60,32 +66,28 @@
                         android:layout_height="16dp"
                         android:layout_marginStart="4dp"
                         android:src="@drawable/ic_chevron_down"
-                        app:tint="@color/white" />
+                        app:tint="@color/text_muted" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btnCategory"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1"
-                app:cardBackgroundColor="@color/white_10"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="0dp">
+                style="@style/filterButton"
+                android:layout_marginStart="8dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="8dp">
+                    android:paddingStart="12dp"
+                    android:paddingEnd="10dp">
 
                     <ImageView
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:src="@drawable/ic_category"
-                        app:tint="@color/white" />
+                        app:tint="@color/text_muted" />
 
                     <TextView
                         android:id="@+id/txtCategory"
@@ -96,7 +98,7 @@
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:text="@string/all_data_category"
-                        android:textColor="@color/white"
+                        android:textColor="@color/text_primary"
                         android:textSize="12sp" />
 
                     <ImageView
@@ -104,32 +106,28 @@
                         android:layout_height="16dp"
                         android:layout_marginStart="4dp"
                         android:src="@drawable/ic_chevron_down"
-                        app:tint="@color/white" />
+                        app:tint="@color/text_muted" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btnType"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1"
-                app:cardBackgroundColor="@color/white_10"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="0dp">
+                style="@style/filterButton"
+                android:layout_marginStart="8dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="8dp">
+                    android:paddingStart="12dp"
+                    android:paddingEnd="10dp">
 
                     <ImageView
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:src="@drawable/ic_filter"
-                        app:tint="@color/white" />
+                        app:tint="@color/text_muted" />
 
                     <TextView
                         android:id="@+id/txtType"
@@ -140,7 +138,7 @@
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:text="@string/all_data_type"
-                        android:textColor="@color/white"
+                        android:textColor="@color/text_primary"
                         android:textSize="12sp" />
 
                     <ImageView
@@ -148,17 +146,17 @@
                         android:layout_height="16dp"
                         android:layout_marginStart="4dp"
                         android:src="@drawable/ic_chevron_down"
-                        app:tint="@color/white" />
+                        app:tint="@color/text_muted" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/inputSearchData"
+            style="@style/Widget.Routine.SearchField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:hint="@string/all_data_search_hint"
             app:endIconMode="clear_text"
             app:startIconDrawable="@drawable/ic_search">
 
@@ -166,7 +164,13 @@
                 android:id="@+id/etDataSearch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="@string/all_data_search_hint"
                 android:imeOptions="actionSearch"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_muted"
+                android:textSize="15sp"
                 android:inputType="text"
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -186,7 +190,7 @@
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipAll"
-                    style="@style/Widget.Material3.Chip.Filter"
+                    style="@style/Widget.Routine.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
@@ -194,35 +198,35 @@
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipWater"
-                    style="@style/Widget.Material3.Chip.Filter"
+                    style="@style/Widget.Routine.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Water" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipMeals"
-                    style="@style/Widget.Material3.Chip.Filter"
+                    style="@style/Widget.Routine.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Meals" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipExpenses"
-                    style="@style/Widget.Material3.Chip.Filter"
+                    style="@style/Widget.Routine.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Expenses" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipWorkout"
-                    style="@style/Widget.Material3.Chip.Filter"
+                    style="@style/Widget.Routine.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Workout" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipSupplements"
-                    style="@style/Widget.Material3.Chip.Filter"
+                    style="@style/Widget.Routine.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Supplements" />
@@ -234,7 +238,7 @@
         android:id="@+id/summaryCardsContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="12dp"
         android:fillViewport="true"
         android:gravity="center"
         android:paddingStart="16dp"

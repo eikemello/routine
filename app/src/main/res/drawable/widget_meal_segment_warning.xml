@@ -4,6 +4,6 @@
      status color of the logged meal by the provider. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="@color/yellow_dark" />
+    <solid android:color="@color/status_warning" />
     <corners android:radius="4dp" />
 </shape>

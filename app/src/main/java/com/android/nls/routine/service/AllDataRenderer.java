@@ -381,7 +381,7 @@ public class AllDataRenderer {
             int total = entry.getValue();
             boolean completed = mSnapshot.dailyWaterGoal() > 0 && total >= mSnapshot.dailyWaterGoal();
             String value = getString(completed ? R.string.completed : R.string.not_completed);
-            int color = mContext.getColor(completed ? R.color.green_dark : R.color.text_secondary);
+            int color = mContext.getColor(completed ? R.color.status_good : R.color.text_secondary);
             specs.add(new RowSpec(RowType.WATER, entry.getKey(),
                     getString(R.string.daily_water_ml, (double) total), value, color, null,
                     null, (double) total, null, null, null,
@@ -424,7 +424,7 @@ public class AllDataRenderer {
             Tracker tracker = trackerFor(record.type());
             String detail = tracker != null ? tracker.name() : record.type().name();
             String value = getString(record.completed() ? R.string.completed : R.string.not_completed);
-            int color = mContext.getColor(record.completed() ? R.color.green_dark : R.color.text_secondary);
+            int color = mContext.getColor(record.completed() ? R.color.status_good : R.color.text_secondary);
             String note = record.note() != null && !record.note().isBlank() ? record.note() : null;
             specs.add(new RowSpec(RowType.ROUTINE, record.timestamp(), detail, value, color, note,
                     iconForTracker(record.type()), null, null, record.id(),
@@ -436,7 +436,7 @@ public class AllDataRenderer {
     private void collectTrackerSpecs(List<RowSpec> specs) {
         for (Tracker tracker : mSnapshot.trackers()) {
             String value = getString(tracker.enabled() ? R.string.all_data_enabled : R.string.all_data_disabled);
-            int color = mContext.getColor(tracker.enabled() ? R.color.green_dark : R.color.text_tertiary);
+            int color = mContext.getColor(tracker.enabled() ? R.color.status_good : R.color.text_tertiary);
             String note = tracker.description() != null && !tracker.description().isBlank()
                     ? tracker.description() : null;
             specs.add(new RowSpec(RowType.TRACKER, 0L, tracker.name(), value, color, note,
@@ -754,33 +754,33 @@ public class AllDataRenderer {
     /**
      * The icon of a row: the one it carries when it has one (routine records
      * and tracker definitions take the identity of their tracker), or the
-     * icon of the row type otherwise - the same glyph, box and tint as the
-     * matching home card.
+     * icon of the row type otherwise - the same glyph, neutral box and tint as
+     * the matching home card.
      */
     private RowIcon iconFor(RowSpec spec) {
         if (spec.icon() != null) {
             return spec.icon();
         }
         return switch (spec.type()) {
-            case WATER -> new RowIcon(R.drawable.ic_water, R.drawable.icon_background_blue, R.color.neon_blue);
-            case MEAL -> new RowIcon(R.drawable.ic_meal, R.drawable.icon_background_green, R.color.green_dark);
-            case EXPENSE -> new RowIcon(R.drawable.ic_credit_card, R.drawable.icon_background_orange,
-                    R.color.neon_orange);
+            case WATER -> new RowIcon(R.drawable.ic_water, R.drawable.icon_background, R.color.accent);
+            case MEAL -> new RowIcon(R.drawable.ic_meal, R.drawable.icon_background, R.color.accent);
+            case EXPENSE -> new RowIcon(R.drawable.ic_credit_card, R.drawable.icon_background,
+                    R.color.accent);
             case CONFIG -> new RowIcon(R.drawable.ic_config, R.drawable.icon_background, R.color.text_secondary);
             default -> new RowIcon(R.drawable.ic_card_track, R.drawable.icon_background, R.color.text_secondary);
         };
     }
 
-    /** The identity of a tracker (glyph, colored box and tint) as its card shows it. */
+    /** The identity of a tracker (glyph, neutral box and tint) as its card shows it. */
     private RowIcon iconForTracker(TrackerType type) {
         return switch (type) {
-            case WATER -> new RowIcon(R.drawable.ic_water, R.drawable.icon_background_blue, R.color.neon_blue);
-            case MEALS -> new RowIcon(R.drawable.ic_meal, R.drawable.icon_background_green, R.color.green_dark);
-            case EXPENSES -> new RowIcon(R.drawable.ic_credit_card, R.drawable.icon_background_orange,
-                    R.color.neon_orange);
-            case WORKOUT -> new RowIcon(R.drawable.ic_workout, R.drawable.icon_background_purple, R.color.neon_purple);
-            case MEDICATION -> new RowIcon(R.drawable.ic_medication, R.drawable.icon_background_pink, R.color.neon_pink);
-            case SUPPLEMENT -> new RowIcon(R.drawable.ic_supplement, R.drawable.icon_background_cyan, R.color.neon_cyan);
+            case WATER -> new RowIcon(R.drawable.ic_water, R.drawable.icon_background, R.color.accent);
+            case MEALS -> new RowIcon(R.drawable.ic_meal, R.drawable.icon_background, R.color.accent);
+            case EXPENSES -> new RowIcon(R.drawable.ic_credit_card, R.drawable.icon_background,
+                    R.color.accent);
+            case WORKOUT -> new RowIcon(R.drawable.ic_workout, R.drawable.icon_background, R.color.accent);
+            case MEDICATION -> new RowIcon(R.drawable.ic_medication, R.drawable.icon_background, R.color.accent);
+            case SUPPLEMENT -> new RowIcon(R.drawable.ic_supplement, R.drawable.icon_background, R.color.accent);
         };
     }
     // ==================== HELPERS ====================
@@ -800,13 +800,13 @@ public class AllDataRenderer {
 
     private MealStatus mealStatus(String status) {
         if (Constants.CORRECT_MEAL.equals(status)) {
-            return new MealStatus(R.string.correct_meal, R.color.green_dark);
+            return new MealStatus(R.string.correct_meal, R.color.status_good);
         }
         if (Constants.WARNING_MEAL.equals(status)) {
-            return new MealStatus(R.string.warning_meal, R.color.yellow_dark);
+            return new MealStatus(R.string.warning_meal, R.color.status_warning);
         }
         if (Constants.WRONG_MEAL.equals(status)) {
-            return new MealStatus(R.string.wrong_meal, R.color.red_dark);
+            return new MealStatus(R.string.wrong_meal, R.color.status_bad);
         }
         if (Constants.OTHER_MEAL.equals(status)) {
             return new MealStatus(R.string.other, R.color.text_secondary);

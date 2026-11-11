@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- A segment of the home progress strip that is not done yet. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="@color/white_20" />
+    <solid android:color="@color/surface_3" />
     <corners android:radius="4dp" />
 </shape>

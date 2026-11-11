@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Status button of the meal widget: the glass background of the home card
-     buttons with the red stroke of the Wrong action, so the buttons keep
-     the identity of the home meal card once they fill their row like the
-     water quick-add buttons. -->
+<!-- Wrong status button / logged slot of the meal widget: the red tonal fill. -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="@color/white_40">
+    android:color="@color/white_20">
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/button_glass" />
+            <solid android:color="@color/status_bad_deep" />
             <corners android:radius="14dp" />
-            <stroke
-                android:width="2dp"
-                android:color="@color/red_dark" />
         </shape>
     </item>
 </ripple>

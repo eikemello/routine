@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Icon box of the purple trackers: a soft fill of the accent behind the tinted glyph. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <gradient
-        android:type="linear"
-        android:angle="135"
-        android:startColor="@color/neon_purple_20"
-        android:endColor="@color/neon_purple_10" />
-    <corners android:radius="14dp" />
-    <stroke
-        android:width="1dp"
-        android:color="@color/neon_purple_40" />
+    <solid android:color="@color/accent_deep" />
+    <corners android:radius="12dp" />
 </shape>

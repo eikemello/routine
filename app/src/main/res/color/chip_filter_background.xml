@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Background of the All data type chips: the water accent tonal fill when
+     checked, the card surface otherwise. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/accent_deep" android:state_checked="true" />
+    <item android:color="@color/surface_1" />
+</selector>

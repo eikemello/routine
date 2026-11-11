@@ -15,6 +15,7 @@ import com.android.nls.routine.model.DayStatusInfo;
 import com.android.nls.routine.model.WeeklySummary;
 import com.android.nls.routine.repository.ConfigRepository;
 import com.android.nls.routine.service.HistoryService;
+import com.android.nls.routine.service.calendar.CalendarCellStyler;
 import com.android.nls.routine.service.calendar.DayScore;
 import com.android.nls.routine.service.calendar.DayDetailsRenderer;
 import com.android.nls.routine.service.calendar.DayScoreData;
@@ -156,22 +157,15 @@ public class HistoryActivity extends AppCompatActivity {
             txtScoreBreakdown.setText(dayInfo.scoreBreakdown());
             txtScoreBreakdown.setTextColor(getColor(R.color.white));
 
+            // The small dot is drawn in the vivid status color: at 10dp the deep
+            // tone of the day cells would disappear against the card.
             switch (dayInfo.status()) {
-                case GREEN:
-                    viewScoreStatus.setBackgroundResource(R.drawable.calendar_day_green);
+                case GREEN, YELLOW, RED -> {
+                    viewScoreStatus.setBackgroundTintList(ColorStateList.valueOf(
+                            getColor(CalendarCellStyler.statusColorRes(dayInfo.status()))));
                     viewScoreStatus.setVisibility(View.VISIBLE);
-                    break;
-                case YELLOW:
-                    viewScoreStatus.setBackgroundResource(R.drawable.calendar_day_yellow);
-                    viewScoreStatus.setVisibility(View.VISIBLE);
-                    break;
-                case RED:
-                    viewScoreStatus.setBackgroundResource(R.drawable.calendar_day_red);
-                    viewScoreStatus.setVisibility(View.VISIBLE);
-                    break;
-                default:
-                    viewScoreStatus.setVisibility(View.GONE);
-                    break;
+                }
+                default -> viewScoreStatus.setVisibility(View.GONE);
             }
         } else {
             txtScoreBreakdown.setText("");
@@ -197,7 +191,7 @@ public class HistoryActivity extends AppCompatActivity {
     private void updatePrincipalDayScore(DayStatusInfo dayInfo, DayScoreData scoreData) {
         if (dayInfo == null || dayInfo.status() == DayStatus.NONE) {
             txtPrincipalDayScore.setText("");
-            txtPrincipalDayScore.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.calendar_day_background_default)));
+            txtPrincipalDayScore.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.surface_2)));
             return;
         }
 
@@ -205,33 +199,27 @@ public class HistoryActivity extends AppCompatActivity {
                 scoreData.getMealStatusesByType(), scoreData.getTrackerCompletions(), mHistoryContext.getScoreTrackerTypes());
         if (percentage < 0) {
             txtPrincipalDayScore.setText("");
-            txtPrincipalDayScore.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.calendar_day_background_default)));
+            txtPrincipalDayScore.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.surface_2)));
             return;
         }
 
         int rounded = (int) Math.round(percentage);
-        String scoreText;
-        int scoreColor = switch (dayInfo.status()) {
-            case GREEN -> {
-                scoreText = getString(R.string.score_percentage_good, rounded);
-                yield R.color.green_dark;
-            }
-            case YELLOW -> {
-                scoreText = getString(R.string.score_percentage_warning, rounded);
-                yield R.color.yellow_dark;
-            }
-            case RED -> {
-                scoreText = getString(R.string.score_percentage_bad, rounded);
-                yield R.color.red_dark;
-            }
-            default -> {
-                scoreText = "";
-                yield R.color.calendar_day_background_default;
-            }
+        String scoreText = switch (dayInfo.status()) {
+            case GREEN -> getString(R.string.score_percentage_good, rounded);
+            case YELLOW -> getString(R.string.score_percentage_warning, rounded);
+            case RED -> getString(R.string.score_percentage_bad, rounded);
+            default -> "";
         };
+        boolean hasStatus = !scoreText.isEmpty();
 
+        // The vivid status text over the deep tone of the same status.
         txtPrincipalDayScore.setText(scoreText);
-        txtPrincipalDayScore.setBackgroundTintList(ColorStateList.valueOf(getColor(scoreColor)));
+        txtPrincipalDayScore.setBackgroundTintList(ColorStateList.valueOf(getColor(hasStatus
+                ? CalendarCellStyler.statusDeepColorRes(dayInfo.status())
+                : R.color.surface_2)));
+        txtPrincipalDayScore.setTextColor(getColor(hasStatus
+                ? CalendarCellStyler.statusColorRes(dayInfo.status())
+                : R.color.text_primary));
         txtPrincipalDayScore.setTextSize(14);
     }
 

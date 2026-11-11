@@ -3,6 +3,7 @@ package com.android.nls.routine.activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.util.Log;
@@ -12,6 +13,8 @@ import androidx.core.view.WindowInsetsControllerCompat;
 import com.android.nls.routine.R;
 import com.android.nls.routine.cardhistory.DynamicCardHistoryService;
 import com.android.nls.routine.model.CardSpending;
+import com.android.nls.routine.model.DayScoreSummary;
+import com.android.nls.routine.model.DayStatus;
 import com.android.nls.routine.model.ExpenseCardSummary;
 import com.android.nls.routine.model.ExpenseRecord;
 import com.android.nls.routine.model.Tracker;
@@ -20,11 +23,12 @@ import com.android.nls.routine.model.TrackerType;
 import com.android.nls.routine.model.WaterRecord;
 import com.android.nls.routine.repository.MealRepository;
 import com.android.nls.routine.repository.TrackerRepository;
+import com.android.nls.routine.service.CardStatusResolver;
 import com.android.nls.routine.service.HomeCardExpenseService;
 import com.android.nls.routine.service.HomeCardMealService;
 import com.android.nls.routine.service.HomeCardWaterService;
-import com.android.nls.routine.service.HomeService;
 import com.android.nls.routine.service.HistoryService;
+import com.android.nls.routine.service.calendar.CalendarCellStyler;
 import com.android.nls.routine.service.calendar.WeekPreviewRenderer;
 import com.android.nls.routine.utils.BottomNavHelper;
 import com.android.nls.routine.utils.Common;
@@ -32,13 +36,12 @@ import com.android.nls.routine.utils.Constants;
 import com.android.nls.routine.widget.WidgetCombinedProvider;
 import com.android.nls.routine.widget.WidgetTrackerProvider;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import java.util.List;
-import java.util.Set;
 
 public class HomeActivity extends AppCompatActivity {
     private static final String TAG = Common.generateTag(HomeActivity.class);
-    private HomeService mHomeService;
     private HomeCardWaterService mHomeCardWaterService;
     private HomeCardExpenseService mHomeCardExpenseService;
     private HomeCardMealService mHomeCardMealService;
@@ -54,7 +57,13 @@ public class HomeActivity extends AppCompatActivity {
 
     // Dynamic tracker cards container
     private LinearLayout mTrackerCardsContainer;
-    private View[] mProgressSegments;
+    // Ring with today's score in the header
+    private CircularProgressIndicator mProgressDayScore;
+    private TextView mTxtDayScore;
+
+    // Meal card currently on screen, so its slot bars can be repainted when a
+    // meal is saved, edited or removed (null while meals are disabled)
+    private View mMealCard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +82,6 @@ public class HomeActivity extends AppCompatActivity {
         mDynamicCardHistoryService = new DynamicCardHistoryService(this);
         mTrackerRepository = new TrackerRepository(this);
         mMealRepository = new MealRepository(this);
-        mHomeService = new HomeService(this);
         mHistoryService = new HistoryService(this);
 
         startUIComponents();
@@ -108,14 +116,8 @@ public class HomeActivity extends AppCompatActivity {
         mTrackerCardsContainer = findViewById(R.id.trackerCardsContainer);
         mWeekPreviewRenderer = new WeekPreviewRenderer(this, findViewById(R.id.weekPreviewStrip), mHistoryService);
 
-        mProgressSegments = new View[]{
-                findViewById(R.id.viewSegment1),
-                findViewById(R.id.viewSegment2),
-                findViewById(R.id.viewSegment3),
-                findViewById(R.id.viewSegment4),
-                findViewById(R.id.viewSegment5),
-                findViewById(R.id.viewSegment6)
-        };
+        mProgressDayScore = findViewById(R.id.progressDayScore);
+        mTxtDayScore = findViewById(R.id.txtDayScore);
     }
 
     private void initFields() {
@@ -125,6 +127,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void renderTrackerCards() {
         mTrackerCardsContainer.removeAllViews();
+        mMealCard = null;
         List<Tracker> enabledTrackers = mTrackerRepository.getEnabledTrackers();
 
         for (Tracker tracker : enabledTrackers) {
@@ -196,6 +199,10 @@ public class HomeActivity extends AppCompatActivity {
 
         mHomeCardWaterService.updateWaterProgress(progressWater, dailyWaterSum, dailyWaterGoal);
         mHomeCardWaterService.setDailyWaterDrank(txtDailyWaterDrank, dailyWaterSum, dailyWaterGoal);
+
+        DayStatus status = CardStatusResolver.water(dailyWaterSum, dailyWaterGoal);
+        CalendarCellStyler.tintIcon(card.findViewById(R.id.imgViewWater), status);
+        CalendarCellStyler.tintProgress(progressWater, status);
     }
 
     private void addWater(View card, MaterialButton button) {
@@ -224,7 +231,49 @@ public class HomeActivity extends AppCompatActivity {
         card.findViewById(R.id.btnMealHistory).setOnClickListener(v ->
                 mHomeCardMealService.showDailyHistoryDialog(this::onMealChanged));
 
+        mMealCard = card;
+        renderMealSlots(card);
         return card;
+    }
+
+    /**
+     * Paints the four slot bars of the meal card (Breakfast, Lunch, Tea and
+     * Dinner) with the status of the meal logged today in each slot - empty
+     * bars stay neutral -, tints the card icon with the status of the meals so
+     * far and writes the "x of 4" summary under the title.
+     */
+    private void renderMealSlots(View card) {
+        int[] slotIds = {R.id.viewMealSlot1, R.id.viewMealSlot2, R.id.viewMealSlot3, R.id.viewMealSlot4};
+        String[] statuses = mHomeCardMealService.getLoggedMealStatusesToday();
+
+        int logged = 0;
+        for (int i = 0; i < slotIds.length; i++) {
+            String status = i < statuses.length ? statuses[i] : null;
+            if (status != null) {
+                logged++;
+            }
+            card.findViewById(slotIds[i]).setBackgroundResource(mealSlotBackground(status));
+        }
+
+        CalendarCellStyler.tintIcon(card.findViewById(R.id.imgViewMeal), CardStatusResolver.meals(statuses));
+
+        TextView txtSummary = card.findViewById(R.id.txtMealSlotsSummary);
+        txtSummary.setText(logged == 0
+                ? getString(R.string.how_was_your_meal)
+                : getString(R.string.meal_slots_summary, logged, slotIds.length));
+    }
+
+    private int mealSlotBackground(String status) {
+        if (Constants.CORRECT_MEAL.equals(status)) {
+            return R.drawable.progress_segment_done;
+        }
+        if (Constants.WARNING_MEAL.equals(status)) {
+            return R.drawable.progress_segment_warning;
+        }
+        if (Constants.WRONG_MEAL.equals(status)) {
+            return R.drawable.progress_segment_wrong;
+        }
+        return R.drawable.progress_segment_background;
     }
 
     /**
@@ -234,6 +283,9 @@ public class HomeActivity extends AppCompatActivity {
      */
     private void onMealChanged() {
         renderTrackerProgress();
+        if (mMealCard != null) {
+            renderMealSlots(mMealCard);
+        }
         WidgetCombinedProvider.refresh(this);
     }
 
@@ -273,11 +325,11 @@ public class HomeActivity extends AppCompatActivity {
         txtTotalSpent.setText(this.getString(R.string.total_expense_value_init, totalSpent));
 
         if (totalSpent > monthlyLimit) {
-            txtTotalSpent.setTextColor(this.getColor(R.color.red_dark));
+            txtTotalSpent.setTextColor(this.getColor(R.color.status_bad));
         } else {
             // Reset it, otherwise the total would stay red after a new cycle
             // starts and the spending is back below the limit
-            txtTotalSpent.setTextColor(this.getColor(R.color.yellow_dark));
+            txtTotalSpent.setTextColor(this.getColor(R.color.text_primary));
         }
 
         if (expenseRecord != null) {
@@ -285,6 +337,9 @@ public class HomeActivity extends AppCompatActivity {
         } else {
             txtLastExpenseRecord.setText(this.getString(R.string.no_expenses_yet));
         }
+
+        CalendarCellStyler.tintIcon(card.findViewById(R.id.imgCreditCard),
+                CardStatusResolver.spending(totalSpent, monthlyLimit));
 
         renderCardProgress(LayoutInflater.from(this), cardProgressContainer, progressExpense, expenseSummary, monthlyLimit);
     }
@@ -305,6 +360,8 @@ public class HomeActivity extends AppCompatActivity {
         if (cardSpending.isEmpty()) {
             progressExpense.setVisibility(View.VISIBLE);
             mHomeCardWaterService.updateExpenseProgress(progressExpense, expenseSummary.totalSpent(), monthlyLimit);
+            CalendarCellStyler.tintProgress(progressExpense,
+                    CardStatusResolver.spending(expenseSummary.totalSpent(), monthlyLimit));
             return;
         }
 
@@ -324,6 +381,8 @@ public class HomeActivity extends AppCompatActivity {
             txtCardProgressValue.setTextSize(14);
 
             progressCard.setProgress(spending.progress());
+            CalendarCellStyler.tintProgress(progressCard,
+                    CardStatusResolver.spending(spending.spent(), spending.monthlyLimit()));
 
             cardProgressContainer.addView(row);
         }
@@ -334,21 +393,22 @@ public class HomeActivity extends AppCompatActivity {
 
         TextView txtWorkoutStatus = card.findViewById(R.id.txtWorkoutStatus);
         MaterialButton btnCompleteWorkout = card.findViewById(R.id.btnCompleteWorkout);
+        ImageView imgWorkout = card.findViewById(R.id.imgViewWorkout);
 
         TrackerRecord record = mTrackerRepository.getTrackerRecordForDay(TrackerType.WORKOUT, System.currentTimeMillis());
-        updateStatusCard(txtWorkoutStatus, btnCompleteWorkout, record);
+        updateStatusCard(imgWorkout, txtWorkoutStatus, btnCompleteWorkout, record);
 
         btnCompleteWorkout.setOnClickListener(v -> {
             mTrackerRepository.saveTrackerRecord(TrackerType.WORKOUT, true, null);
             TrackerRecord updatedRecord = mTrackerRepository.getTrackerRecordForDay(TrackerType.WORKOUT, System.currentTimeMillis());
-            updateStatusCard(txtWorkoutStatus, btnCompleteWorkout, updatedRecord);
+            updateStatusCard(imgWorkout, txtWorkoutStatus, btnCompleteWorkout, updatedRecord);
             renderTrackerProgress();
             WidgetTrackerProvider.refresh(this);
         });
 
         card.findViewById(R.id.btnWorkoutHistory).setOnClickListener(v ->
                 mDynamicCardHistoryService.showDailyHistoryDialog(tracker, () -> {
-                    refreshSimpleCard(TrackerType.WORKOUT, txtWorkoutStatus, btnCompleteWorkout);
+                    refreshSimpleCard(TrackerType.WORKOUT, imgWorkout, txtWorkoutStatus, btnCompleteWorkout);
                     renderTrackerProgress();
                     WidgetTrackerProvider.refresh(this);
                 }));
@@ -362,6 +422,7 @@ public class HomeActivity extends AppCompatActivity {
         TextView txtMedicationName = card.findViewById(R.id.txtMedicationName);
         TextView txtMedicationStatus = card.findViewById(R.id.txtMedicationStatus);
         MaterialButton btnMarkMedicationTaken = card.findViewById(R.id.btnMarkMedicationTaken);
+        ImageView imgMedication = card.findViewById(R.id.imgViewMedication);
 
         String name = tracker.name();
         if (name != null && !name.equalsIgnoreCase(TrackerType.MEDICATION.name())) {
@@ -371,19 +432,19 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         TrackerRecord record = mTrackerRepository.getTrackerRecordForDay(TrackerType.MEDICATION, System.currentTimeMillis());
-        updateStatusCard(txtMedicationStatus, btnMarkMedicationTaken, record);
+        updateStatusCard(imgMedication, txtMedicationStatus, btnMarkMedicationTaken, record);
 
         btnMarkMedicationTaken.setOnClickListener(v -> {
             mTrackerRepository.saveTrackerRecord(TrackerType.MEDICATION, true, null);
             TrackerRecord updatedRecord = mTrackerRepository.getTrackerRecordForDay(TrackerType.MEDICATION, System.currentTimeMillis());
-            updateStatusCard(txtMedicationStatus, btnMarkMedicationTaken, updatedRecord);
+            updateStatusCard(imgMedication, txtMedicationStatus, btnMarkMedicationTaken, updatedRecord);
             renderTrackerProgress();
             WidgetTrackerProvider.refresh(this);
         });
 
         card.findViewById(R.id.btnMedicationHistory).setOnClickListener(v ->
                 mDynamicCardHistoryService.showDailyHistoryDialog(tracker, () -> {
-                    refreshSimpleCard(TrackerType.MEDICATION, txtMedicationStatus, btnMarkMedicationTaken);
+                    refreshSimpleCard(TrackerType.MEDICATION, imgMedication, txtMedicationStatus, btnMarkMedicationTaken);
                     renderTrackerProgress();
                     WidgetTrackerProvider.refresh(this);
                 }));
@@ -398,6 +459,7 @@ public class HomeActivity extends AppCompatActivity {
         TextView txtSupplementDescription = card.findViewById(R.id.txtSupplementDescription);
         TextView txtSupplementStatus = card.findViewById(R.id.txtSupplementStatus);
         MaterialButton btnMarkSupplementTaken = card.findViewById(R.id.btnMarkSupplementTaken);
+        ImageView imgSupplement = card.findViewById(R.id.imgViewSupplement);
 
         String name = tracker.name();
         if (name != null && !name.equalsIgnoreCase(TrackerType.SUPPLEMENT.name())) {
@@ -414,19 +476,19 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         TrackerRecord record = mTrackerRepository.getTrackerRecordForDay(TrackerType.SUPPLEMENT, System.currentTimeMillis());
-        updateStatusCard(txtSupplementStatus, btnMarkSupplementTaken, record);
+        updateStatusCard(imgSupplement, txtSupplementStatus, btnMarkSupplementTaken, record);
 
         btnMarkSupplementTaken.setOnClickListener(v -> {
             mTrackerRepository.saveTrackerRecord(TrackerType.SUPPLEMENT, true, null);
             TrackerRecord updatedRecord = mTrackerRepository.getTrackerRecordForDay(TrackerType.SUPPLEMENT, System.currentTimeMillis());
-            updateStatusCard(txtSupplementStatus, btnMarkSupplementTaken, updatedRecord);
+            updateStatusCard(imgSupplement, txtSupplementStatus, btnMarkSupplementTaken, updatedRecord);
             renderTrackerProgress();
             WidgetTrackerProvider.refresh(this);
         });
 
         card.findViewById(R.id.btnSupplementHistory).setOnClickListener(v ->
                 mDynamicCardHistoryService.showDailyHistoryDialog(tracker, () -> {
-                    refreshSimpleCard(TrackerType.SUPPLEMENT, txtSupplementStatus, btnMarkSupplementTaken);
+                    refreshSimpleCard(TrackerType.SUPPLEMENT, imgSupplement, txtSupplementStatus, btnMarkSupplementTaken);
                     renderTrackerProgress();
                     WidgetTrackerProvider.refresh(this);
                 }));
@@ -436,17 +498,18 @@ public class HomeActivity extends AppCompatActivity {
 
     /**
      * Updates a status card (workout, medication, supplement) based on the given record.
-     * Shows "Completed" in green and hides the action button when the task is done,
-     * otherwise shows "Not completed" in white with the action button visible.
+     * Shows "Completed" in green, with the icon in green too, and hides the action button when the task is done,
+     * otherwise shows "Not completed" in the muted text color with the action button visible.
      */
-    private void updateStatusCard(TextView txtStatus, MaterialButton btnAction, TrackerRecord record) {
+    private void updateStatusCard(ImageView imgIcon, TextView txtStatus, MaterialButton btnAction, TrackerRecord record) {
+        CalendarCellStyler.tintIcon(imgIcon, CardStatusResolver.routine(record));
         if (record != null && record.completed()) {
             txtStatus.setText(getString(R.string.completed));
-            txtStatus.setTextColor(getColor(R.color.green_dark));
+            txtStatus.setTextColor(getColor(R.color.status_good));
             btnAction.setVisibility(View.GONE);
         } else {
             txtStatus.setText(getString(R.string.not_completed));
-            txtStatus.setTextColor(getColor(R.color.white));
+            txtStatus.setTextColor(getColor(R.color.text_muted));
             btnAction.setVisibility(View.VISIBLE);
         }
     }
@@ -456,57 +519,39 @@ public class HomeActivity extends AppCompatActivity {
      * of the day, so the card behind the history panel shows the same status the
      * panel just changed.
      */
-    private void refreshSimpleCard(TrackerType type, TextView txtStatus, MaterialButton btnAction) {
-        updateStatusCard(txtStatus, btnAction, mDynamicCardHistoryService.getTodayRecord(type));
+    private void refreshSimpleCard(TrackerType type, ImageView imgIcon, TextView txtStatus, MaterialButton btnAction) {
+        updateStatusCard(imgIcon, txtStatus, btnAction, mDynamicCardHistoryService.getTodayRecord(type));
     }
 
+    /**
+     * Repaints the week strip and the ring of today's score: the same weighted
+     * percentage the history calendar computes, drawn as the vivid status color
+     * (green / yellow / red) over a track in the deep tone of that same status.
+     * Before anything is logged the ring stays empty on the neutral track, with
+     * a dash in the middle.
+     */
     private void renderTrackerProgress() {
         mWeekPreviewRenderer.render();
 
-        List<Tracker> enabledTrackers = mTrackerRepository.getEnabledTrackers();
-        Set<TrackerType> completedTrackers = mHomeService.getCompletedTrackersToday();
-
-        int segmentCount = 0;
-        for (Tracker tracker : enabledTrackers) {
-            if (tracker.type() != TrackerType.EXPENSES) {
-                segmentCount++;
-            }
+        DayScoreSummary score = mHistoryService.getTodayScore();
+        if (!score.hasScore()) {
+            mProgressDayScore.setTrackColor(getColor(R.color.accent_deep));
+            mProgressDayScore.setProgressCompat(0, true);
+            mTxtDayScore.setText(R.string.day_score_empty);
+            mProgressDayScore.setContentDescription(getString(R.string.day_score_none_description));
+            return;
         }
 
-        int completedCount = 0;
-        for (Tracker tracker : enabledTrackers) {
-            if (tracker.type() == TrackerType.EXPENSES) {
-                continue;
-            }
-            if (tracker.type() == TrackerType.MEALS) {
-                // Check if all 4 meals (Breakfast, Lunch, Tea, Dinner) were logged today
-                if (mHomeService.areAllMealsLogged()) {
-                    completedCount++;
-                }
-            } else if (completedTrackers.contains(tracker.type())) {
-                completedCount++;
-            }
-        }
-
-        for (int i = 0; i < mProgressSegments.length; i++) {
-            View segment = mProgressSegments[i];
-            if (i < segmentCount) {
-                segment.setVisibility(View.VISIBLE);
-                segment.setBackgroundResource(i < completedCount
-                        ? R.drawable.calendar_day_green
-                        : R.drawable.calendar_day_red);
-            } else {
-                segment.setVisibility(View.GONE);
-            }
-        }
+        int rounded = (int) Math.round(score.percentage());
+        mProgressDayScore.setTrackColor(getColor(CalendarCellStyler.statusDeepColorRes(score.status())));
+        mProgressDayScore.setIndicatorColor(getColor(CalendarCellStyler.statusColorRes(score.status())));
+        mProgressDayScore.setProgressCompat(rounded, true);
+        mTxtDayScore.setText(getString(R.string.day_score_percent, rounded));
+        mProgressDayScore.setContentDescription(getString(R.string.day_score_description, rounded));
     }
 
     @Override
     protected void onDestroy() {
-        // mHomeService owns its own repositories (they are separate instances
-        // from the ones above), so its references must be released too,
-        // otherwise the database is never closed.
-        mHomeService.closeDb();
         mHomeCardWaterService.closeDb();
         mHomeCardExpenseService.closeDb();
         mHomeCardMealService.closeDb();

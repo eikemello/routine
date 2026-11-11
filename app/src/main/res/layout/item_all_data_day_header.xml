@@ -1,45 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Group header of the All data list (a day, Trackers or Config): the
+     label on the start and the totals of the group on the end, straight on
+     the background. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:paddingTop="16dp"
-    android:paddingBottom="8dp">
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="4dp"
+    android:paddingTop="20dp"
+    android:paddingEnd="4dp"
+    android:paddingBottom="10dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/txtDayDate"
+        style="@style/sectionLabel"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:maxLines="1"
+        android:text="10/05/2026" />
 
-        <TextView
-            android:id="@+id/txtDayDate"
-            style="@style/subTitleTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:text="10/05/2026"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/txtDaySummary"
-            style="@style/subTitleTextView.Muted"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:gravity="end"
-            android:maxLines="2"
-            android:text="Water 750 ml | Expenses $0.00"
-            android:textSize="12sp" />
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="4dp"
-        android:background="@color/white_10" />
+    <TextView
+        android:id="@+id/txtDaySummary"
+        style="@style/subTitleTextView.Muted"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:gravity="end"
+        android:maxLines="2"
+        android:text="Water 750 ml | Expenses $0.00"
+        android:textSize="12sp" />
 </LinearLayout>

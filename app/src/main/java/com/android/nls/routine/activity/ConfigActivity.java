@@ -12,8 +12,10 @@ import com.android.nls.routine.R;
 import com.android.nls.routine.model.CreditCard;
 import com.android.nls.routine.service.ConfigService;
 import com.android.nls.routine.utils.BottomNavHelper;
+import com.android.nls.routine.utils.Common;
 import com.android.nls.routine.utils.Constants;
 import com.android.nls.routine.widget.WidgetCombinedProvider;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import java.util.List;
 
 public class ConfigActivity extends AppCompatActivity {
@@ -23,7 +25,7 @@ public class ConfigActivity extends AppCompatActivity {
     private TextView txtDefaultBtn3;
     private TextView txtMonthlyLimit;
     private TextView txtNoCards;
-    private TextView txtNotifyAccess;
+    private MaterialSwitch switchNotifyAccess;
     private LinearLayout btnDailyWater;
     private LinearLayout btnDefaultValue1;
     private LinearLayout btnDefaultValue2;
@@ -62,7 +64,7 @@ public class ConfigActivity extends AppCompatActivity {
         txtDefaultBtn3 = findViewById(R.id.txtDefaultBtn3);
         txtMonthlyLimit = findViewById(R.id.txtMonthlyLimit);
         txtNoCards = findViewById(R.id.txtNoCards);
-        txtNotifyAccess = findViewById(R.id.txtNotifyAccess);
+        switchNotifyAccess = findViewById(R.id.switchNotifyAccess);
         btnDailyWater = findViewById(R.id.btnDailyWater);
         btnDefaultValue1 = findViewById(R.id.btnDefaultValue1);
         btnDefaultValue2 = findViewById(R.id.btnDefaultValue2);
@@ -80,10 +82,7 @@ public class ConfigActivity extends AppCompatActivity {
         btnDefaultValue3.setOnClickListener(v -> showConfigDialog(Constants.BTN_DEFAULT_3, txtDefaultBtn3));
         btnMonthlyLimit.setOnClickListener(v -> mConfigService.showAlertDialog(Constants.MONTHLY_LIMIT, txtMonthlyLimit));
         btnCardStatementClosing.setOnClickListener(v -> openCardsDialog());
-        btnAllowNotifyAccess.setOnClickListener(v -> {
-            mConfigService.setNotifyAccess();
-            txtNotifyAccess.setText(this.getResources().getString(R.string.not_allowed));
-        });
+        btnAllowNotifyAccess.setOnClickListener(v -> mConfigService.setNotifyAccess());
     }
 
     /**
@@ -95,14 +94,15 @@ public class ConfigActivity extends AppCompatActivity {
     }
 
     private void initFields() {
-        txtDailyWaterGoal.setText(this.getString(R.string.water_default_value_init, mConfigService.getDailyWaterGoal()));
-        txtDefaultBtn1.setText(this.getString(R.string.water_default_value_init, mConfigService.getDefaultBtn1Value()));
-        txtDefaultBtn2.setText(this.getString(R.string.water_default_value_init, mConfigService.getDefaultBtn2Value()));
-        txtDefaultBtn3.setText(this.getString(R.string.water_default_value_init, mConfigService.getDefaultBtn3Value()));
-        txtMonthlyLimit.setText(this.getString(R.string.total_expense_value_init, mConfigService.getMonthlyLimitValue()));
+        txtDailyWaterGoal.setText(this.getString(R.string.daily_water_ml, mConfigService.getDailyWaterGoal()));
+        txtDefaultBtn1.setText(this.getString(R.string.daily_water_ml, mConfigService.getDefaultBtn1Value()));
+        txtDefaultBtn2.setText(this.getString(R.string.daily_water_ml, mConfigService.getDefaultBtn2Value()));
+        txtDefaultBtn3.setText(this.getString(R.string.daily_water_ml, mConfigService.getDefaultBtn3Value()));
+        txtMonthlyLimit.setText(this.getString(R.string.expense_sum, mConfigService.getMonthlyLimitValue()));
         renderCards();
-        txtNotifyAccess.setText(mConfigService.isNotifyAccessEnabled() ? this.getResources().getString(R.string.allowed)
-                : this.getResources().getString(R.string.not_allowed));
+        // The switch only mirrors the system permission: tapping the row opens
+        // the system settings, and onResume reads the state back from there
+        switchNotifyAccess.setChecked(mConfigService.isNotifyAccessEnabled());
     }
 
     private void openCardsDialog() {
@@ -111,7 +111,8 @@ public class ConfigActivity extends AppCompatActivity {
 
     /**
      * Renders one row per configured card (bank, last four digits and closing
-     * day) below the "Card statement closing" section.
+     * day) inside the Expenses group, each one after an inset divider like
+     * the other rows of the group.
      */
     private void renderCards() {
         cardsListContainer.removeAllViews();
@@ -121,14 +122,22 @@ public class ConfigActivity extends AppCompatActivity {
 
         LayoutInflater inflater = LayoutInflater.from(this);
         for (CreditCard card : cards) {
+            View divider = new View(this);
+            LinearLayout.LayoutParams dividerParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, Common.dpToPx(this, 1));
+            dividerParams.setMarginStart(Common.dpToPx(this, 16));
+            divider.setLayoutParams(dividerParams);
+            divider.setBackgroundColor(getColor(R.color.outline_subtle));
+            cardsListContainer.addView(divider);
+
             View row = inflater.inflate(R.layout.item_cards_config_row, cardsListContainer, false);
             TextView txtCardBank = row.findViewById(R.id.txtCardBank);
             TextView txtCardLastFour = row.findViewById(R.id.txtCardLastFour);
             TextView txtCardClosingDay = row.findViewById(R.id.txtCardClosingDay);
 
             txtCardBank.setText(card.bankName());
-            txtCardLastFour.setText(card.lastFour());
-            txtCardClosingDay.setText(this.getString(R.string.card_closing_day_value, card.closingDay()));
+            txtCardLastFour.setText(this.getString(R.string.card_last_four, card.lastFour()));
+            txtCardClosingDay.setText(this.getString(R.string.card_closes_on_day, card.closingDay()));
             row.setOnClickListener(v -> openCardsDialog());
 
             cardsListContainer.addView(row);

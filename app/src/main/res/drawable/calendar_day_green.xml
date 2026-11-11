@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Day cell of a good day (score >= 85%). Round, so the week strip draws circles and the month grid soft pills. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="@color/green_dark" />
-    <corners android:radius="10dp" />
+    <solid android:color="@color/status_good_deep" />
+    <corners android:radius="999dp" />
 </shape>

@@ -193,7 +193,7 @@ public class WidgetTrackerProvider extends AppWidgetProvider {
 
         views.setViewVisibility(SLOT_IDS[slot], View.VISIBLE);
         views.setImageViewResource(SLOT_ICON_IDS[slot], getIconRes(type));
-        views.setInt(SLOT_ICON_IDS[slot], "setBackgroundResource", getIconBackgroundRes(type));
+        views.setInt(SLOT_ICON_IDS[slot], "setBackgroundResource", R.drawable.icon_background);
         views.setContentDescription(SLOT_ICON_IDS[slot], name);
         views.setTextViewText(SLOT_NAME_IDS[slot], name);
 
@@ -328,20 +328,6 @@ public class WidgetTrackerProvider extends AppWidgetProvider {
             case SUPPLEMENT -> R.drawable.ic_supplement;
             case WORKOUT -> R.drawable.ic_workout;
             default -> R.drawable.ic_workout;
-        };
-    }
-
-    /**
-     * The icon box of the card of that tracker, so a tile looks like its card.
-     * Only the routine trackers reach the widget; anything else falls back to
-     * the workout box.
-     */
-    private static int getIconBackgroundRes(TrackerType type) {
-        return switch (type) {
-            case MEDICATION -> R.drawable.icon_background_pink;
-            case SUPPLEMENT -> R.drawable.icon_background_cyan;
-            case WORKOUT -> R.drawable.icon_background_purple;
-            default -> R.drawable.icon_background_purple;
         };
     }
 }

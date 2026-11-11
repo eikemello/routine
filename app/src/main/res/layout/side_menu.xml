@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Side menu opened by the Menu item of the bottom navigation. It is added
+     on top of the whole screen (SideMenu attaches it to the activity content),
+     so it overlays the screen instead of resizing it: a dimmed scrim that
+     closes the menu on tap, and a floating panel sized to its options that
+     slides in from the right edge and rests above the bottom navigation
+     (SideMenu sets its bottom margin). -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:elevation="24dp">
+
+    <View
+        android:id="@+id/sideMenuScrim"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:background="@color/side_menu_scrim"
+        android:clickable="true"
+        android:contentDescription="@string/side_menu_close"
+        android:focusable="true" />
+
+    <LinearLayout
+        android:id="@+id/sideMenuPanel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:background="@drawable/side_menu_background"
+        android:clickable="true"
+        android:elevation="8dp"
+        android:focusable="true"
+        android:minWidth="200dp"
+        android:orientation="vertical"
+        android:paddingStart="10dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="6dp">
+
+        <TextView
+            style="@style/sectionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:text="@string/menu" />
+
+        <LinearLayout
+            android:id="@+id/sideMenuItems"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical" />
+    </LinearLayout>
+</FrameLayout>

@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Water card of the home screen: the header opens the history panel, the
+     amount drunk today is the hero number over the goal, then the progress
+     bar and the three tonal quick-add buttons. -->
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/MaterialCardView"
@@ -11,28 +14,30 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/btnWaterHistory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/imgViewWater"
                 style="@style/iconContainer"
-                android:background="@drawable/icon_background_blue"
+                android:background="@drawable/icon_background"
                 android:contentDescription="@string/water"
                 android:src="@drawable/ic_water"
-                app:tint="@color/neon_blue" />
+                app:tint="@color/accent" />
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:layout_toEndOf="@+id/imgViewWater">
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/txtWaterTitle"
@@ -42,104 +47,88 @@
                     android:text="@string/water" />
 
                 <TextView
-                    android:id="@+id/txtDailyWaterDrank"
-                    style="@style/textViewCardInfo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toStartOf="@id/textView"
-                    android:includeFontPadding="false"
-                    android:text="@string/water_default_value_init" />
-
-                <TextView
-                    android:id="@+id/textView"
-                    style="@style/textViewCardInfo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:layout_toStartOf="@id/txtDailyWater"
-                    android:includeFontPadding="false"
-                    android:text="@string/trace"
-                    android:textAlignment="textEnd" />
-
-                <TextView
-                    android:id="@+id/txtDailyWater"
-                    style="@style/textViewCardInfo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginBottom="4dp"
-                    android:includeFontPadding="false"
-                    android:text="@string/daily_water_ml"
-                    android:textAlignment="textEnd" />
-
-                <TextView
                     android:id="@+id/txtLastWaterAddedTime"
                     style="@style/subTitleTextView.Muted"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/txtWaterTitle"
-                    android:layout_marginBottom="4dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:text="@string/last_added_at" />
+            </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/imgWaterHistoryChevron"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignTop="@+id/txtLastWaterAddedTime"
-                    android:contentDescription="@string/water_history"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_chevron_right"
-                    app:tint="@color/text_tertiary" />
-            </RelativeLayout>
-
-        </RelativeLayout>
-
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="6dp">
-
-            <com.google.android.material.progressindicator.LinearProgressIndicator
-                android:id="@+id/progressWater"
-                style="@style/linearProgressBar.Water"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center" />
-        </FrameLayout>
+            <ImageView
+                android:id="@+id/imgWaterHistoryChevron"
+                style="@style/rowChevron"
+                android:contentDescription="@string/water_history" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:gravity="center"
-            android:weightSum="3">
+            android:layout_marginTop="16dp"
+            android:baselineAligned="true"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txtDailyWaterDrank"
+                style="@style/heroNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/water_default_value_init" />
+
+            <TextView
+                android:id="@+id/textView"
+                style="@style/heroUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="@string/trace" />
+
+            <TextView
+                android:id="@+id/txtDailyWater"
+                style="@style/heroUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="@string/daily_water_ml" />
+        </LinearLayout>
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progressWater"
+            style="@style/linearProgressBar.Water"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAddWater1"
                 style="@style/buttonTextStyle.Water"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="6dp"
+                android:layout_height="44dp"
                 android:layout_weight="1"
                 android:text="@string/water_default_value_50" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAddWater2"
-                style="@style/buttonTextStyle"
+                style="@style/buttonTextStyle.Water"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="6dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="8dp"
                 android:layout_weight="1"
                 android:text="@string/water_default_value_100" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAddWater3"
-                style="@style/buttonTextStyle"
+                style="@style/buttonTextStyle.Water"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="8dp"
                 android:layout_weight="1"
                 android:text="@string/water_default_value_250" />
         </LinearLayout>

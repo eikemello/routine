@@ -2,6 +2,7 @@ package com.android.nls.routine.service;
 
 import android.content.Context;
 import com.android.nls.routine.model.DayDetails;
+import com.android.nls.routine.model.DayScoreSummary;
 import com.android.nls.routine.model.DayStatus;
 import com.android.nls.routine.model.DayStatusInfo;
 import com.android.nls.routine.model.ExpenseRecord;
@@ -134,14 +135,7 @@ public class HistoryService {
      */
     public Map<Long, DayStatusInfo> getDayStatusesForRange(long start, long end) {
         double dailyGoal = mConfigRepository.getDailyWaterGoal();
-
-        // Enabled tracker cards (excluding EXPENSES, which is not part of the score)
-        Set<TrackerType> enabledTrackers = new LinkedHashSet<>();
-        for (Tracker tracker : mTrackerRepository.getEnabledTrackers()) {
-            if (tracker.type() != TrackerType.EXPENSES) {
-                enabledTrackers.add(tracker.type());
-            }
-        }
+        Set<TrackerType> enabledTrackers = getScoreTrackerTypes();
 
         Map<Long, Integer> dailyWaterSums = mWaterRepository.getDailyWaterSums(start, end);
         Map<Long, Map<String, String>> dailyMealStatusesByType = mMealRepository.getDailyMealStatusesByType(start, end);
@@ -175,6 +169,36 @@ public class HistoryService {
         }
 
         return result;
+    }
+
+    /**
+     * Today's score for the ring of the home screen: the same weighted
+     * percentage and status color the history calendar gives the day.
+     */
+    public DayScoreSummary getTodayScore() {
+        long dayStart = Common.getStartOfDayInMillis();
+        long dayEnd = Common.getEndOfDayInMillis();
+        double dailyGoal = mConfigRepository.getDailyWaterGoal();
+        Set<TrackerType> enabledTrackers = getScoreTrackerTypes();
+
+        int waterSum = mWaterRepository.getDailyWaterSums(dayStart, dayEnd).getOrDefault(dayStart, 0);
+        Map<String, String> mealStatusesByType = mMealRepository.getDailyMealStatusesByType(dayStart, dayEnd).get(dayStart);
+        Map<TrackerType, Boolean> trackerCompletions = mTrackerRepository.getDailyTrackerCompletions(dayStart, dayEnd).get(dayStart);
+
+        double percentage = DayScore.computePercentage(waterSum, dailyGoal, mealStatusesByType, trackerCompletions, enabledTrackers);
+        DayStatus status = DayScore.compute(waterSum, dailyGoal, mealStatusesByType, trackerCompletions, enabledTrackers);
+        return new DayScoreSummary(percentage, status);
+    }
+
+    /** Enabled tracker cards, excluding EXPENSES, which is not part of the score. */
+    private Set<TrackerType> getScoreTrackerTypes() {
+        Set<TrackerType> enabledTrackers = new LinkedHashSet<>();
+        for (Tracker tracker : mTrackerRepository.getEnabledTrackers()) {
+            if (tracker.type() != TrackerType.EXPENSES) {
+                enabledTrackers.add(tracker.type());
+            }
+        }
+        return enabledTrackers;
     }
 
     private int countWaterDaysAchieved(long startOfWeek, long endOfWeek) {

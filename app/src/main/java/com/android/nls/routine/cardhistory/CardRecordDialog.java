@@ -38,14 +38,14 @@ public final class CardRecordDialog {
     /** A label/value pair shown inside the details dialog of an all-data record. */
     public record DetailField(String label, String value) {}
 
-    /** Callback invoked when the user asks to edit one record of the All data list. */
+    /** Callback invoked when the user asks to edit one record of the My Data list. */
     @FunctionalInterface
     public interface RecordEditor {
         /** The renderer opens the editor of the tapped record and refreshes the list. */
         void edit();
     }
 
-    /** Callback invoked when the user asks to remove one record of the All data list. */
+    /** Callback invoked when the user asks to remove one record of the My Data list. */
     @FunctionalInterface
     public interface RecordRemover {
         /** The renderer deletes the tapped record and refreshes the list. */
@@ -53,7 +53,7 @@ public final class CardRecordDialog {
     }
 
     /**
-     * Shows the full data of one record of the All data screen: a scrollable list of
+     * Shows the full data of one record of the My Data data screen: a scrollable list of
      * label/value pairs plus an optional Edit and an optional Remove action at the top.
      * The Edit action is hidden when {@code onEdit} is null; same for Remove with
      * {@code onRemove}. Closing the dialog goes back to the list unchanged.

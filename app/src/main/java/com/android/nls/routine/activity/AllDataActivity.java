@@ -156,10 +156,10 @@ public class AllDataActivity extends AppCompatActivity {
         double expenses = mAllDataService.load(0L, Long.MAX_VALUE).totalExpenses();
         int routines = mAllDataService.load(0L, Long.MAX_VALUE).totalRoutines();
 
-        addSummaryCard(summaryList, R.drawable.ic_water, "Water", String.format("%.2f L", water / 1000.0), "8 entries", R.drawable.icon_background_blue);
-        addSummaryCard(summaryList, R.drawable.ic_meal, "Meals", String.valueOf(meals), meals + " entries", R.drawable.icon_background_green);
-        addSummaryCard(summaryList, R.drawable.ic_credit_card, "Expenses", String.format("$%.2f", expenses), "3 entries", R.drawable.icon_background_orange);
-        addSummaryCard(summaryList, R.drawable.ic_card_track, "Workout", String.valueOf(routines), routines + " entries", R.drawable.icon_background_purple);
+        addSummaryCard(summaryList, R.drawable.ic_water, "Water", String.format("%.2f L", water / 1000.0), "8 entries", R.drawable.icon_background);
+        addSummaryCard(summaryList, R.drawable.ic_meal, "Meals", String.valueOf(meals), meals + " entries", R.drawable.icon_background);
+        addSummaryCard(summaryList, R.drawable.ic_credit_card, "Expenses", String.format("$%.2f", expenses), "3 entries", R.drawable.icon_background);
+        addSummaryCard(summaryList, R.drawable.ic_card_track, "Workout", String.valueOf(routines), routines + " entries", R.drawable.icon_background);
     }
 
     private void addSummaryCard(LinearLayout container, int iconRes, String title, String value, String count, int bgRes) {
@@ -398,7 +398,7 @@ public class AllDataActivity extends AppCompatActivity {
     }
 
     private void setFilterButtonActive(MaterialCardView button, boolean active) {
-        button.setCardBackgroundColor(getColor(active ? R.color.neon_blue_20 : R.color.white_10));
+        button.setCardBackgroundColor(getColor(active ? R.color.accent_deep : R.color.surface_1));
     }
 
     /** Re-reads the data from the database and repaints the filtered list, so a
@@ -567,4 +567,4 @@ public class AllDataActivity extends AppCompatActivity {
         mAllDataService.closeDb();
         super.onDestroy();
     }
-}
+}

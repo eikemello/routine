@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Expense card of the home screen: the header opens the history panel,
+     the money spent in the cycle is the hero number over the limit, then one
+     progress bar per configured card (or the single bar without cards). -->
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/MaterialCardView"
@@ -11,30 +14,31 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/btnExpenseHistory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/imgCreditCard"
                 style="@style/iconContainer"
-                android:layout_height="48dp"
-                android:background="@drawable/icon_background_orange"
+                android:background="@drawable/icon_background"
                 android:contentDescription="@string/expenses"
                 android:src="@drawable/ic_credit_card"
-                app:tint="@color/neon_orange" />
+                app:tint="@color/accent" />
 
-            <RelativeLayout
+            <LinearLayout
                 android:id="@+id/middleRL"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:layout_toEndOf="@id/imgCreditCard">
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/txtExpenses"
@@ -47,82 +51,69 @@
                     android:id="@+id/expenseHistoryRow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/txtExpenses"
-                    android:layout_marginBottom="8dp"
-                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/txtLastExpenseRecord"
-                        style="@style/subTitleTextView"
+                        style="@style/subTitleTextView.Muted"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:text="@string/last_expense" />
-
-                    <ImageView
-                        android:id="@+id/imgExpenseHistoryChevron"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginStart="8dp"
-                        android:contentDescription="@string/expense_history"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/ic_chevron_right"
-                        app:tint="@color/text_tertiary" />
                 </LinearLayout>
+            </LinearLayout>
 
-                <TextView
-                    android:id="@+id/txtTotalSpent"
-                    style="@style/textViewCardInfo.Warning"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toStartOf="@id/txtTrace"
-                    android:text="@string/total_expense_value_init"
-                    android:textAlignment="textEnd" />
+            <ImageView
+                android:id="@+id/imgExpenseHistoryChevron"
+                style="@style/rowChevron"
+                android:contentDescription="@string/expense_history" />
+        </LinearLayout>
 
-                <TextView
-                    android:id="@+id/txtTrace"
-                    style="@style/textViewCardInfo.Warning"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toStartOf="@id/txtTotalValue"
-                    android:text="@string/trace" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:baselineAligned="true"
+            android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/txtTotalValue"
-                    style="@style/textViewCardInfo.Warning"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="@string/total_expense_value_init" />
-            </RelativeLayout>
+            <TextView
+                android:id="@+id/txtTotalSpent"
+                style="@style/heroNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/total_expense_value_init" />
 
-        </RelativeLayout>
+            <TextView
+                android:id="@+id/txtTrace"
+                style="@style/heroUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="@string/trace" />
+
+            <TextView
+                android:id="@+id/txtTotalValue"
+                style="@style/heroUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="@string/total_expense_value_init" />
+        </LinearLayout>
 
         <!-- One progress bar per configured card is inflated here -->
         <LinearLayout
             android:id="@+id/cardProgressContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
             android:orientation="vertical" />
 
-        <FrameLayout
-            android:layout_width="wrap_content"
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progressExpense"
+            style="@style/linearProgressBar.Expense"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
-            android:layout_marginBottom="4dp">
-
-            <com.google.android.material.progressindicator.LinearProgressIndicator
-                android:id="@+id/progressExpense"
-                style="@style/linearProgressBar.Expense"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center" />
-        </FrameLayout>
+            android:layout_marginTop="12dp" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

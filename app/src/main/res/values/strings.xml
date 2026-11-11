@@ -10,6 +10,13 @@
     <string name="water_default_value_250">+ %1$.0f</string>
     <string name="meal">Meal</string>
     <string name="how_was_your_meal">How was your meal?</string>
+    <string name="meal_slots_summary">%1$d of %2$d meals logged today</string>
+    <string name="home_today_section">Today</string>
+    <string name="day_score_percent">%1$d%%</string>
+    <string name="day_score_empty" translatable="false">–</string>
+    <string name="day_score_description">Today\'s score: %1$d%%</string>
+    <string name="day_score_none_description">No score yet today</string>
+    <string name="trackers_screen_subtitle">Choose what shows on your home screen</string>
     <string name="last_added_at">Last added at %1$s with %2$sml</string>
     <string name="correct_meal">Correct</string>
     <string name="warning_meal">Warning</string>
@@ -24,7 +31,7 @@
     <string name="water_record_delete_message">Remove this %1$d ml insertion?</string>
     <string name="record_amount_hint">Amount (ml)</string>
     <string name="configure_default_values">Configure default values</string>
-    <string name="config">Config</string>
+    <string name="config">Settings</string>
     <string name="spent">Spent</string>
     <string name="limit">Limit</string>
     <string name="total_expense_value_init">%1$.2f</string>
@@ -139,6 +146,17 @@
     <string name="notify_access_allowed">Allowed notify access</string>
     <string name="allowed">Allowed</string>
     <string name="not_allowed">Not allowed</string>
+    <string name="notify_access_title">Bank notification access</string>
+    <string name="config_eyebrow">Preferences</string>
+    <string name="config_daily_goal">Daily goal</string>
+    <string name="config_daily_goal_subtitle">Used by the water card and the day score</string>
+    <string name="config_quick_buttons_subtitle">Amounts added by the water card and widget</string>
+    <string name="config_monthly_limit">Monthly limit</string>
+    <string name="config_add_card">+ Add card</string>
+    <string name="config_notifications">Notifications</string>
+    <string name="card_last_four">•••• %1$s</string>
+    <string name="card_closes_on_day">Closes on day %1$d</string>
+    <string name="notify_access_subtitle">Reads purchase alerts to log expenses</string>
     <string name="other">Other</string>
     <string name="add_an_observation">you can add an observation</string>
     <string name="meal_observation_missing_title">Meal without description</string>
@@ -189,10 +207,11 @@
 
     <!-- Bottom menu (the former Config tab) -->
     <string name="menu">Menu</string>
+    <string name="side_menu_close">Close menu</string>
 
     <!-- All data screen: one single list of every record with a search box
          and type filter chips on top (the History screen keeps the calendar) -->
-    <string name="all_data">All data</string>
+    <string name="all_data">My data</string>
     <string name="all_data_filter_all">All</string>
     <string name="all_data_search_hint">Search food, amount, note</string>
     <string name="all_data_results_count">%1$d results</string>
@@ -233,4 +252,4 @@
     <!-- Remove confirmation of an All data record -->
     <string name="record_remove_title">Remove record</string>
     <string name="record_remove_message">Remove %1$s?</string>
-</resources>
+</resources>

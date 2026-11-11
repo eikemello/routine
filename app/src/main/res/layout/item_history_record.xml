@@ -100,7 +100,7 @@
             android:padding="8dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_delete"
-            app:tint="@color/red_dark" />
+            app:tint="@color/status_bad" />
     </LinearLayout>
 
     <View

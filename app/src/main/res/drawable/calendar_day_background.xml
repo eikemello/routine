@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Neutral day cell: a future day or a day without records. -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
-            <solid android:color="@color/glass_border" />
-            <corners android:radius="10dp" />
+            <solid android:color="@color/surface_3" />
+            <corners android:radius="999dp" />
         </shape>
     </item>
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/white_15" />
-            <corners android:radius="10dp" />
-            <stroke
-                android:width="0.5dp"
-                android:color="@color/white_20" />
+            <solid android:color="@color/surface_2" />
+            <corners android:radius="999dp" />
         </shape>
     </item>
 </selector>
