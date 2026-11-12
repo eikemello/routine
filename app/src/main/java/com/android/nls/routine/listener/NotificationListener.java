@@ -1,5 +1,6 @@
 package com.android.nls.routine.listener;
 
+import android.app.Notification;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
@@ -13,6 +14,7 @@ import com.android.nls.routine.widget.WidgetCombinedProvider;
 public class NotificationListener extends NotificationListenerService {
     private static final String TAG = Common.generateTag(NotificationListener.class);
     private final BankDetector mBankDetector = new BankDetector();
+    private final ExpenseDeduplicator mExpenseDeduplicator = new ExpenseDeduplicator();
     private HomeCardExpenseService mHomeCardExpenseService;
 
     @Override
@@ -27,9 +29,19 @@ public class NotificationListener extends NotificationListenerService {
             return;
         }
 
+        if ((sbn.getNotification().flags & Notification.FLAG_GROUP_SUMMARY) != 0) {
+            return;
+        }
+
         try {
             Expense expense = mBankDetector.detect(this, sbn);
             if (expense != null) {
+                if (mExpenseDeduplicator.isDuplicate(sbn.getKey(), expense.bank(), expense.amount(),
+                        expense.timestamp())) {
+                    Log.d(TAG, "Duplicate expense ignored (key=" + sbn.getKey() + "): " + expense);
+                    return;
+                }
+
                 Log.d(Constants.TAG, "Detected expense: " + expense);
                 mHomeCardExpenseService.saveExpenseTest(expense);
                 WidgetCombinedProvider.refresh(this);
